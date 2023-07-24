@@ -1,0 +1,47 @@
+version: "3"
+
+services:
+  web:
+    build:
+      context: .
+    # image:
+    command: gunicorn --bind 0.0.0.0:8000 --pythonpath code django_base.wsgi:application --workers=4
+    volumes:
+      - static_volume:/code/static
+      - media_volume:/code/media
+    expose:
+      - "8000"
+    logging:
+      driver: awslogs
+      options:
+        awslogs-group: ecs-cluster-licensing
+        awslogs-region: us-east-1
+        awslogs-stream-prefix: web-aws-test
+    networks:
+      - django-network
+  nginx:
+    build: nginx
+    # image:
+    restart: always
+    volumes:
+      - static_volume:/code/static
+      - media_volume:/code/media
+    ports:
+      - "80:80"
+    logging:
+      driver: awslogs
+      options:
+        awslogs-group: ecs-cluster-licensing
+        awslogs-region: us-east-1
+        awslogs-stream-prefix: web-aws-test
+    depends_on:
+      - web
+    networks:
+      - django-network
+
+networks:
+  django-network:
+volumes:
+  media_volume:
+  static_volume:
+
