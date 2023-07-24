@@ -1,6 +1,6 @@
 # General information
 
-Pre-config Django with django-rest-framework.
+Pre-config Django with django-rest-framework and docker.
 This project includes the next functionalities:
 - Login, logout, signup
 - Password reset, password recovery
@@ -28,6 +28,8 @@ Recommended Python version: 3.10.7
 ```bash
 git clone https://github.com/Linkcharsoft/base_django_rest_project .
 ```
+
+## Without docker
 
 It is highly recommended to use a **[VirtualEnv](https://towardsdatascience.com/virtual-environments-104c62d48c54)**
 You can specify the python version you want to use with the following command:
@@ -60,6 +62,20 @@ pip install -r requirements.txt
 ```bash
 python manage.py migrate
 ```
+
+## With docker
+Then for development run:
+```bash
+sudo docker-compose build
+sudo docker-compose up -d
+```
+
+Or for production run:
+```bash
+sudo docker compose -f docker-compose-production.yml build
+sudo docker-compose -f docker-compose-production.yml up -d
+```
+
 **Code Formater**
 In the requirements file, we have included the [black](https://pypi.org/project/black/)library to ensure a high standard of code formatting.
 Additionally, you will find a "pre-commit" file in the project's root directory, which should be moved to the hooks folder within the .git folder.
