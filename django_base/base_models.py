@@ -7,7 +7,6 @@ import datetime
 from django.contrib.auth.models import UserManager
 from django.db import models
 
-from django_base.utils import get_date_with_timezone
 from django.utils import timezone
 
 

@@ -1,5 +1,4 @@
 from drf_writable_nested.serializers import WritableNestedModelSerializer
-from drf_writable_nested.mixins import UniqueFieldsMixin
 
 from rest_framework import serializers
 
