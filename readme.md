@@ -49,6 +49,8 @@ Add this lines in docker-compose-production in the selected service at build lev
 
 #### default.conf
 
+    The proxy_pass in some cases must be changed to the name of the service in the docker-compose file instead of the ip address. Ej: proxy_pass http://web:8000;
+
     server {
         listen 80 default_server;
         server_name _;
