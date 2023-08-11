@@ -9,33 +9,8 @@ services:
     volumes:
       - static_volume:/code/static
       - media_volume:/code/media
-    expose:
-      - "8000"
-    logging:
-      driver: awslogs
-      options:
-        awslogs-group: ecs-cluster-licensing
-        awslogs-region: us-east-1
-        awslogs-stream-prefix: web-aws-test
-    networks:
-      - django-network
-  nginx:
-    build: nginx
-    # image:
-    restart: always
-    volumes:
-      - static_volume:/code/static
-      - media_volume:/code/media
     ports:
-      - "80:80"
-    logging:
-      driver: awslogs
-      options:
-        awslogs-group: ecs-cluster-licensing
-        awslogs-region: us-east-1
-        awslogs-stream-prefix: web-aws-test
-    depends_on:
-      - web
+      - "8000:8000"
     networks:
       - django-network
 

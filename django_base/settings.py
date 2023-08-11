@@ -1,3 +1,4 @@
+from email.policy import default
 from pathlib import Path
 import environ
 import os
@@ -7,14 +8,14 @@ env = environ.Env()
 environ.Env.read_env(os.path.join(BASE_DIR, ".env"))
 
 # <-------------- General env settings -------------->
-SECRET_KEY = env("SECRET_KEY")
-DEBUG = env.bool("DEBUG")
+SECRET_KEY = env("SECRET_KEY", default = '-----------')
+DEBUG = env.bool("DEBUG", default=True)
 BACK_URL = env("BACK_URL", default="http://localhost:8000")
 FRONT_URL = env("FRONT_URL", default="http://localhost:3000")
 APP_NAME = env("APP_NAME", default="Django Base")
 
 # <-------------- DB env settings -------------->
-DB_ENGINE = env("DB_ENGINE")
+DB_ENGINE = env("DB_ENGINE", default="sqlite3")
 DB_USER = env("DB_USER", default="")
 DB_PASSWORD = env("DB_PASSWORD", default="")
 DB_HOST = env("DB_HOST", default="")

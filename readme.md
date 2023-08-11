@@ -18,6 +18,63 @@ And the next libraries (plus the ones that the frameworks include):
 - drf-writable-nested
 
 
+## For AWS-Logs
+Add this lines in docker-compose-production in the selected service at build level:
+
+    logging:
+      driver: awslogs
+      options:
+        awslogs-group: ecs-cluster-licensing
+        awslogs-region: us-east-1
+        awslogs-stream-prefix: web-aws-test
+
+
+## For Ngnix
+    Add this lines in docker-compose-production as a new service
+
+    nginx:
+        build: nginx
+        restart: always
+        volumes:
+        - static_volume:/code/static
+        - media_volume:/code/media
+        ports:
+        - "80:80"
+        depends_on:
+        - web
+        networks:
+        - django-network
+
+    In addition add the ngnix folder in the root of your project with this two files.
+
+#### default.conf
+
+    server {
+        listen 80 default_server;
+        server_name _;
+        location / {
+            proxy_pass http://127.0.0.1:8000;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header Host $host;
+            proxy_redirect off;
+        }
+        location /static/ {
+            alias /code/static/;
+        }
+        location /media/ {
+            alias /code/media/;
+        }
+    }
+
+
+#### Dockerfile
+    FROM nginx:stable-alpine
+
+    COPY default.conf /etc/nginx
+    COPY default.conf /etc/nginx/conf.d
+
+    EXPOSE 80
+
 ## Installation
 
 Recommended Python version: 3.10.7
