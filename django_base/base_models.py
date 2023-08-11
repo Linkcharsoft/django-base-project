@@ -7,6 +7,7 @@ import datetime
 from django.contrib.auth.models import UserManager
 from django.db import models
 
+from django_base.utils import get_date_with_timezone
 from django.utils import timezone
 
 
@@ -38,10 +39,13 @@ class BaseSoftDeleteModel(BaseModel):
         abstract = True
 
     def delete(self, *args, **kwargs):
-        self.deleted = True
-        self.deleted_at = timezone.now()
-        self.save()
-
+        if "hard_delete" in kwargs and kwargs["hard_delete"]:
+            kwargs.pop("hard_delete")
+            super().delete(*args, **kwargs)
+        else:
+            self.deleted = True
+            self.deleted_at = timezone.now()
+            self.save()
 
 class CustomFileField(models.FileField):
     def generate_filename(self, instance, filename):
