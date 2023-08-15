@@ -43,6 +43,26 @@ CORS_ALLOWED_URLS = env.list("CORS_ALLOWED_URLS", default=[])
 # <-------------- Watchman env settings -------------->
 WATCHMAN_TOKEN = env("WATCHMAN_TOKEN", default="password")
 
+# <-------------- S3 env -------------->
+USE_S3 = env.bool("USE_S3", default=True)
+
+# aws settings
+AWS_STORAGE_BUCKET_NAME = env("AWS_STORAGE_BUCKET_NAME", default="")
+AWS_S3_CUSTOM_DOMAIN = f"{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com"
+AWS_S3_OBJECT_PARAMETERS = {
+    "CacheControl": "max-age=86400",
+}
+AWS_LOCATION = "static"
+AWS_DEFAULT_ACL = None
+# s3 static settings
+STATICFILES_STORAGE = "django_base.storage_backends.StaticStorage"
+# s3 public media settings
+DEFAULT_FILE_STORAGE = "django_base.storage_backends.PublicMediaStorage"
+# s3 private media settings
+PRIVATE_MEDIA_LOCATION = "private"
+PRIVATE_FILE_STORAGE = "django_base.storage_backends.PrivateMediaStorage"
+
+
 # <-------------- General settings -------------->
 if not DEBUG:
     ALLOWED_HOSTS = env.list("ALLOWED_HOSTS")
@@ -178,11 +198,19 @@ USE_I18N = True
 USE_TZ = True
 
 # <-------------- Media and Static settings -------------->
-STATIC_URL = "static/"
-STATIC_ROOT = BASE_DIR / "static"
+if USE_S3:
+    PUBLIC_MEDIA_LOCATION = "media"
+    MEDIA_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/{PUBLIC_MEDIA_LOCATION}/"
+    STATIC_LOCATION = "static"                                        #If no apache is used, remove this line and add whitenose
+    STATIC_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/{STATIC_LOCATION}/" #If no apache is used, remove this line and add whitenose
 
-MEDIA_URL = "media/"
-MEDIA_ROOT = BASE_DIR / "media"
+
+else:
+    STATIC_URL = "/static/" #If no apache is used, move this line out of the else
+    STATIC_ROOT = BASE_DIR / "static" #If no apache is used, move this line out of the else
+
+    MEDIA_URL = "/media/"
+    MEDIA_ROOT = BASE_DIR / "media"
 
 # <---------------------- Email configurations ---------------------->
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
