@@ -69,6 +69,8 @@ if not DEBUG:
 else:
     ALLOWED_HOSTS = ["*"]
 
+CSRF_TRUSTED_ORIGINS = env.list("CSRF_TRUSTED_ORIGINS", default=[])
+
 
 # <-------------- Apps settings -------------->
 BASE_APPS = [
