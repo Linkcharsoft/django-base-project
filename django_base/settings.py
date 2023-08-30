@@ -10,6 +10,7 @@ environ.Env.read_env(os.path.join(BASE_DIR, ".env"))
 # <-------------- General env settings -------------->
 SECRET_KEY = env("SECRET_KEY", default = '-----------')
 DEBUG = env.bool("DEBUG", default=True)
+USE_DEBUG_TOOLBAR = env.bool("USE_DEBUG_TOOLBAR", default=False)
 BACK_URL = env("BACK_URL", default="http://localhost:8000")
 FRONT_URL = env("FRONT_URL", default="http://localhost:3000")
 APP_NAME = env("APP_NAME", default="Django Base")
@@ -269,7 +270,7 @@ CORS_ORIGIN_WHITELIST = CORS_ALLOWED_URLS
 #     "0.0.0.0"
 # ]
 
-if DEBUG:
+if USE_DEBUG_TOOLBAR:
     import socket  # only if you haven't already imported this
 
     hostname, _, ips = socket.gethostbyname_ex(socket.gethostname())
