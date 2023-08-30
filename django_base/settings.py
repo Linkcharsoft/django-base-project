@@ -34,8 +34,8 @@ EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD", default="")
 EMAIL_USE_TLS = env("EMAIL_USE_TLS", default=True)
 EMAIL_PORT = env("EMAIL_PORT", default=587)
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
-SES_AWS_ACCESS_KEY_ID = env("AWS_ACCESS_KEY_ID", default="")
-SES_AWS_SECRET_ACCESS_KEY = env("AWS_SECRET_ACCESS_KEY", default="")
+AWS_ACCESS_KEY_ID = env("AWS_ACCESS_KEY_ID", default="")
+AWS_SECRET_ACCESS_KEY = env("AWS_SECRET_ACCESS_KEY", default="")
 
 # <-------------- CORS env settings -------------->
 CORS_ALLOWED_URLS = env.list("CORS_ALLOWED_URLS", default=[])
@@ -44,23 +44,8 @@ CORS_ALLOWED_URLS = env.list("CORS_ALLOWED_URLS", default=[])
 WATCHMAN_TOKEN = env("WATCHMAN_TOKEN", default="password")
 
 # <-------------- S3 env -------------->
-USE_S3 = env.bool("USE_S3", default=True)
-
-# aws settings
+USE_S3 = env.bool("USE_S3", default=False)
 AWS_STORAGE_BUCKET_NAME = env("AWS_STORAGE_BUCKET_NAME", default="")
-AWS_S3_CUSTOM_DOMAIN = f"{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com"
-AWS_S3_OBJECT_PARAMETERS = {
-    "CacheControl": "max-age=86400",
-}
-AWS_LOCATION = "static"
-AWS_DEFAULT_ACL = None
-# s3 static settings
-STATICFILES_STORAGE = "django_base.storage_backends.StaticStorage"
-# s3 public media settings
-DEFAULT_FILE_STORAGE = "django_base.storage_backends.PublicMediaStorage"
-# s3 private media settings
-PRIVATE_MEDIA_LOCATION = "private"
-PRIVATE_FILE_STORAGE = "django_base.storage_backends.PrivateMediaStorage"
 
 
 # <-------------- General settings -------------->
@@ -201,18 +186,29 @@ USE_TZ = True
 
 # <-------------- Media and Static settings -------------->
 if USE_S3:
+    # aws settings
+    AWS_S3_CUSTOM_DOMAIN = f"{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com"
+    AWS_S3_OBJECT_PARAMETERS = {
+        "CacheControl": "max-age=86400",
+    }
+    AWS_LOCATION = "static"
+    AWS_DEFAULT_ACL = None
+    # s3 static settings
+    # STATICFILES_STORAGE = "django_base.storage_backends.StaticStorage"
+    # s3 public media settings
+    DEFAULT_FILE_STORAGE = "django_base.storage_backends.PublicMediaStorage"
+    # s3 private media settings
+    PRIVATE_MEDIA_LOCATION = "private"
+    PRIVATE_FILE_STORAGE = "django_base.storage_backends.PrivateMediaStorage"
     PUBLIC_MEDIA_LOCATION = "media"
     MEDIA_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/{PUBLIC_MEDIA_LOCATION}/"
-    STATIC_LOCATION = "static"                                        #If no apache is used, remove this line and add whitenose
-    STATIC_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/{STATIC_LOCATION}/" #If no apache is used, remove this line and add whitenose
-
 
 else:
-    STATIC_URL = "/static/" #If no apache is used, move this line out of the else
-    STATIC_ROOT = BASE_DIR / "static" #If no apache is used, move this line out of the else
-
     MEDIA_URL = "/media/"
     MEDIA_ROOT = BASE_DIR / "media"
+
+STATIC_URL = "/static/"
+STATIC_ROOT = BASE_DIR / "static"
 
 # <---------------------- Email configurations ---------------------->
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
@@ -268,6 +264,13 @@ CORS_ALLOWED_ORIGINS = CORS_ALLOWED_URLS
 CORS_ORIGIN_WHITELIST = CORS_ALLOWED_URLS
 
 # <---------------------- django-debug-toolbar configurations ---------------------->
-INTERNAL_IPS = [
-    "127.0.0.1",
-]
+# INTERNAL_IPS = [
+#     "127.0.0.1",
+#     "0.0.0.0"
+# ]
+
+if DEBUG:
+    import socket  # only if you haven't already imported this
+
+    hostname, _, ips = socket.gethostbyname_ex(socket.gethostname())
+    INTERNAL_IPS = [ip[: ip.rfind(".")] + ".1" for ip in ips] + ["127.0.0.1", "0.0.0.0"]
