@@ -283,6 +283,12 @@ CORS_ORIGIN_WHITELIST = CORS_ALLOWED_URLS
 #     "0.0.0.0"
 # ]
 
+# <---------------------- CRON ---------------------->
+CRONJOBS = [
+    # ('0 0 * * *', '<app_name>.cron.<def_name>'), 
+]
+
+
 if USE_DEBUG_TOOLBAR:
     import socket  # only if you haven't already imported this
 
