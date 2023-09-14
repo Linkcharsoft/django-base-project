@@ -152,22 +152,35 @@ AUTH_PASSWORD_VALIDATORS = [
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-# <-------------- DB settings -------------->
+#<-------------- DB settings -------------->
+ALLOWED_DB_ENGINES = {
+    "sqlite3": "django.db.backends.sqlite3",
+    "mysql": "django.db.backends.mysql",
+    "postgresql": "django.db.backends.postgresql",
+    "oracle": "django.db.backends.oracle",
+}
+
+if DB_ENGINE not in ALLOWED_DB_ENGINES.keys():
+    raise Exception("DB_ENGINE not allowed")
+
 if DB_ENGINE == "sqlite3":
     DATABASES = {
         "default": {
-            "ENGINE": "django.db.backends.sqlite3",
+            "ENGINE": ALLOWED_DB_ENGINES[DB_ENGINE],
             "NAME": BASE_DIR / "db.sqlite3",
         }
     }
-else:
-    ALLOWED_DB_ENGINES = {
-        "mysql": "django.db.backends.mysql",
-        "postgresql": "django.db.backends.postgresql",
-    }
-    if DB_ENGINE not in ALLOWED_DB_ENGINES.keys():
-        raise Exception("DB_ENGINE not allowed")
 
+elif DB_ENGINE == "oracle":
+    DATABASES = {
+        "default": {
+            "ENGINE": ALLOWED_DB_ENGINES[DB_ENGINE],
+            "NAME": f"{DB_HOST}:{DB_PORT}/{DB_NAME}",
+            "USER": DB_USER,
+            "PASSWORD": DB_PASSWORD,
+        }
+    }
+else:
     DATABASES = {
         "default": {
             "ENGINE": ALLOWED_DB_ENGINES[DB_ENGINE],
