@@ -5,7 +5,7 @@ import django.contrib.auth.validators
 from django.db import migrations, models
 import django.db.models.deletion
 import django.utils.timezone
-import django_base.base_models
+import django_base.base_utils.base_models
 
 
 class Migration(migrations.Migration):
@@ -129,7 +129,7 @@ class Migration(migrations.Migration):
                 "abstract": False,
             },
             managers=[
-                ("objects", django_base.base_models.BaseUserCustomManager()),
+                ("objects", django_base.base_utils.base_models.BaseUserCustomManager()),
             ],
         ),
         migrations.CreateModel(

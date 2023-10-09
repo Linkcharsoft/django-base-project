@@ -3,7 +3,7 @@ from drf_writable_nested.mixins import UniqueFieldsMixin
 
 from rest_framework import serializers
 
-from django_base.base_serializers import BaseSoftDeleteSerializer
+from django_base.base_utils.base_serializers import BaseSoftDeleteSerializer
 
 from users.models import User, Profile
 

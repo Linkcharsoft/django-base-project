@@ -20,7 +20,7 @@ from django.utils import timezone
 
 
 from users.models import User, TokenRecovery
-from users.utils import get_random_string
+from django_base.base_utils.utils import get_random_string
 
 
 class EmailVerification(APIView, ConfirmEmailView):

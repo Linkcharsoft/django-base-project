@@ -1,6 +1,7 @@
 import string
 
 from django.core.exceptions import ValidationError
+from django.utils.deconstruct import deconstructible
 
 
 class NumberRequiredValidator:
@@ -40,3 +41,15 @@ class UpperValidator:
 
     def get_help_text(self):
         return "Password must contain at least one uppercase letter."
+
+
+@deconstructible
+class FileSizeValidator(object):
+    def __init__(self, mb_limit=5):
+        self.mb_limit = mb_limit
+
+    def __call__(self, value):
+        if value.size > self.mb_limit * 1024 * 1024:
+            raise ValidationError(
+                f"File too large. Size should not exceed {self.mb_limit} MiB."
+            )

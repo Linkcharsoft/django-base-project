@@ -140,13 +140,13 @@ AUTH_PASSWORD_VALIDATORS = [
         "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
     },
     {
-        "NAME": "django_base.validators.UpperValidator",
+        "NAME": "django_base.base_utils.base_validators.UpperValidator",
     },
     {
-        "NAME": "django_base.validators.SymbolValidator",
+        "NAME": "django_base.base_utils.base_validators.SymbolValidator",
     },
     {
-        "NAME": "django_base.validators.NumberRequiredValidator",
+        "NAME": "django_base.base_utils.base_validators.NumberRequiredValidator",
     },
 ]
 
@@ -180,6 +180,7 @@ elif DB_ENGINE == "oracle":
             "PASSWORD": DB_PASSWORD,
         }
     }
+
 else:
     DATABASES = {
         "default": {
@@ -234,7 +235,7 @@ REST_FRAMEWORK = {
         "rest_framework.authentication.BasicAuthentication",
         "rest_framework.authentication.SessionAuthentication",
     ),
-    "DEFAULT_PAGINATION_CLASS": "django_base.pagination.CustomPagination",
+    "DEFAULT_PAGINATION_CLASS": "django_base.base_utils.base_pagination.CustomPagination",
     "DEFAULT_SCHEMA_CLASS": "rest_framework.schemas.coreapi.AutoSchema",
     "PAGE_SIZE": 10,
 }

@@ -6,7 +6,7 @@ from django.db.models import UniqueConstraint
 from django.dispatch import receiver
 from django.db import models
 
-from django_base.base_models import BaseSoftDeleteModel, BaseUserCustomManager
+from django_base.base_utils.base_models import BaseSoftDeleteModel, BaseUserCustomManager
 
 
 class User(BaseSoftDeleteModel, AbstractUser):

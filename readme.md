@@ -267,6 +267,7 @@ class UserViewSet(ModelViewSet):
 - [Luca Cittá Guiordano](https://www.linkedin.com/in/lucacittagiordano/)
 - [Matias Girardi](https://www.linkedin.com/in/matiasgirardi)
 - [Juan Ignacio Borrelli](https://www.linkedin.com/in/juan-ignacio-borrelli/)
+- [Francesco Silvetti](https://www.linkedin.com/in/francescosilvetti/)
 
 
 All of us working on [Linkchar Software Development](https://linkchar.com/)
