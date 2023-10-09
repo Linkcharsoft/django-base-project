@@ -234,6 +234,12 @@ This library provides an excellent solution for handling nested serializers. It 
 
 Additionally, the library offers other useful serializer functionalities, such as managing unique fields. This feature can be beneficial when dealing with models that require uniqueness constraints on certain fields. 
 
+
+[**django-crontab**](https://pypi.org/project/django-crontab/)
+"Django-crontab is a Django application that allows you to register cron tasks from the Django admin interface or a crontab file."
+
+This library allows you to schedule tasks to be executed at specific times. It is a very useful tool for automating tasks that need to be performed at regular intervals.
+
 ## Endpoints
 To access detailed information about the endpoints in the project, you can utilize the Swagger or Redoc endpoints. Both of these endpoints are included in the project and offer interactive documentation for the API.
 
