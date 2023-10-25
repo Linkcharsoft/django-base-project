@@ -33,7 +33,7 @@ class Profile(BaseSoftDeleteModel):
 
 class TokenRecovery(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    token = models.CharField(max_length=6, default="")
+    token = models.CharField(max_length=25, default="")
     created_at = models.DateTimeField(auto_now_add=True)
 
 

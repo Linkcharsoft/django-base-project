@@ -1,34 +1,49 @@
-from django.shortcuts import render
-from rest_framework.response import Response
-from rest_framework.views import APIView
-from rest_framework import status
+from datetime import timedelta
 
 from allauth.account.views import ConfirmEmailView
 
 from dj_rest_auth.registration.serializers import VerifyEmailSerializer
 from dj_rest_auth.views import PasswordChangeView
 
-from django_base.settings import BACK_URL, EMAIL_HOST_USER, APP_NAME
-from django.utils.translation import gettext_lazy as _
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from rest_framework import status
 
-from django.shortcuts import get_object_or_404
-from django.core.mail import send_mail
-from django.core.exceptions import ValidationError
 from django.contrib.auth.password_validation import validate_password
-from datetime import timedelta
+from django.utils.translation import gettext_lazy as _
+from django.template.loader import render_to_string
+from django.core.exceptions import ValidationError
+from django.core.mail import EmailMessage
+from django.shortcuts import render
 from django.utils import timezone
-
+from django.conf import settings
 
 from users.models import User, TokenRecovery
 from django_base.base_utils.utils import get_random_string
 
+
+def _get_validated_token(request):
+    token_recovery = TokenRecovery.objects.get(
+        user__email=request.data.get("email"),
+        token=request.data.get("token")
+        )
+    if (
+        token_recovery.created_at + timedelta(minutes=30)
+        < timezone.now()
+    ):
+        raise ValidationError(_("Token expired"))
+    return token_recovery
+
+def _get_user(email):
+    user = User.objects.get(email=email)
+    return user
 
 class EmailVerification(APIView, ConfirmEmailView):
     def get(self, request, key):
         return render(
             request,
             "registration/verify_email.html",
-            context={"key": key, "BASE_URL": BACK_URL},
+            context={"key": key, "BASE_URL": settings.BACK_URL},
         )
 
     def post(self, request, *args, **kwargs):
@@ -39,127 +54,82 @@ class EmailVerification(APIView, ConfirmEmailView):
         confirmation.confirm(self.request)
         return Response("ok", status=status.HTTP_200_OK)
 
-
+# <------------------ Password recovery ------------------>
 class Password_recovery_email_send(APIView):
     def post(self, request):
-        try:
-            recovery_token = get_random_string(6)
-            email = request.data["email"]
 
-            user = get_object_or_404(User, email=email)
+        request_type = request.data.get("request_type", 'reset') if \
+            settings.PASSWORD_CHANGE_BY_EMAIL else 'reset'
+
+        try:
+            user = _get_user(request.data.get("email"))
+
+            token_length = 25 if settings.PASSWORD_EMAIL_SEND == 'link' else 6
+            recovery_token = get_random_string(token_length)
+
             if TokenRecovery.objects.filter(user=user).exists():
                 token_recovery = TokenRecovery.objects.get(user=user)
                 token_recovery.delete()
             TokenRecovery.objects.create(user=user, token=recovery_token)
 
-            email_plaintext_message = (
-                "Hi,\n\n \
-            You have requested a password reset for your account.\n \
-            Please enter this code in "
-                + APP_NAME
-                + " app: "
-                + recovery_token
-                + "\n \
-            If you did not request a password reset, please ignore this email.\n\n \
-            Thank you,\n "
-                + APP_NAME
-                + " Team"
-            )
-            send_mail(
-                # title:
-                "Password Reset for {title}".format(title=APP_NAME),
-                # message:
-                email_plaintext_message,
-                # from:
-                EMAIL_HOST_USER,
-                # to:
-                [email],
-            )
+            email_subject = f"Password Reset for {settings.APP_NAME}"
+
+            html_message = render_to_string('registration/password_recovery_email.html', {
+                'FRONT_URL': settings.FRONT_URL,
+                'recovery_token': recovery_token,
+                'APP_NAME': settings.APP_NAME,
+                'REQUEST_TYPE': request_type
+            })
+
+            message = EmailMessage(email_subject, html_message, settings.EMAIL_HOST_USER, [user.email,])
+            message.content_subtype = 'html'
+            message.send()
+
             return Response("Email sent", status=status.HTTP_200_OK)
+
         except Exception as e:
-            return Response(
-                f"Something went wrong {str(e)}", status=status.HTTP_400_BAD_REQUEST
-            )
+            print(e)
+            return Response("Email sent", status=status.HTTP_200_OK)
 
 
 class Check_token(APIView):
     def post(self, request):
+
         try:
-            token = request.data["token"]
-            email = request.data["email"]
-            user = get_object_or_404(User, email=email)
-            if TokenRecovery.objects.filter(user=user).exists():
-                token_recovery = TokenRecovery.objects.get(user=user)
-                if token_recovery.token == token:
-                    if (
-                        token_recovery.created_at + timedelta(minutes=10)
-                        < timezone.now()
-                    ):
-                        return Response(
-                            "Token expired", status=status.HTTP_400_BAD_REQUEST
-                        )
-                    else:
-                        return Response("Token is valid", status=status.HTTP_200_OK)
-                else:
-                    return Response(
-                        "Token is invalid", status=status.HTTP_400_BAD_REQUEST
-                    )
-            else:
-                return Response(
-                    "This user has no token request", status=status.HTTP_400_BAD_REQUEST
-                )
+            _get_validated_token(request)
+        except ValidationError as e:
+            return Response(str(e.message), status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
-            return Response(
-                f"Something went wrong.{str(e)}",
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            )
+            print(e)
+            return Response("Token is invalid", status=status.HTTP_400_BAD_REQUEST) 
+        else:
+            return Response("Token is valid", status=status.HTTP_200_OK)
 
 
 class Password_recovery_confirm(APIView):
     def post(self, request):
+
         try:
-            token = request.data["token"]
-            email = request.data["email"]
-            password = request.data["password"]
-            user = get_object_or_404(User, email=email)
-            if TokenRecovery.objects.filter(user=user).exists():
-                token_recovery = TokenRecovery.objects.get(user=user)
-                if token_recovery.token == token:
-                    if (
-                        token_recovery.created_at + timedelta(minutes=10)
-                        < timezone.now()
-                    ):
-                        return Response(
-                            "Token expired", status=status.HTTP_400_BAD_REQUEST
-                        )
-
-                    else:
-                        try:
-                            validate_password(password, user=user)
-                        except ValidationError as e:
-                            return Response(str(e), status=status.HTTP_400_BAD_REQUEST)
-
-                        user.set_password(password)
-                        user.save()
-                        token_recovery.delete()
-                        return Response(
-                            "Password reset successful", status=status.HTTP_200_OK
-                        )
-                else:
-                    return Response(
-                        "Token is invalid", status=status.HTTP_400_BAD_REQUEST
-                    )
-
-            else:
-                return Response(
-                    "This user has no token request", status=status.HTTP_400_BAD_REQUEST
-                )
+            password = request.data.get("password",'')
+            user = _get_user(request.data.get("email"))
+            token_recovery = _get_validated_token(request)
+            validate_password(password, user=user)
+        except ValidationError as e:
+            if hasattr(e, 'message'):
+                return Response(str(e.message), status=status.HTTP_400_BAD_REQUEST)
+            return Response(e, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
-            return Response(
-                f"Something went wrong. {str(e)}",
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            )
+            print(e)
+            return Response("Token is invalid", status=status.HTTP_400_BAD_REQUEST)
 
+        user.set_password(password)
+        user.save()
+        token_recovery.delete()
+        return Response(
+            "Password reset successful", status=status.HTTP_200_OK
+        )
+
+# <------------------ Password recovery ------------------>
 
 class PasswordChangeViewModify(PasswordChangeView):
     def post(self, request, *args, **kwargs):

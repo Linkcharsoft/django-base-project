@@ -25,6 +25,8 @@ DB_NAME = env("DB_NAME", default="")
 
 # <-------------- Auth env settings -------------->
 USE_EMAIL_FOR_AUTHENTICATION = env.bool("USE_EMAIL_FOR_AUTHENTICATION", default=False)
+PASSWORD_EMAIL_SEND=env.bool("PASSWORD_EMAIL_SEND", default='link')
+PASSWORD_CHANGE_BY_EMAIL=env.bool("PASSWORD_CHANGE_BY_EMAIL", default=True)
 
 # <-------------- Email env settings -------------->
 EMAIL_PROVIDER = env("EMAIL_PROVIDER", default="console")
