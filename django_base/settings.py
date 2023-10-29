@@ -50,6 +50,10 @@ WATCHMAN_TOKEN = env("WATCHMAN_TOKEN", default="password")
 USE_S3 = env.bool("USE_S3", default=False)
 AWS_STORAGE_BUCKET_NAME = env("AWS_STORAGE_BUCKET_NAME", default="")
 
+#<-------------- Platform configurations env settings -------------->
+INCLUDE_LOCATION = env.bool("INCLUDE_LOCATION", default=False)
+LOCATION_SCOPE = env("LOCATION_SCOPE", default="state")
+INCLUDE_EXPANDED_COUNTRY = env.bool("INCLUDE_EXPANDED_COUNTRY", default=False)
 
 # <-------------- General settings -------------->
 if not DEBUG:
@@ -89,6 +93,7 @@ THIRD_APPS = [
 
 MY_APPS = [
     "users",
+    "platform_configurations"
 ]
 
 INSTALLED_APPS = BASE_APPS + THIRD_APPS + MY_APPS
@@ -297,3 +302,10 @@ if USE_DEBUG_TOOLBAR:
 
     hostname, _, ips = socket.gethostbyname_ex(socket.gethostname())
     INTERNAL_IPS = [ip[: ip.rfind(".")] + ".1" for ip in ips] + ["127.0.0.1", "0.0.0.0"]
+
+
+#<-------------- Platform configurations -------------->
+if INCLUDE_LOCATION:
+    valid_location_scopes = ["country", "state", "city"]
+    if LOCATION_SCOPE not in valid_location_scopes:
+        raise Exception("LOCATION_SCOPE not allowed")

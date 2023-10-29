@@ -7,7 +7,6 @@ import datetime
 from django.contrib.auth.models import UserManager
 from django.db import models
 
-from django_base.base_utils.utils import get_date_with_timezone
 from django.utils import timezone
 
 
@@ -47,6 +46,7 @@ class BaseSoftDeleteModel(BaseModel):
             self.deleted_at = timezone.now()
             self.save()
 
+
 class CustomFileField(models.FileField):
     def generate_filename(self, instance, filename):
         extension = filename.split(".")[-1]
@@ -63,3 +63,64 @@ class CustomImageField(models.ImageField):
             hashlib.md5(str(datetime.datetime.now()).encode()).hexdigest(), extension
         )
         return os.path.join(self.upload_to, filename)
+
+
+#<-------------- Locations -------------->
+
+
+class AbstactCountry(models.Model):
+    name = models.CharField(max_length=100)
+    iso3 = models.CharField(max_length=3)
+    latitude = models.FloatField()
+    longitude = models.FloatField()
+
+    class Meta:
+        abstract = True
+
+    def __str__(self):
+        return self.name
+
+
+class AbstactExpandedCountry(AbstactCountry):
+    iso2 = models.CharField(max_length=2, null=True, blank=True)
+    numeric_code = models.CharField(max_length=3, null=True, blank=True)
+    phone_code = models.CharField(max_length=3, null=True, blank=True)
+    currency = models.CharField(max_length=3, null=True, blank=True)
+    currency_name = models.CharField(max_length=100, null=True, blank=True)
+    currency_symbol = models.CharField(max_length=3, null=True, blank=True)
+
+    class Meta:
+        abstract = True
+
+    def __str__(self):
+        return self.name
+
+
+class AbstractState(models.Model):
+    name = models.CharField(max_length=100)
+    state_code = models.CharField(max_length=3)
+    latitude = models.FloatField()
+    longitude = models.FloatField()
+
+    country = models.ForeignKey('platform_configurations.Country', on_delete=models.CASCADE)
+    class Meta:
+        abstract = True
+
+    def __str__(self):
+        return self.name
+
+
+class AbstractCity(models.Model):
+    name = models.CharField(max_length=100)
+    latitude = models.FloatField()
+    longitude = models.FloatField()
+
+    state = models.ForeignKey('platform_configurations.State', on_delete=models.CASCADE)
+
+    class Meta:
+        abstract = True
+
+    def __str__(self):
+        return self.name
+
+#<-------------- Locations -------------->

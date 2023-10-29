@@ -1,14 +1,16 @@
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 
+from dj_rest_auth.registration.views import ResendEmailVerificationView, RegisterView
+
 from rest_framework.routers import DefaultRouter
 
 from django.contrib import admin
 from django.urls import path, include, re_path
 
 from users.urls import router as users_router
+from platform_configurations.urls import router as platform_configurations_router
 from users.register_views import EmailVerification
-from dj_rest_auth.registration.views import ResendEmailVerificationView, RegisterView
 
 
 schema_view = get_schema_view(
@@ -23,6 +25,7 @@ schema_view = get_schema_view(
 
 base_router = DefaultRouter()
 base_router.registry.extend(users_router.registry)
+base_router.registry.extend(platform_configurations_router.registry)
 
 # fmt: off
 #<-------------- Django + libraries urls -------------->
@@ -57,6 +60,7 @@ urlpatterns += [
 #<-------------- Our apps includes -------------->
 urlpatterns += [
     path('api/users/', include('users.urls')),
+    path('api/platform_configurations/', include('platform_configurations.urls')),
 ]
 
 #<-------------- Our base router -------------->
