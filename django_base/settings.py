@@ -8,7 +8,7 @@ env = environ.Env()
 environ.Env.read_env(os.path.join(BASE_DIR, ".env"))
 
 # <-------------- General env settings -------------->
-SECRET_KEY = env("SECRET_KEY", default = '-----------')
+SECRET_KEY = env("SECRET_KEY", default="-----------")
 DEBUG = env.bool("DEBUG", default=True)
 USE_DEBUG_TOOLBAR = env.bool("USE_DEBUG_TOOLBAR", default=False)
 BACK_URL = env("BACK_URL", default="http://localhost:8000")
@@ -25,8 +25,8 @@ DB_NAME = env("DB_NAME", default="")
 
 # <-------------- Auth env settings -------------->
 USE_EMAIL_FOR_AUTHENTICATION = env.bool("USE_EMAIL_FOR_AUTHENTICATION", default=False)
-PASSWORD_EMAIL_SEND=env.bool("PASSWORD_EMAIL_SEND", default='link')
-PASSWORD_CHANGE_BY_EMAIL=env.bool("PASSWORD_CHANGE_BY_EMAIL", default=True)
+PASSWORD_EMAIL_SEND = env.bool("PASSWORD_EMAIL_SEND", default="link")
+PASSWORD_CHANGE_BY_EMAIL = env.bool("PASSWORD_CHANGE_BY_EMAIL", default=True)
 
 # <-------------- Email env settings -------------->
 EMAIL_PROVIDER = env("EMAIL_PROVIDER", default="console")
@@ -50,7 +50,7 @@ WATCHMAN_TOKEN = env("WATCHMAN_TOKEN", default="password")
 USE_S3 = env.bool("USE_S3", default=False)
 AWS_STORAGE_BUCKET_NAME = env("AWS_STORAGE_BUCKET_NAME", default="")
 
-#<-------------- Platform configurations env settings -------------->
+# <-------------- Platform configurations env settings -------------->
 INCLUDE_LOCATION = env.bool("INCLUDE_LOCATION", default=False)
 LOCATION_SCOPE = env("LOCATION_SCOPE", default="state")
 INCLUDE_EXPANDED_COUNTRY = env.bool("INCLUDE_EXPANDED_COUNTRY", default=False)
@@ -91,10 +91,7 @@ THIRD_APPS = [
     "django_filters",
 ]
 
-MY_APPS = [
-    "users",
-    "platform_configurations"
-]
+MY_APPS = ["users", "platform_configurations"]
 
 INSTALLED_APPS = BASE_APPS + THIRD_APPS + MY_APPS
 
@@ -103,6 +100,7 @@ INSTALLED_APPS = BASE_APPS + THIRD_APPS + MY_APPS
 MIDDLEWARE = [
     "django_base.middlewares.HealthCheckMiddleware",
     "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "corsheaders.middleware.CorsMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -159,7 +157,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-#<-------------- DB settings -------------->
+# <-------------- DB settings -------------->
 ALLOWED_DB_ENGINES = {
     "sqlite3": "django.db.backends.sqlite3",
     "mysql": "django.db.backends.mysql",
@@ -293,7 +291,7 @@ CORS_ORIGIN_WHITELIST = CORS_ALLOWED_URLS
 
 # <---------------------- CRON ---------------------->
 CRONJOBS = [
-    # ('0 0 * * *', '<app_name>.cron.<def_name>'), 
+    # ('0 0 * * *', '<app_name>.cron.<def_name>'),
 ]
 
 
@@ -304,7 +302,7 @@ if USE_DEBUG_TOOLBAR:
     INTERNAL_IPS = [ip[: ip.rfind(".")] + ".1" for ip in ips] + ["127.0.0.1", "0.0.0.0"]
 
 
-#<-------------- Platform configurations -------------->
+# <-------------- Platform configurations -------------->
 if INCLUDE_LOCATION:
     valid_location_scopes = ["country", "state", "city"]
     if LOCATION_SCOPE not in valid_location_scopes:
