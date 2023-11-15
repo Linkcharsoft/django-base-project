@@ -11,6 +11,8 @@ from rest_framework import status
 
 from django.contrib.auth.password_validation import validate_password
 from django.utils.translation import gettext_lazy as _
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.decorators import method_decorator
 from django.template.loader import render_to_string
 from django.core.exceptions import ValidationError
 from django.core.mail import EmailMessage
@@ -38,6 +40,7 @@ def _get_user(email):
     user = User.objects.get(email=email)
     return user
 
+@method_decorator(csrf_exempt, name='dispatch')
 class EmailVerification(APIView, ConfirmEmailView):
     def get(self, request, key):
         return render(

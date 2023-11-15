@@ -38,6 +38,7 @@ urlpatterns = [
 
 #<-------------- Dj-rest-auth urls -------------->
 urlpatterns += [
+    path('api/auth/registration/account-email-verification-sent/', EmailVerification.as_view(), name='account_email_verification_sent'),
     path('api/auth/', include('dj_rest_auth.urls')),
     path('api/auth/registration/', include('dj_rest_auth.registration.urls')),
 
@@ -45,7 +46,6 @@ urlpatterns += [
 
     path('api/auth/registration/resend-email/', ResendEmailVerificationView.as_view(), name="rest_resend_email"),
     re_path("api/auth/registration/account-confirm-email/(?P<key>[\s\d\w().+-_',:&]+)/$", EmailVerification.as_view(), name='account_confirm_email'),
-    path('api/auth/registration/account-email-verification-sent/', EmailVerification.as_view(), name='account_email_verification_sent'),
 
     path('api/allauth/', include('allauth.urls')),
 ]
