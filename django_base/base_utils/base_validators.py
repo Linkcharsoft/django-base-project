@@ -2,6 +2,7 @@ import string
 
 from django.core.exceptions import ValidationError
 from django.utils.deconstruct import deconstructible
+from django.utils.translation import gettext_lazy as _
 
 
 class NumberRequiredValidator:
@@ -14,7 +15,7 @@ class NumberRequiredValidator:
             raise ValidationError(self.get_help_text(), code="password_no_number")
 
     def get_help_text(self):
-        return "Password must contain at least one number."
+        return _("Password must contain at least one number.")
 
 
 class SymbolValidator:
@@ -27,7 +28,9 @@ class SymbolValidator:
             raise ValidationError(self.get_help_text(), code="password_no_symbol")
 
     def get_help_text(self):
-        return f"Password must contain at least one symbol: {string.punctuation}."
+        return _("Password must contain at least one symbol: %(simbol)s.") % {
+            "simbol": string.punctuation
+        }
 
 
 class UpperValidator:
@@ -40,7 +43,7 @@ class UpperValidator:
             raise ValidationError(self.get_help_text(), code="password_no_upper")
 
     def get_help_text(self):
-        return "Password must contain at least one uppercase letter."
+        return _("Password must contain at least one uppercase letter.")
 
 
 @deconstructible
@@ -51,5 +54,6 @@ class FileSizeValidator(object):
     def __call__(self, value):
         if value.size > self.mb_limit * 1024 * 1024:
             raise ValidationError(
-                f"File too large. Size should not exceed {self.mb_limit} MiB."
+                _("File too large. Size should not exceed %(file_limit)s MiB.")
+                % {"file_limit": self.mb_limit}
             )

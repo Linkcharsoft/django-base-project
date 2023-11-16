@@ -26,21 +26,19 @@ from django_base.base_utils.utils import get_random_string
 
 def _get_validated_token(request):
     token_recovery = TokenRecovery.objects.get(
-        user__email=request.data.get("email"),
-        token=request.data.get("token")
-        )
-    if (
-        token_recovery.created_at + timedelta(minutes=30)
-        < timezone.now()
-    ):
+        user__email=request.data.get("email"), token=request.data.get("token")
+    )
+    if token_recovery.created_at + timedelta(minutes=30) < timezone.now():
         raise ValidationError(_("Token expired"))
     return token_recovery
+
 
 def _get_user(email):
     user = User.objects.get(email=email)
     return user
 
-@method_decorator(csrf_exempt, name='dispatch')
+
+@method_decorator(csrf_exempt, name="dispatch")
 class EmailVerification(APIView, ConfirmEmailView):
     def get(self, request, key):
         return render(
@@ -57,17 +55,20 @@ class EmailVerification(APIView, ConfirmEmailView):
         confirmation.confirm(self.request)
         return Response("ok", status=status.HTTP_200_OK)
 
+
 # <------------------ Password recovery ------------------>
 class Password_recovery_email_send(APIView):
     def post(self, request):
-
-        request_type = request.data.get("request_type", 'reset') if \
-            settings.PASSWORD_CHANGE_BY_EMAIL else 'reset'
+        request_type = (
+            request.data.get("request_type", "reset")
+            if settings.PASSWORD_CHANGE_BY_EMAIL
+            else "reset"
+        )
 
         try:
             user = _get_user(request.data.get("email"))
 
-            token_length = 25 if settings.PASSWORD_EMAIL_SEND == 'link' else 6
+            token_length = 25 if settings.PASSWORD_EMAIL_SEND == "link" else 6
             recovery_token = get_random_string(token_length)
 
             if TokenRecovery.objects.filter(user=user).exists():
@@ -77,15 +78,25 @@ class Password_recovery_email_send(APIView):
 
             email_subject = f"Password Reset for {settings.APP_NAME}"
 
-            html_message = render_to_string('registration/password_recovery_email.html', {
-                'FRONT_URL': settings.FRONT_URL,
-                'recovery_token': recovery_token,
-                'APP_NAME': settings.APP_NAME,
-                'REQUEST_TYPE': request_type
-            })
+            html_message = render_to_string(
+                "registration/password_recovery_email.html",
+                {
+                    "FRONT_URL": settings.FRONT_URL,
+                    "recovery_token": recovery_token,
+                    "APP_NAME": settings.APP_NAME,
+                    "REQUEST_TYPE": request_type,
+                },
+            )
 
-            message = EmailMessage(email_subject, html_message, settings.EMAIL_HOST_USER, [user.email,])
-            message.content_subtype = 'html'
+            message = EmailMessage(
+                email_subject,
+                html_message,
+                settings.EMAIL_HOST_USER,
+                [
+                    user.email,
+                ],
+            )
+            message.content_subtype = "html"
             message.send()
 
             return Response("Email sent", status=status.HTTP_200_OK)
@@ -97,57 +108,55 @@ class Password_recovery_email_send(APIView):
 
 class Check_token(APIView):
     def post(self, request):
-
         try:
             _get_validated_token(request)
         except ValidationError as e:
             return Response(str(e.message), status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
             print(e)
-            return Response("Token is invalid", status=status.HTTP_400_BAD_REQUEST) 
+            return Response(_("Token is invalid"), status=status.HTTP_400_BAD_REQUEST)
         else:
-            return Response("Token is valid", status=status.HTTP_200_OK)
+            return Response(_("Token is valid"), status=status.HTTP_200_OK)
 
 
 class Password_recovery_confirm(APIView):
     def post(self, request):
-
         try:
-            password = request.data.get("password",'')
+            password = request.data.get("password", "")
             user = _get_user(request.data.get("email"))
             token_recovery = _get_validated_token(request)
             validate_password(password, user=user)
         except ValidationError as e:
-            if hasattr(e, 'message'):
+            if hasattr(e, "message"):
                 return Response(str(e.message), status=status.HTTP_400_BAD_REQUEST)
             return Response(e, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
             print(e)
-            return Response("Token is invalid", status=status.HTTP_400_BAD_REQUEST)
+            return Response(_("Token is invalid"), status=status.HTTP_400_BAD_REQUEST)
 
         user.set_password(password)
         user.save()
         token_recovery.delete()
-        return Response(
-            "Password reset successful", status=status.HTTP_200_OK
-        )
+        return Response("Password reset successful", status=status.HTTP_200_OK)
+
 
 # <------------------ Password recovery ------------------>
+
 
 class PasswordChangeViewModify(PasswordChangeView):
     def post(self, request, *args, **kwargs):
         if not "old_password" in request.data:
             return Response(
-                "old_password is required", status=status.HTTP_400_BAD_REQUEST
+                _("old_password is required"), status=status.HTTP_400_BAD_REQUEST
             )
         old_password = request.data["old_password"]
         if not request.user.check_password(old_password):
             return Response(
-                "Old password is incorrect", status=status.HTTP_400_BAD_REQUEST
+                _("Old password is incorrect"), status=status.HTTP_400_BAD_REQUEST
             )
         if old_password == request.data["new_password1"]:
             return Response(
-                "New password must be different from old password",
+                _("New password must be different from old password"),
                 status=status.HTTP_400_BAD_REQUEST,
             )
         serializer = self.get_serializer(data=request.data)

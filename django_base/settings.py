@@ -1,7 +1,9 @@
-from email.policy import default
 from pathlib import Path
 import environ
 import os
+
+from django.utils.translation import gettext_lazy as _
+
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 env = environ.Env()
@@ -103,6 +105,7 @@ MIDDLEWARE = [
     "whitenoise.middleware.WhiteNoiseMiddleware",
     "corsheaders.middleware.CorsMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.middleware.locale.LocaleMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
@@ -199,10 +202,16 @@ else:
     }
 
 # <-------------- Lenguaje and timezone settings -------------->
-LANGUAGE_CODE = "en-us"
+LANGUAGE_CODE = "en"
 TIME_ZONE = "UTC"
 USE_I18N = True
 USE_TZ = True
+LOCALE_PATHS = [f"{BASE_DIR}/locale"]
+
+LANGUAGES = [
+    ("en", _("English")),
+    ("es", _("Spanish")),
+]
 
 # <-------------- Media and Static settings -------------->
 if USE_S3:
