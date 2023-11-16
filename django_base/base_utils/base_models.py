@@ -97,12 +97,13 @@ class AbstactExpandedCountry(AbstactCountry):
 
 
 class AbstractState(models.Model):
+    json_id = models.IntegerField()
     name = models.CharField(max_length=100)
     state_code = models.CharField(max_length=3)
-    latitude = models.FloatField()
-    longitude = models.FloatField()
+    latitude = models.FloatField(null=True, blank=True)
+    longitude = models.FloatField(null=True, blank=True)
 
-    country = models.ForeignKey('platform_configurations.Country', on_delete=models.CASCADE)
+    country = models.ForeignKey('platform_configurations.Country', on_delete=models.CASCADE, related_name='states')
     class Meta:
         abstract = True
 
@@ -111,11 +112,12 @@ class AbstractState(models.Model):
 
 
 class AbstractCity(models.Model):
+    json_id = models.IntegerField()
     name = models.CharField(max_length=100)
     latitude = models.FloatField()
     longitude = models.FloatField()
 
-    state = models.ForeignKey('platform_configurations.State', on_delete=models.CASCADE)
+    state = models.ForeignKey('platform_configurations.State', on_delete=models.CASCADE, related_name='cities')
 
     class Meta:
         abstract = True
