@@ -26,4 +26,4 @@ if settings.INCLUDE_LOCATION:
         class CityAdmin(admin.ModelAdmin):
             list_display = ('pk', 'name', 'latitude', 'longitude')
             search_fields = ('pk', 'name', 'latitude', 'longitude')
-            list_filter = ('country', 'state')
+            list_filter = ('state',)
