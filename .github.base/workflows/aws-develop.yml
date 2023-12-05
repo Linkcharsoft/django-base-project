@@ -24,7 +24,7 @@
 #    See the documentation for each action used below for the recommended IAM policies for this IAM user,
 #    and best practices on handling the access key credentials.
 
-name: Deploy to Amazon ECS
+name: Deploy to Amazon ECS - Develop
 
 on:
   push:
@@ -38,7 +38,7 @@ env:
   ECS_SERVICE: base-project-develop-web              # set this to your Amazon ECS service name
   ECS_CLUSTER: base-project-develop                 # set this to your Amazon ECS cluster name
   CONTAINER_NAME: base-project-develop-web           # set this to the name of the container in the
-  TASK_DEFINITION_FAMILY: backend-web   # set this to your task definition family name
+  TASK_DEFINITION_FAMILY: base-project-develop-web   # set this to your task definition family name
   MIGRATION_TASK_DEFINITION_FAMILY: base-project-develop-migration   # set this to your task definition family name
 
 permissions:
