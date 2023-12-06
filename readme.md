@@ -145,6 +145,8 @@ chmod +x .git/hooks/pre-commit
 ```
 
 
+We also have a "runcommands.py" file in the project's root directory. This file contains some useful commands that can be executed from the command line. It has an interactive menu that allows you to select the desired command.
+
 
 ## Operation and how to use
 
@@ -169,6 +171,32 @@ The project includes a custom paginator to use with ViewSets. When using a list 
 Some additions:
 - We have added some extra password validators to the ones already provided by Django.
 - We include a function in the "django_base/utils.py" to make aware naive datetimes.
+
+## Translations
+The project includes a translation system. The default language is English, but you can add more languages as needed in the "LANGUAGES" variable in the .env file.
+
+
+To make it work you need to mark the strings that you want to translate with the "gettext_lazy" function. For example:
+```python
+    from django.utils.translation import gettext_lazy as _
+    _('Hello world')
+```
+
+Then you need to run the following command:
+```bash
+    python manage.py makemessages -a
+```
+Or use the "runcommands.py" file and select the "Make messages" option. (Recomended)
+
+This will generate a "django.po" file in the "locale" folder. You can then add the translations to this file.
+
+Finally, you need to run the following command:
+```bash
+    python manage.py compilemessages
+```
+
+Now if the client sends the "Accept-Language" header with the desired language, the system will automatically return the translated strings.
+
 
 ## Libraries
 

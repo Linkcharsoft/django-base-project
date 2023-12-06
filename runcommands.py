@@ -1,3 +1,4 @@
+import os
 import argparse
 import subprocess
 
@@ -20,6 +21,32 @@ def get_env_value(key, filename=".env"):
         print(f"Could not find the environment file {filename}.")
     return None
 
+def extract_language_codes(languages_string):
+    languages = languages_string.split(" ")
+    codes = []
+    
+    for pos, element in enumerate(languages):
+        if pos == 0:
+            codes.append(element[2:4])
+        elif pos == len(languages) - 1:
+            break
+        else:
+            codes.append(element.split(",")[1][2:4])
+    
+    return codes
+
+def check_language_directories_exist(language_codes):
+    locale_directory = "locale"  # Replace with the actual path to your "locale" directory
+
+    missing_directories = []
+
+    for code in language_codes:
+        language_directory = os.path.join(locale_directory, code)
+        if not os.path.exists(language_directory):
+            missing_directories.append(code)
+
+    return missing_directories
+
 
 DB_USER = get_env_value("DB_USER")
 DB_NAME = get_env_value("DB_NAME")
@@ -31,7 +58,7 @@ def run_django_command(command):
 
 
 def enter_django_shell():
-    run_django_command("shell")
+    run_django_command("shell_plus")
 
 
 def run_make_migrations():
@@ -43,7 +70,19 @@ def run_migrations():
 
 
 def run_makemessages():
-    run_django_command("makemessages -a --ignore=venv/*")
+    command = "makemessages"
+
+    language_codes = extract_language_codes(get_env_value("LANGUAGES"))
+    missing_directories = check_language_directories_exist(language_codes)
+
+    if missing_directories:
+        for code in missing_directories:
+            command += f" -l {code}"
+    else:
+        command += " -a"
+
+    run_django_command(f"{command} --ignore=venv/*")
+
 
 
 def run_compilemessages():
@@ -66,6 +105,10 @@ def enter_postgres_shell():
     )
     subprocess.run(cmd, shell=True)
 
+def run_tests():
+    cmd = f"docker compose exec {DJANGO_CONTAINER_NAME} python manage.py test"
+    subprocess.run(cmd, shell=True)
+
 
 def interactive_menu():
     while True:
@@ -79,7 +122,8 @@ def interactive_menu():
         print("7. Enter Django container")
         print("8. Enter PostgreSQL container")
         print("9. Enter PostgreSQL shell (psql)")
-        print("10. Quit")
+        print("10. Run tests")
+        print("11. Quit")
         choice = input("Enter your choice: ")
 
         if choice == "1":
@@ -110,6 +154,9 @@ def interactive_menu():
             enter_postgres_shell()
             break
         elif choice == "10":
+            run_tests()
+            break
+        elif choice == "11":
             break
         else:
             print("Invalid choice. Please try again.")
@@ -143,6 +190,7 @@ def main():
     parser.add_argument(
         "--postgres-shell", action="store_true", help="Enter PostgreSQL shell (psql)"
     )
+    parser.add_argument("--tests", action="store_true", help="Run tests")
 
     args = parser.parse_args()
 
@@ -166,6 +214,8 @@ def main():
             enter_container(POSTGRES_CONTAINER_NAME)
         elif args.postgres_shell:
             enter_postgres_shell()
+        elif args.tests:
+            run_tests()
     else:
         # No arguments provided, show interactive menu
         interactive_menu()

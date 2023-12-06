@@ -4,6 +4,13 @@ import os
 
 from django.utils.translation import gettext_lazy as _
 
+def env_to_list(variable):
+    cleaned_value = []
+    for i in range(0, len(variable), 2):
+        key = variable[i].strip("('").strip()
+        value = _(variable[i + 1].strip(" _(')").strip())
+        cleaned_value.append((key, value))
+    return cleaned_value
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 env = environ.Env()
@@ -208,10 +215,7 @@ USE_I18N = True
 USE_TZ = True
 LOCALE_PATHS = [f"{BASE_DIR}/locale"]
 
-LANGUAGES = [
-    ("en", _("English")),
-    ("es", _("Spanish")),
-]
+LANGUAGES = env_to_list(env.list("LANGUAGES", default="[]"))
 
 # <-------------- Media and Static settings -------------->
 if USE_S3:
