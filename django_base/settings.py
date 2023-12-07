@@ -262,6 +262,7 @@ SITE_ID = 1
 
 # <---------------------- Auth configurations ---------------------->
 if USE_EMAIL_FOR_AUTHENTICATION:
+    ACCOUNT_ADAPTER = "users.adapter.CustomAccountAdapter"
     ACCOUNT_EMAIL_REQUIRED = True
     ACOOUNT_UNIQUE_EMAIL = True
 
