@@ -215,7 +215,7 @@ USE_I18N = True
 USE_TZ = True
 LOCALE_PATHS = [f"{BASE_DIR}/locale"]
 
-LANGUAGES = env_to_list(env.list("LANGUAGES", default="[]"))
+LANGUAGES = env_to_list(env.list("LANGUAGES", default=["('en', 'English')"]))
 
 # <-------------- Media and Static settings -------------->
 if USE_S3:
