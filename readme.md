@@ -124,19 +124,17 @@ server {
 
 #### Dockerfile
 
+```
 FROM nginx:stable-alpine
-
-  
 
 COPY default.conf /etc/nginx
 
 COPY default.conf /etc/nginx/conf.d
 
-  
-
 EXPOSE 80
 
-  
+```
+
 
 ## Installation
 
@@ -254,9 +252,9 @@ sudo  docker-compose  -f  docker-compose-production.yml  up  -d
 
 **Code Formater**
 
-In the requirements file, we have included the [black](https://pypi.org/project/black/)library to ensure a high standard of code formatting.
+In the requirements file, we have included the [black](https://pypi.org/project/black/) library to ensure a high standard of code formatting.
 
-Additionally, you will find a "pre-commit" file in the project's root directory, which should be moved to the hooks folder within the .git folder.
+Additionally, you will find a "pre-commit" file in the project's root directory, which should be copied to the hooks folder within the .git folder.
 
   
 
