@@ -23,6 +23,8 @@ USE_DEBUG_TOOLBAR = env.bool("USE_DEBUG_TOOLBAR", default=False)
 BACK_URL = env("BACK_URL", default="http://localhost:8000")
 FRONT_URL = env("FRONT_URL", default="http://localhost:3000")
 APP_NAME = env("APP_NAME", default="Django Base")
+USE_CELERY = env.bool("USE_CELERY", default=False)
+USE_WEB_SOCKET = env.bool("USE_WEB_SOCKET", default=False)
 
 # <-------------- DB env settings -------------->
 DB_ENGINE = env("DB_ENGINE", default="sqlite3")
@@ -72,6 +74,10 @@ else:
 
 CSRF_TRUSTED_ORIGINS = env.list("CSRF_TRUSTED_ORIGINS", default=[])
 
+# <-------------- Broker settings -------------->
+BROKER_SERVER = env("BROKER_SERVER", default="redis")
+BROKER_SERVER_PORT = env("BROKER_SERVER_PORT", default=6379)
+
 
 # <-------------- Apps settings -------------->
 BASE_APPS = [
@@ -84,6 +90,8 @@ BASE_APPS = [
 ]
 
 THIRD_APPS = [
+    # 'daphne',
+    # 'channels',
     "rest_framework",
     "rest_framework.authtoken",
     "dj_rest_auth",
@@ -102,7 +110,7 @@ THIRD_APPS = [
 
 MY_APPS = ["users", "platform_configurations"]
 
-INSTALLED_APPS = BASE_APPS + THIRD_APPS + MY_APPS
+INSTALLED_APPS = THIRD_APPS + BASE_APPS + MY_APPS
 
 
 # <-------------- Django base settings -------------->
@@ -140,6 +148,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "django_base.wsgi.application"
+# ASGI_APPLICATION = 'django_base.asgi.application'
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -321,3 +330,20 @@ if INCLUDE_LOCATION:
     valid_location_scopes = ["country", "state", "city"]
     if LOCATION_SCOPE not in valid_location_scopes:
         raise Exception("LOCATION_SCOPE not allowed")
+
+# <-------------- Celery configurations -------------->
+if USE_CELERY:
+    CELERY_BROKER = f'redis://:@{BROKER_SERVER}:{BROKER_SERVER_PORT}/0'
+    CELERY_BROKER_URL = CELERY_BROKER
+    CELERY_RESULT_BACKEND = CELERY_BROKER
+
+# <-------------- Socket configurations -------------->
+if USE_WEB_SOCKET:
+    CHANNEL_LAYERS = {
+        "default": {
+            "BACKEND": "channels_redis.core.RedisChannelLayer",
+            "CONFIG": {
+                "hosts": [(BROKER_SERVER, BROKER_SERVER_PORT)],
+            },
+        },
+    }
