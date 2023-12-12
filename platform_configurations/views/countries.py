@@ -12,7 +12,7 @@ if settings.INCLUDE_LOCATION:
     class CountryViewSet(ReadOnlyModelViewSet):
         """Viewset for Country model."""
 
-        queryset = models.Country.objects.all()
+        queryset = models.Country.objects.filter(is_active=True)
 
         serializers = {
             "list": countries.CountryListSerializer,

@@ -73,6 +73,7 @@ class AbstactCountry(models.Model):
     iso3 = models.CharField(max_length=3)
     latitude = models.FloatField()
     longitude = models.FloatField()
+    is_active = models.BooleanField(default=True)
 
     class Meta:
         abstract = True
@@ -88,6 +89,7 @@ class AbstactExpandedCountry(AbstactCountry):
     currency = models.CharField(max_length=3, null=True, blank=True)
     currency_name = models.CharField(max_length=100, null=True, blank=True)
     currency_symbol = models.CharField(max_length=3, null=True, blank=True)
+    is_active = models.BooleanField(default=True)
 
     class Meta:
         abstract = True
@@ -102,6 +104,7 @@ class AbstractState(models.Model):
     state_code = models.CharField(max_length=3)
     latitude = models.FloatField(null=True, blank=True)
     longitude = models.FloatField(null=True, blank=True)
+    is_active = models.BooleanField(default=True)
 
     country = models.ForeignKey('platform_configurations.Country', on_delete=models.CASCADE, related_name='states')
     class Meta:
@@ -116,6 +119,7 @@ class AbstractCity(models.Model):
     name = models.CharField(max_length=100)
     latitude = models.FloatField()
     longitude = models.FloatField()
+    is_active = models.BooleanField(default=True)
 
     state = models.ForeignKey('platform_configurations.State', on_delete=models.CASCADE, related_name='cities')
 
