@@ -9,7 +9,7 @@ class CountryFactory(factory.Factory):
     class Meta:
         model = Country
 
-    name = factory.LazyAttribute(lambda _: fake.country())
+    name = factory.LazyAttribute(lambda _: fake.unique.country())
     iso3 = factory.LazyAttribute(lambda _: fake.country_code())
     latitude = factory.LazyAttribute(lambda _: fake.latitude())
     longitude = factory.LazyAttribute(lambda _: fake.longitude())
@@ -20,7 +20,7 @@ class StateFactory(factory.Factory):
         model = State
 
     json_id = factory.LazyAttribute(lambda _: fake.random_int())
-    name = factory.LazyAttribute(lambda _: fake.state())
+    name = factory.LazyAttribute(lambda _: fake.unique.state())
     state_code = factory.LazyAttribute(lambda _: fake.state_abbr())
     latitude = factory.LazyAttribute(lambda _: fake.latitude())
     longitude = factory.LazyAttribute(lambda _: fake.longitude())
@@ -32,7 +32,7 @@ class CityFactory(factory.Factory):
         model = City
 
     json_id = factory.LazyAttribute(lambda _: fake.random_int())
-    name = factory.LazyAttribute(lambda _: fake.city())
+    name = factory.LazyAttribute(lambda _: fake.unique.city())
     latitude = factory.LazyAttribute(lambda _: fake.latitude())
     longitude = factory.LazyAttribute(lambda _: fake.longitude())
     state = factory.SubFactory(StateFactory)
