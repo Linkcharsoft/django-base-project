@@ -146,6 +146,12 @@ class Password_recovery_confirm(APIView):
 
 class PasswordChangeViewModify(PasswordChangeView):
     def post(self, request, *args, **kwargs):
+        if not settings.PASSWORD_CHANGE_BY_EMAIL:
+            return Response(
+                _("Only password change by email is allowed"), 
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
         if not "old_password" in request.data:
             return Response(
                 _("old_password is required"), status=status.HTTP_400_BAD_REQUEST
@@ -155,14 +161,18 @@ class PasswordChangeViewModify(PasswordChangeView):
             return Response(
                 _("Old password is incorrect"), status=status.HTTP_400_BAD_REQUEST
             )
-        if old_password == request.data["new_password1"]:
+        if old_password == request.data["new_password"]:
             return Response(
                 _("New password must be different from old password"),
                 status=status.HTTP_400_BAD_REQUEST,
             )
-        serializer = self.get_serializer(data=request.data)
+        data = request.data.copy()
+        data["new_password1"] = data["new_password"]
+        data["new_password2"] = data["new_password"]
+        serializer = self.get_serializer(data=data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
         request.user.is_register_completed = True
         request.user.save()
         return Response("New password has been saved.", status=status.HTTP_200_OK)
+            

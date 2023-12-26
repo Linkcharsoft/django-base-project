@@ -14,7 +14,6 @@ if settings.INCLUDE_LOCATION and models.get_abstract_state_model():
         class StateViewSet(ReadOnlyModelViewSet):
             """Viewset for State model."""
 
-            queryset = models.State.objects.all()
 
             serializers = {
                 "list": states.StateListSerializer,
@@ -44,5 +43,12 @@ if settings.INCLUDE_LOCATION and models.get_abstract_state_model():
 
             ordering = ("name",)
 
+            def get_queryset(self):
+                queryset = models.State.objects.filter(
+                    is_active=True,
+                    country__is_active=True
+                ).select_related('country')
+                return queryset
+            
             def get_serializer_class(self):
                 return self.serializers.get(self.action)

@@ -13,17 +13,18 @@ if settings.INCLUDE_LOCATION:
     class CountryAdmin(admin.ModelAdmin):
         list_display = ('pk', 'name', 'iso3', 'latitude', 'longitude')
         search_fields = ('pk', 'name', 'iso3', 'latitude', 'longitude')
+        list_filter = ("is_active",)
 
     if get_abstract_state_model():
         @admin.register(models.State)
         class StateAdmin(admin.ModelAdmin):
             list_display = ('pk', 'name', 'state_code', 'latitude', 'longitude')
             search_fields = ('pk', 'name', 'state_code', 'latitude', 'longitude')
-            list_filter = ('country',)
+            list_filter = ('is_active', 'country',)
 
     if get_abstract_city_model():
         @admin.register(models.City)
         class CityAdmin(admin.ModelAdmin):
             list_display = ('pk', 'name', 'latitude', 'longitude')
             search_fields = ('pk', 'name', 'latitude', 'longitude')
-            list_filter = ('state',)
+            list_filter = ('is_active', 'state',)
