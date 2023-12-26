@@ -296,7 +296,7 @@ if EMAIL_PROVIDER == "console":
     EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 elif EMAIL_PROVIDER == "aws":
     EMAIL_BACKEND = "django_ses.SESBackend"
-elif EMAIL_PROVIDER == "smpt":
+elif EMAIL_PROVIDER == "smtp":
     EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 else:
     raise Exception("EMAIL_PROVIDER not allowed")
