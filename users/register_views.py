@@ -85,6 +85,7 @@ class Password_recovery_email_send(APIView):
                     "recovery_token": recovery_token,
                     "APP_NAME": settings.APP_NAME,
                     "REQUEST_TYPE": request_type,
+                    "PASSWORD_EMAIL_SEND": settings.PASSWORD_EMAIL_SEND,
                 },
             )
 
