@@ -38,13 +38,6 @@ def _get_user(email):
 
 @method_decorator(csrf_exempt, name="dispatch")
 class EmailVerification(APIView, ConfirmEmailView):
-    def get(self, request, key):
-        return render(
-            request,
-            "registration/verify_email.html",
-            context={"key": key, "BASE_URL": settings.BACK_URL},
-        )
-
     def post(self, request, *args, **kwargs):
         serializer = VerifyEmailSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
