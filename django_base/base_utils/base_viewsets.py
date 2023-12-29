@@ -46,7 +46,7 @@ class BaseGenericViewSetMixin(
     pass
 
 
-class BaseReadOnlyModelViewSetMixin(
+class BaseReadOnlyModelViewSet(
     ViewSetPermissionMixin,
     ViewSetSerializerMixin,
     ReadOnlyModelViewSet,
