@@ -1,16 +1,19 @@
-from rest_framework.viewsets import ReadOnlyModelViewSet
-
 from django.conf import settings
 
 from platform_configurations import models
 from platform_configurations.serializers import cities
-
+from django_base.base_utils.base_viewsets import BaseReadOnlyModelViewSetMixin
 
 
 if settings.INCLUDE_LOCATION and models.get_abstract_city_model():
-        class CityViewSet(ReadOnlyModelViewSet):
+        class CityViewSet(BaseReadOnlyModelViewSetMixin):
             """Viewset for City model."""
-            serializer_class = cities.CitySerializer
+
+            serializers = {
+                "list": cities.CitySerializer,
+                "retrieve": cities.CitySerializer,
+            }
+
 
             def get_queryset(self):
                 queryset = models.City.objects.filter(

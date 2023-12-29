@@ -1,19 +1,18 @@
 from django_filters import rest_framework as filters
 
-from rest_framework.viewsets import ReadOnlyModelViewSet
 from rest_framework import filters as rest_filters
 
 from django.conf import settings
 
 from platform_configurations import models
 from platform_configurations.serializers import states
+from django_base.base_utils.base_viewsets import BaseReadOnlyModelViewSetMixin
 
 
 
 if settings.INCLUDE_LOCATION and models.get_abstract_state_model():
-        class StateViewSet(ReadOnlyModelViewSet):
+        class StateViewSet(BaseReadOnlyModelViewSetMixin):
             """Viewset for State model."""
-
 
             serializers = {
                 "list": states.StateListSerializer,
@@ -49,6 +48,3 @@ if settings.INCLUDE_LOCATION and models.get_abstract_state_model():
                     country__is_active=True
                 ).select_related('country')
                 return queryset
-            
-            def get_serializer_class(self):
-                return self.serializers.get(self.action)
