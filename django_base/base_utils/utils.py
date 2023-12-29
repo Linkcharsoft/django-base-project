@@ -36,3 +36,14 @@ def get_abstract_state_model():
 
 def get_abstract_city_model():
     return AbstractCity if settings.LOCATION_SCOPE == 'city' else None
+
+def email_template_sender(
+    subject, template_name, context, to_email, from_email=settings.DEFAULT_FROM_EMAIL
+):
+    from django.template.loader import render_to_string
+    from django.core.mail import EmailMessage
+
+    message = render_to_string(template_name, context)
+    email = EmailMessage(subject, message, to=[to_email], from_email=from_email)
+    email.content_subtype = "html"
+    email.send()

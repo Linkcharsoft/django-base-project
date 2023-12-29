@@ -13,15 +13,13 @@ from django.contrib.auth.password_validation import validate_password
 from django.utils.translation import gettext_lazy as _
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
-from django.template.loader import render_to_string
 from django.core.exceptions import ValidationError
-from django.core.mail import EmailMessage
 from django.shortcuts import render
 from django.utils import timezone
 from django.conf import settings
 
 from users.models import User, TokenRecovery
-from django_base.base_utils.utils import get_random_string
+from django_base.base_utils.utils import get_random_string, email_template_sender
 
 
 def _get_validated_token(request):
@@ -76,29 +74,23 @@ class Password_recovery_email_send(APIView):
                 token_recovery.delete()
             TokenRecovery.objects.create(user=user, token=recovery_token)
 
+
             email_subject = f"Password Reset for {settings.APP_NAME}"
 
-            html_message = render_to_string(
-                "registration/password_recovery_email.html",
-                {
-                    "FRONT_URL": settings.FRONT_URL,
-                    "recovery_token": recovery_token,
-                    "APP_NAME": settings.APP_NAME,
-                    "REQUEST_TYPE": request_type,
-                    "PASSWORD_EMAIL_SEND": settings.PASSWORD_EMAIL_SEND,
-                },
-            )
+            context = {
+                "FRONT_URL": settings.FRONT_URL,
+                "recovery_token": recovery_token,
+                "APP_NAME": settings.APP_NAME,
+                "REQUEST_TYPE": request_type,
+                "PASSWORD_EMAIL_SEND": settings.PASSWORD_EMAIL_SEND,
+            }
 
-            message = EmailMessage(
+            email_template_sender(
                 email_subject,
-                html_message,
-                settings.EMAIL_HOST_USER,
-                [
-                    user.email,
-                ],
+                "registration/password_recovery_email.html",
+                context,
+                user.email,
             )
-            message.content_subtype = "html"
-            message.send()
 
             return Response("Email sent", status=status.HTTP_200_OK)
 
