@@ -59,8 +59,9 @@ class CustomFileField(models.FileField):
 class CustomImageField(models.ImageField):
     def generate_filename(self, instance, filename):
         extension = filename.split(".")[-1]
+        #md5 hash updated to sha256 (Not tested)
         filename = "{}.{}".format(
-            hashlib.md5(str(datetime.datetime.now()).encode()).hexdigest(), extension
+            hashlib.sha256(str(datetime.datetime.now()).encode()).hexdigest(), extension
         )
         return os.path.join(self.upload_to, filename)
 
