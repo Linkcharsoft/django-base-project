@@ -260,7 +260,7 @@ EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 # <---------------------- Rest configurations ---------------------->
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
-        "rest_framework.authentication.SessionAuthentication",
+        "rest_framework.authentication.TokenAuthentication",
     ),
     "DEFAULT_PAGINATION_CLASS": "django_base.base_utils.base_pagination.CustomPagination",
     "DEFAULT_SCHEMA_CLASS": "rest_framework.schemas.coreapi.AutoSchema",
