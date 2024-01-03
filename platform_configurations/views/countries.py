@@ -4,11 +4,11 @@ from django.conf import settings
 
 from platform_configurations import models
 from platform_configurations.serializers import countries
-from django_base.base_utils.base_viewsets import BaseReadOnlyModelViewSetMixin
+from django_base.base_utils.base_viewsets import BaseReadOnlyModelViewSet
 
 if settings.INCLUDE_LOCATION:
 
-    class CountryViewSet(BaseReadOnlyModelViewSetMixin):
+    class CountryViewSet(BaseReadOnlyModelViewSet):
         """Viewset for Country model."""
 
         queryset = models.Country.objects.filter(is_active=True)

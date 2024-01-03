@@ -2,11 +2,11 @@ from django.conf import settings
 
 from platform_configurations import models
 from platform_configurations.serializers import cities
-from django_base.base_utils.base_viewsets import BaseReadOnlyModelViewSetMixin
+from django_base.base_utils.base_viewsets import BaseReadOnlyModelViewSet
 
 
 if settings.INCLUDE_LOCATION and models.get_abstract_city_model():
-        class CityViewSet(BaseReadOnlyModelViewSetMixin):
+        class CityViewSet(BaseReadOnlyModelViewSet):
             """Viewset for City model."""
 
             serializers = {

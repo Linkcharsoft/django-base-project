@@ -2,6 +2,8 @@ import string
 
 import random
 
+from django.template.loader import render_to_string
+from django.core.mail import EmailMessage
 from django.utils import timezone
 from django.conf import settings
 
@@ -40,8 +42,7 @@ def get_abstract_city_model():
 def email_template_sender(
     subject, template_name, context, to_email, from_email=settings.DEFAULT_FROM_EMAIL
 ):
-    from django.template.loader import render_to_string
-    from django.core.mail import EmailMessage
+
 
     message = render_to_string(template_name, context)
     email = EmailMessage(subject, message, to=[to_email], from_email=from_email)

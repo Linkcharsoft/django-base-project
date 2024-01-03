@@ -6,12 +6,12 @@ from django.conf import settings
 
 from platform_configurations import models
 from platform_configurations.serializers import states
-from django_base.base_utils.base_viewsets import BaseReadOnlyModelViewSetMixin
+from django_base.base_utils.base_viewsets import BaseReadOnlyModelViewSet
 
 
 
 if settings.INCLUDE_LOCATION and models.get_abstract_state_model():
-        class StateViewSet(BaseReadOnlyModelViewSetMixin):
+        class StateViewSet(BaseReadOnlyModelViewSet):
             """Viewset for State model."""
 
             serializers = {
