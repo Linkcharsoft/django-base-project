@@ -52,8 +52,7 @@ AWS_ACCESS_KEY_ID = env("AWS_ACCESS_KEY_ID", default="")
 AWS_SECRET_ACCESS_KEY = env("AWS_SECRET_ACCESS_KEY", default="")
 
 # <-------------- CORS env settings -------------->
-CORS_ALLOWED_URLS = env.list("CORS_ALLOWED_URLS", default=[])
-
+CORS_ALLOWED_URLS = env.list("CORS_ALLOWED_URLS", default=[]) + [FRONT_URL]
 # <-------------- Watchman env settings -------------->
 WATCHMAN_TOKEN = env("WATCHMAN_TOKEN", default="password")
 
