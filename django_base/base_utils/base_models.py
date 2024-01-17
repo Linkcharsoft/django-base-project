@@ -118,8 +118,8 @@ class AbstractState(models.Model):
 class AbstractCity(models.Model):
     json_id = models.IntegerField()
     name = models.CharField(max_length=100)
-    latitude = models.FloatField()
-    longitude = models.FloatField()
+    latitude = models.FloatField(null=True, blank=True)
+    longitude = models.FloatField(null=True, blank=True)
     is_active = models.BooleanField(default=True)
 
     state = models.ForeignKey('platform_configurations.State', on_delete=models.CASCADE, related_name='cities')

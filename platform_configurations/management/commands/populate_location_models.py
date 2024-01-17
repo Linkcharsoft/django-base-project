@@ -53,6 +53,12 @@ class Command(BaseCommand):
         'currency_symbol'
     ]
 
+    approved_state_types = [
+        'state','province', 'metropolitan region', 'Region', 'region', None,
+        'territory','canton','department','federal district','capital city',
+        'autonomous region', 'autonomous community','autonomous region','republic'
+        ]
+
     extra_pos = 1 if settings.LOCATION_SCOPE == 'city' else 0
     country_extra_pos = (1 if settings.LOCATION_SCOPE == 'country' else 0) + extra_pos
 
@@ -106,7 +112,7 @@ class Command(BaseCommand):
             'latitude': item[18 + self.country_extra_pos],
             'longitude': item[19 + self.country_extra_pos],
         }
-        if 'AbstactExpandedCountry' in models.Country.__bases__:
+        if "AbstactExpandedCountry" == models.Country.__bases__[0].__name__:
             base_model_fields.update({
                 'iso2': item[2 + self.country_extra_pos],
                 'numeric_code': item[3 + self.country_extra_pos],
@@ -181,9 +187,13 @@ class Command(BaseCommand):
                             'name': item[0 + self.extra_pos],
                             'state_code': item[1 + self.extra_pos],
                             'latitude': item[18 + self.extra_pos],
-                            'longitude': item[19 + self.extra_pos]
+                            'longitude': item[19 + self.extra_pos],
+                            'type':None
                             }]
                 for state in item[22 + self.extra_pos]:
+                    if state['type'] not in self.approved_state_types:
+                        continue
+
                     if state['name'] not in all_country_states_names:
                         if state['name'] not in states_names_to_create:
                             self._add_to_create_list('state', state, states_to_create, country)
@@ -201,29 +211,49 @@ class Command(BaseCommand):
             if states_to_update:
                 print(f'Updating states {len(states_to_update)}')
                 models.State.objects.bulk_update(states_to_update, ['name', 'state_code', 'latitude', 'longitude'])
-            if settings.LOCATION_SCOPE == 'city':
-                cities_to_create = []
-                cities_to_update = []
 
+            if settings.LOCATION_SCOPE == 'city':
+                all_cities_to_create = []
+                all_cities_to_update = []
                 for item in data.values:
                     country = all_countries.get(name=item[0 + self.extra_pos])
                     for state in item[22 + self.extra_pos]:
+                        if state['type'] not in self.approved_state_types:
+                            continue
+                        cities_to_create = []
+                        cities_to_update = []
+                        cities_names_to_create = []
                         current_state = country.states.get(name=state['name'])
                         all_state_cities = current_state.cities.all()
+                        all_state_cities_names = all_state_cities.values_list('name', flat=True)
+
+                        if not state['cities'] and not all_state_cities:
+                            state['cities'] = [{
+                                'id': 0,
+                                'name': state['name'],
+                                'latitude': state['latitude'],
+                                'longitude': state['longitude']
+                            }]
+
                         for city in state['cities']:
-                            if city['name'] not in all_state_cities:
-                                self._add_to_create_list('city', city, cities_to_create, current_state)
+                            if city['name'] not in all_state_cities_names:
+                                if city['name'] not in cities_names_to_create:
+                                    self._add_to_create_list('city', city, cities_to_create, current_state)
+                                    cities_names_to_create.append(city['name'])
                             else:
                                 self._update_city(city, all_state_cities, cities_to_update)
-                
-                if cities_to_create:
-                    print(f'Creating cities {len(cities_to_create)}')
-                    models.City.objects.bulk_create(cities_to_create)
+
+                        all_cities_to_create += cities_to_create
+                        all_cities_to_update += cities_to_update
+
+                if all_cities_to_create:
+                    print(f'Creating cities {len(all_cities_to_create)}')
+                    models.City.objects.bulk_create(all_cities_to_create)
 
 
-                if cities_to_update:
-                    print(f'Updating cities {len(cities_to_update)}')
-                    models.City.objects.bulk_update(cities_to_update, ['name', 'latitude', 'longitude'])
+                if all_cities_to_update:
+                    print(f'Updating cities {len(all_cities_to_update)}')
+                    models.City.objects.bulk_update(all_cities_to_update, ['name', 'latitude', 'longitude'])
 
         # get the end time
         et = time.time()
