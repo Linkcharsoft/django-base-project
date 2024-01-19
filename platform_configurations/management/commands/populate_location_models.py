@@ -1,5 +1,7 @@
 import pandas as pd
 
+import json
+
 import time
 
 from io import StringIO
@@ -10,9 +12,7 @@ from django.core.management.base import BaseCommand
 from django.conf import settings
 
 from platform_configurations import models 
-from django_base.base_utils.utils import (
-    get_abstract_country_model,
-)
+
 
 class Command(BaseCommand):
     """Django command to populate location models."""
@@ -147,6 +147,25 @@ class Command(BaseCommand):
         item_creator = getattr(self, self.model_creator[model])
         items_to_create.append(item_creator(item, parent))
 
+    def _get_buenos_aires_cities(self):
+        url = 'https://apis.datos.gob.ar/georef/api/municipios?provincia=06&max=999'
+        response = requests.get(url)
+        if response.status_code != 200:
+            raise Exception('Error getting data from url')
+        response = json.loads(response.text)
+        data = pd.DataFrame.from_dict(response['municipios'])
+        cities = []
+        for city in data.values:
+            cities.append(
+                {
+                    'id':city[1],
+                    'name':city[2],
+                    'latitude':city[0]['lat'],
+                    'longitude':city[0]['lon']
+                }
+            )
+        return cities
+
     def handle(self, *args, **options):
         st = time.time()
         """Handle the command."""
@@ -166,12 +185,14 @@ class Command(BaseCommand):
         if counties_to_create:
             print(f'Creating countries {len(counties_to_create)}')
             models.Country.objects.bulk_create(counties_to_create)
+            print('Countries created')
         if counties_to_update:
             fields = self.extended_country_fields if \
                     "AbstactExpandedCountry" == models.Country.__bases__[0].__name__ \
                     else self.base_country_fields
             print(f'Updating countries {len(counties_to_update)}')
             models.Country.objects.bulk_update(counties_to_update, fields)
+            print('Countries updated')
 
         if settings.LOCATION_SCOPE != 'country':
             states_to_create = []
@@ -205,12 +226,14 @@ class Command(BaseCommand):
                 print(f'Creating states {len(states_to_create)}')
                 try:
                     models.State.objects.bulk_create(states_to_create)
+                    print('States created')
                 except Exception as e:
                     print(e)
                     raise e
             if states_to_update:
                 print(f'Updating states {len(states_to_update)}')
                 models.State.objects.bulk_update(states_to_update, ['name', 'state_code', 'latitude', 'longitude'])
+                print('States updated')
 
             if settings.LOCATION_SCOPE == 'city':
                 all_cities_to_create = []
@@ -220,6 +243,8 @@ class Command(BaseCommand):
                     for state in item[22 + self.extra_pos]:
                         if state['type'] not in self.approved_state_types:
                             continue
+                        if state['name'] == 'Buenos Aires':
+                            state['cities'] = self._get_buenos_aires_cities()
                         cities_to_create = []
                         cities_to_update = []
                         cities_names_to_create = []
@@ -249,11 +274,12 @@ class Command(BaseCommand):
                 if all_cities_to_create:
                     print(f'Creating cities {len(all_cities_to_create)}')
                     models.City.objects.bulk_create(all_cities_to_create)
-
+                    print('Cities created')
 
                 if all_cities_to_update:
                     print(f'Updating cities {len(all_cities_to_update)}')
                     models.City.objects.bulk_update(all_cities_to_update, ['name', 'latitude', 'longitude'])
+                    print('Cities updated')
 
         # get the end time
         et = time.time()
