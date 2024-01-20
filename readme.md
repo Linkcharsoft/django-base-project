@@ -611,7 +611,7 @@ page_size_query_param = 'page_size'
 
 ## Contributing
 
-- [Luca Cittá Guiordano](https://www.linkedin.com/in/lucacittagiordano/)
+- [Luca Cittá Giordano](https://www.linkedin.com/in/lucacittagiordano/)
 
 - [Matias Girardi](https://www.linkedin.com/in/matiasgirardi)
 
