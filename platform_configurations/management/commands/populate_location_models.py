@@ -10,9 +10,7 @@ from django.core.management.base import BaseCommand
 from django.conf import settings
 
 from platform_configurations import models 
-from django_base.base_utils.utils import (
-    get_abstract_country_model,
-)
+
 
 class Command(BaseCommand):
     """Django command to populate location models."""
