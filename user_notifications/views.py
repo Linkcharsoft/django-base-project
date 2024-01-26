@@ -38,7 +38,6 @@ class NotificationsViewSet(GenericViewSet, ListModelMixin, RetrieveModelMixin):
         instance.unread = False
         instance.save()
         return super().retrieve(request, *args, **kwargs)
-    
 
     @action(detail=False, methods=["post"], url_path="read-all")
     def mark_all_as_read(self, request):

@@ -52,8 +52,7 @@ AWS_ACCESS_KEY_ID = env("AWS_ACCESS_KEY_ID", default="")
 AWS_SECRET_ACCESS_KEY = env("AWS_SECRET_ACCESS_KEY", default="")
 
 # <-------------- CORS env settings -------------->
-CORS_ALLOWED_URLS = env.list("CORS_ALLOWED_URLS", default=[])
-
+CORS_ALLOWED_URLS = env.list("CORS_ALLOWED_URLS", default=[]) + [FRONT_URL]
 # <-------------- Watchman env settings -------------->
 WATCHMAN_TOKEN = env("WATCHMAN_TOKEN", default="password")
 
@@ -265,8 +264,6 @@ EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "rest_framework.authentication.TokenAuthentication",
-        "rest_framework.authentication.BasicAuthentication",
-        "rest_framework.authentication.SessionAuthentication",
     ),
     "DEFAULT_PAGINATION_CLASS": "django_base.base_utils.base_pagination.CustomPagination",
     "DEFAULT_SCHEMA_CLASS": "rest_framework.schemas.coreapi.AutoSchema",
@@ -302,7 +299,7 @@ if EMAIL_PROVIDER == "console":
     EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 elif EMAIL_PROVIDER == "aws":
     EMAIL_BACKEND = "django_ses.SESBackend"
-elif EMAIL_PROVIDER == "smpt":
+elif EMAIL_PROVIDER == "smtp":
     EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 else:
     raise Exception("EMAIL_PROVIDER not allowed")

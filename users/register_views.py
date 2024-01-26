@@ -13,15 +13,13 @@ from django.contrib.auth.password_validation import validate_password
 from django.utils.translation import gettext_lazy as _
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
-from django.template.loader import render_to_string
 from django.core.exceptions import ValidationError
-from django.core.mail import EmailMessage
 from django.shortcuts import render
 from django.utils import timezone
 from django.conf import settings
 
 from users.models import User, TokenRecovery
-from django_base.base_utils.utils import get_random_string
+from django_base.base_utils.utils import get_random_string, email_template_sender
 
 
 def _get_validated_token(request):
@@ -40,13 +38,6 @@ def _get_user(email):
 
 @method_decorator(csrf_exempt, name="dispatch")
 class EmailVerification(APIView, ConfirmEmailView):
-    def get(self, request, key):
-        return render(
-            request,
-            "registration/verify_email.html",
-            context={"key": key, "BASE_URL": settings.BACK_URL},
-        )
-
     def post(self, request, *args, **kwargs):
         serializer = VerifyEmailSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -76,28 +67,23 @@ class Password_recovery_email_send(APIView):
                 token_recovery.delete()
             TokenRecovery.objects.create(user=user, token=recovery_token)
 
+
             email_subject = f"Password Reset for {settings.APP_NAME}"
 
-            html_message = render_to_string(
-                "registration/password_recovery_email.html",
-                {
-                    "FRONT_URL": settings.FRONT_URL,
-                    "recovery_token": recovery_token,
-                    "APP_NAME": settings.APP_NAME,
-                    "REQUEST_TYPE": request_type,
-                },
-            )
+            context = {
+                "FRONT_URL": settings.FRONT_URL,
+                "recovery_token": recovery_token,
+                "APP_NAME": settings.APP_NAME,
+                "REQUEST_TYPE": request_type,
+                "PASSWORD_EMAIL_SEND": settings.PASSWORD_EMAIL_SEND,
+            }
 
-            message = EmailMessage(
+            email_template_sender(
                 email_subject,
-                html_message,
-                settings.EMAIL_HOST_USER,
-                [
-                    user.email,
-                ],
+                "registration/password_recovery_email.html",
+                context,
+                user.email,
             )
-            message.content_subtype = "html"
-            message.send()
 
             return Response("Email sent", status=status.HTTP_200_OK)
 
@@ -145,6 +131,12 @@ class Password_recovery_confirm(APIView):
 
 class PasswordChangeViewModify(PasswordChangeView):
     def post(self, request, *args, **kwargs):
+        if not settings.PASSWORD_CHANGE_BY_EMAIL:
+            return Response(
+                _("Only password change by email is allowed"), 
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
         if not "old_password" in request.data:
             return Response(
                 _("old_password is required"), status=status.HTTP_400_BAD_REQUEST
@@ -154,14 +146,18 @@ class PasswordChangeViewModify(PasswordChangeView):
             return Response(
                 _("Old password is incorrect"), status=status.HTTP_400_BAD_REQUEST
             )
-        if old_password == request.data["new_password1"]:
+        if old_password == request.data["new_password"]:
             return Response(
                 _("New password must be different from old password"),
                 status=status.HTTP_400_BAD_REQUEST,
             )
-        serializer = self.get_serializer(data=request.data)
+        data = request.data.copy()
+        data["new_password1"] = data["new_password"]
+        data["new_password2"] = data["new_password"]
+        serializer = self.get_serializer(data=data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
         request.user.is_register_completed = True
         request.user.save()
         return Response("New password has been saved.", status=status.HTTP_200_OK)
+            

@@ -59,8 +59,9 @@ class CustomFileField(models.FileField):
 class CustomImageField(models.ImageField):
     def generate_filename(self, instance, filename):
         extension = filename.split(".")[-1]
+        #md5 hash updated to sha256 (Not tested)
         filename = "{}.{}".format(
-            hashlib.md5(str(datetime.datetime.now()).encode()).hexdigest(), extension
+            hashlib.sha256(str(datetime.datetime.now()).encode()).hexdigest(), extension
         )
         return os.path.join(self.upload_to, filename)
 
@@ -101,7 +102,7 @@ class AbstactExpandedCountry(AbstactCountry):
 class AbstractState(models.Model):
     json_id = models.IntegerField()
     name = models.CharField(max_length=100)
-    state_code = models.CharField(max_length=3)
+    state_code = models.CharField(max_length=5)
     latitude = models.FloatField(null=True, blank=True)
     longitude = models.FloatField(null=True, blank=True)
     is_active = models.BooleanField(default=True)
@@ -117,8 +118,8 @@ class AbstractState(models.Model):
 class AbstractCity(models.Model):
     json_id = models.IntegerField()
     name = models.CharField(max_length=100)
-    latitude = models.FloatField()
-    longitude = models.FloatField()
+    latitude = models.FloatField(null=True, blank=True)
+    longitude = models.FloatField(null=True, blank=True)
     is_active = models.BooleanField(default=True)
 
     state = models.ForeignKey('platform_configurations.State', on_delete=models.CASCADE, related_name='cities')
