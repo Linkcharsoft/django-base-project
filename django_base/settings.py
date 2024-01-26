@@ -66,6 +66,10 @@ INCLUDE_LOCATION = env.bool("INCLUDE_LOCATION", default=False)
 LOCATION_SCOPE = env("LOCATION_SCOPE", default="state")
 INCLUDE_EXPANDED_COUNTRY = env.bool("INCLUDE_EXPANDED_COUNTRY", default=False)
 
+# <-------------- ExpoGO env settings -------------->
+USE_EXPO_NOTIFICATIONS = env.bool("USE_EXPO_NOTIFICATIONS", default=False)
+EXPO_APP_ID = env("EXPO_APP_ID", default="")
+
 # <-------------- General settings -------------->
 if not DEBUG:
     ALLOWED_HOSTS = env.list("ALLOWED_HOSTS")
@@ -109,7 +113,7 @@ THIRD_APPS = [
     "notifications",
 ]
 
-MY_APPS = ["users", "platform_configurations"]
+MY_APPS = ["users", "platform_configurations", "user_notifications"]
 
 INSTALLED_APPS = THIRD_APPS + BASE_APPS + MY_APPS
 

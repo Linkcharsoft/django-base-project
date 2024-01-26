@@ -140,7 +140,7 @@ class Password_recovery_confirm(APIView):
         return Response("Password reset successful", status=status.HTTP_200_OK)
 
 
-# <------------------ Password recovery ------------------>
+# / <------------------ Password recovery ------------------>
 
 
 class PasswordChangeViewModify(PasswordChangeView):
