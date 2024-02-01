@@ -7,7 +7,7 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 
 from django.contrib.auth import get_user_model
-from user_notifications.models import ExpoToken
+
 
 from users.serializers import UserSerializer
 from django_base.settings import USE_EXPO_NOTIFICATIONS
@@ -30,6 +30,7 @@ class UserViewSet(GenericViewSet, RetrieveModelMixin, UpdateModelMixin):
         if not USE_EXPO_NOTIFICATIONS:
             return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
         
+        from user_notifications.models import ExpoToken
         user = request.user
 
         token = request.data.get("token")
