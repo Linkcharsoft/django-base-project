@@ -37,7 +37,7 @@ class ViewSetSerializerMixin:
         return self.serializers.get(self.action, None)
 
 
-class BaseGenericViewSetMixin(
+class BaseGenericViewSet(
     NoPutViewSetMixin,
     ViewSetPermissionMixin,
     ViewSetSerializerMixin,
