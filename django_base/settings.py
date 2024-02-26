@@ -350,3 +350,17 @@ if USE_WEB_SOCKET:
             },
         },
     }
+
+# <-------------- SWAGGER configurations -------------->
+SWAGGER_SETTINGS = {
+    'USE_SESSION_AUTH': False,
+    'SHOW_REQUEST_HEADERS': True,
+    'SECURITY_DEFINITIONS': {
+        'api_key': {
+            'type': 'apiKey',
+            'in': 'header',
+            'name': 'Authorization',
+            'description': "Write 'Token' in the field, followed by a space and then your token"
+        }
+    },
+}
