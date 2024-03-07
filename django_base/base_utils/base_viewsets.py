@@ -2,6 +2,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.viewsets import GenericViewSet, ReadOnlyModelViewSet, ModelViewSet
 
+
 class NoPutViewSetMixin:
     def update(self, request, *args, **kwargs):
         if self.request.method == "PUT":
@@ -20,7 +21,17 @@ class ViewSetPermissionMixin:
     }
 
     def get_permissions(self):
-        return [permission() for permission in self.permissions.get(self.action, [])]
+        permission_classes = self.permissions.get(self.action, [])
+
+        assert permission_classes != [], (
+            "Permission classes are empty or not defined for action `%s` in '%s',"
+            "explicitly use [AllowAny] for public access or"
+            "define non empty permission classes for said action."
+            % self.action
+            % self.__class__.__name__
+        )
+
+        return [permission() for permission in permission_classes]
 
 
 class ViewSetSerializerMixin:
@@ -34,7 +45,14 @@ class ViewSetSerializerMixin:
     }
 
     def get_serializer_class(self, *args, **kwargs):
-        return self.serializers.get(self.action, None)
+        serializer_class = self.serializers.get(self.action, None)
+
+        assert serializer_class is not None, (
+            "'%s' should either define a serializer class for action `%s`, "
+            "or override the `get_serializer_class()` method."
+            % self.__class__.__name__
+            % self.action
+        )
 
 
 class BaseGenericViewSet(
