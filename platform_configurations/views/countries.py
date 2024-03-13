@@ -1,4 +1,5 @@
 from rest_framework import filters as rest_filters
+from rest_framework.permissions import AllowAny
 
 from django.conf import settings
 
@@ -6,12 +7,18 @@ from platform_configurations import models
 from platform_configurations.serializers import countries
 from django_base.base_utils.base_viewsets import BaseReadOnlyModelViewSet
 
+
 if settings.INCLUDE_LOCATION:
 
     class CountryViewSet(BaseReadOnlyModelViewSet):
         """Viewset for Country model."""
 
         queryset = models.Country.objects.filter(is_active=True)
+
+        permissions = {
+            "list": [AllowAny],
+            "retrieve": [AllowAny],
+        }
 
         serializers = {
             "list": countries.CountryListSerializer,

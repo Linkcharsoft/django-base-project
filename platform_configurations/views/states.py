@@ -1,6 +1,7 @@
 from django_filters import rest_framework as filters
 
 from rest_framework import filters as rest_filters
+from rest_framework.permissions import AllowAny
 
 from django.conf import settings
 
@@ -13,6 +14,11 @@ from django_base.base_utils.base_viewsets import BaseReadOnlyModelViewSet
 if settings.INCLUDE_LOCATION and models.get_abstract_state_model():
         class StateViewSet(BaseReadOnlyModelViewSet):
             """Viewset for State model."""
+
+            permissions = {
+                "list": [AllowAny],
+                "retrieve": [AllowAny],
+            }
 
             serializers = {
                 "list": states.StateListSerializer,

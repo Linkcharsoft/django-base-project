@@ -3,11 +3,17 @@ from django.conf import settings
 from platform_configurations import models
 from platform_configurations.serializers import cities
 from django_base.base_utils.base_viewsets import BaseReadOnlyModelViewSet
+from rest_framework.permissions import AllowAny
 
 
 if settings.INCLUDE_LOCATION and models.get_abstract_city_model():
         class CityViewSet(BaseReadOnlyModelViewSet):
             """Viewset for City model."""
+
+            permissions = {
+                "list": [AllowAny],
+                "retrieve": [AllowAny],
+            }
 
             serializers = {
                 "list": cities.CitySerializer,
