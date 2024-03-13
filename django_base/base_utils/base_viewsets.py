@@ -27,8 +27,7 @@ class ViewSetPermissionMixin:
             "Permission classes are empty or not defined for action `%s` in '%s',"
             "explicitly use [AllowAny] for public access or"
             "define non empty permission classes for said action."
-            % self.action
-            % self.__class__.__name__
+            % (self.action, self.__class__.__name__)
         )
 
         return [permission() for permission in permission_classes]
@@ -50,9 +49,10 @@ class ViewSetSerializerMixin:
         assert serializer_class is not None, (
             "'%s' should either define a serializer class for action `%s`, "
             "or override the `get_serializer_class()` method."
-            % self.__class__.__name__
-            % self.action
+            % (self.__class__.__name__, self.action)
         )
+
+        return serializer_class
 
 
 class BaseGenericViewSet(
