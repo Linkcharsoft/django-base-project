@@ -27,7 +27,6 @@ FRONT_URL = env("FRONT_URL", default="http://localhost:3000")
 APP_NAME = env("APP_NAME", default="Django Base")
 USE_CELERY = env.bool("USE_CELERY", default=False)
 USE_WEB_SOCKET = env.bool("USE_WEB_SOCKET", default=False)
-INCLUDE_SIGNED_MEDIA_URL = env.bool("INCLUDE_SIGNED_MEDIA_URL", default=False)
 
 # <-------------- DB env settings -------------->
 DB_ENGINE = env("DB_ENGINE", default="sqlite3")
