@@ -4,6 +4,7 @@ import os
 
 from django.utils.translation import gettext_lazy as _
 
+
 def env_to_list(variable):
     cleaned_value = []
     for i in range(0, len(variable), 2):
@@ -11,6 +12,7 @@ def env_to_list(variable):
         value = _(variable[i + 1].strip(" _(')").strip())
         cleaned_value.append((key, value))
     return cleaned_value
+
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 env = environ.Env()
@@ -25,6 +27,7 @@ FRONT_URL = env("FRONT_URL", default="http://localhost:3000")
 APP_NAME = env("APP_NAME", default="Django Base")
 USE_CELERY = env.bool("USE_CELERY", default=False)
 USE_WEB_SOCKET = env.bool("USE_WEB_SOCKET", default=False)
+INCLUDE_SIGNED_MEDIA_URL = env.bool("INCLUDE_SIGNED_MEDIA_URL", default=False)
 
 # <-------------- DB env settings -------------->
 DB_ENGINE = env("DB_ENGINE", default="sqlite3")
@@ -48,8 +51,7 @@ EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD", default="")
 EMAIL_USE_TLS = env("EMAIL_USE_TLS", default=True)
 EMAIL_PORT = env("EMAIL_PORT", default=587)
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
-AWS_ACCESS_KEY_ID = env("AWS_ACCESS_KEY_ID", default="")
-AWS_SECRET_ACCESS_KEY = env("AWS_SECRET_ACCESS_KEY", default="")
+
 
 # <-------------- CORS env settings -------------->
 CORS_ALLOWED_URLS = env.list("CORS_ALLOWED_URLS", default=[]) + [FRONT_URL]
@@ -58,7 +60,6 @@ WATCHMAN_TOKEN = env("WATCHMAN_TOKEN", default="password")
 
 # <-------------- S3 env -------------->
 USE_S3 = env.bool("USE_S3", default=False)
-AWS_STORAGE_BUCKET_NAME = env("AWS_STORAGE_BUCKET_NAME", default="")
 
 # <-------------- Platform configurations env settings -------------->
 INCLUDE_LOCATION = env.bool("INCLUDE_LOCATION", default=False)
@@ -112,7 +113,7 @@ THIRD_APPS = [
     "notifications",
 ]
 
-MY_APPS = ["users", "platform_configurations", "user_notifications"]
+MY_APPS = ["users", "platform_configurations", "user_notifications", "test_media"]
 
 INSTALLED_APPS = THIRD_APPS + BASE_APPS + MY_APPS
 
@@ -229,27 +230,34 @@ USE_TZ = True
 LOCALE_PATHS = [f"{BASE_DIR}/locale"]
 
 # LANGUAGES = env_to_list(env.list("LANGUAGES", default=["('en', 'English')"]))
-LANGUAGES =[('en', 'English'),]
+LANGUAGES = [
+    ("en", "English"),
+]
 
-# <-------------- Media and Static settings -------------->
+# <-------------- Media and Static settings --------- ----->
+AWS_ACCESS_KEY_ID = env("AWS_ACCESS_KEY_ID", default="")
+AWS_SECRET_ACCESS_KEY = env("AWS_SECRET_ACCESS_KEY", default="")
+AWS_STORAGE_BUCKET_NAME = env("AWS_STORAGE_BUCKET_NAME", default="")
+# AWS_S3_CUSTOM_DOMAIN = f"{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com"
+AWS_S3_OBJECT_PARAMETERS = {
+    "CacheControl": "max-age=86400",
+}
+
 if USE_S3:
-    # aws settings
-    AWS_S3_CUSTOM_DOMAIN = f"{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com"
-    AWS_S3_OBJECT_PARAMETERS = {
-        "CacheControl": "max-age=86400",
+    STORAGES = {
+        "default": {
+            "BACKEND": "storages.backends.s3.S3Storage",
+            "OPTIONS": {
+                "location": "media",
+            },
+        },
+        "staticfiles": {
+            "BACKEND": "storages.backends.s3.S3Storage",
+            "OPTIONS": {
+                "location": "static",
+            },
+        },
     }
-    AWS_LOCATION = "static"
-    AWS_DEFAULT_ACL = None
-    # s3 static settings
-    # STATICFILES_STORAGE = "django_base.storage_backends.StaticStorage"
-    # s3 public media settings
-    DEFAULT_FILE_STORAGE = "django_base.storage_backends.PublicMediaStorage"
-    # s3 private media settings
-    PRIVATE_MEDIA_LOCATION = "private"
-    PRIVATE_FILE_STORAGE = "django_base.storage_backends.PrivateMediaStorage"
-    PUBLIC_MEDIA_LOCATION = "media"
-    MEDIA_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/{PUBLIC_MEDIA_LOCATION}/"
-
 else:
     MEDIA_URL = "/media/"
     MEDIA_ROOT = BASE_DIR / "media"
@@ -294,6 +302,17 @@ REST_AUTH = {
     "USER_DETAILS_SERIALIZER": "users.serializers.UserSerializer",
 }
 
+USE_JWT = env.bool("USE_JWT", default=False)
+if USE_JWT:
+    REST_FRAMEWORK["DEFAULT_AUTHENTICATION_CLASSES"] = (
+        ("dj_rest_auth.jwt_auth.JWTAuthentication",),
+    )
+
+    REST_AUTH["USE_JWT"] = True
+    REST_AUTH["JWT_AUTH_HTTPONLY"] = False
+    REST_AUTH["JWT_AUTH_RETURN_EXPIRATION"] = True
+
+
 # <---------------------- Email configurations ---------------------->
 if EMAIL_PROVIDER == "console":
     EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
@@ -336,7 +355,7 @@ if INCLUDE_LOCATION:
 
 # <-------------- Celery configurations -------------->
 if USE_CELERY:
-    CELERY_BROKER = f'redis://:@{BROKER_SERVER}:{BROKER_SERVER_PORT}/0'
+    CELERY_BROKER = f"redis://:@{BROKER_SERVER}:{BROKER_SERVER_PORT}/0"
     CELERY_BROKER_URL = CELERY_BROKER
     CELERY_RESULT_BACKEND = CELERY_BROKER
 
@@ -353,14 +372,14 @@ if USE_WEB_SOCKET:
 
 # <-------------- SWAGGER configurations -------------->
 SWAGGER_SETTINGS = {
-    'USE_SESSION_AUTH': False,
-    'SHOW_REQUEST_HEADERS': True,
-    'SECURITY_DEFINITIONS': {
-        'api_key': {
-            'type': 'apiKey',
-            'in': 'header',
-            'name': 'Authorization',
-            'description': "Write 'Token' in the field, followed by a space and then your token"
+    "USE_SESSION_AUTH": False,
+    "SHOW_REQUEST_HEADERS": True,
+    "SECURITY_DEFINITIONS": {
+        "api_key": {
+            "type": "apiKey",
+            "in": "header",
+            "name": "Authorization",
+            "description": "Write 'Token' in the field, followed by a space and then your token",
         }
     },
 }
