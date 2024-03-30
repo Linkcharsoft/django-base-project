@@ -103,3 +103,4 @@ wcwidth==0.2.13
 whitenoise==6.5.0
 wrapt==1.15.0
 zope.interface==6.2
+django-global-places==0.8.3

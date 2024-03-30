@@ -60,10 +60,12 @@ WATCHMAN_TOKEN = env("WATCHMAN_TOKEN", default="password")
 # <-------------- S3 env -------------->
 USE_S3 = env.bool("USE_S3", default=False)
 
-# <-------------- Platform configurations env settings -------------->
-INCLUDE_LOCATION = env.bool("INCLUDE_LOCATION", default=False)
-LOCATION_SCOPE = env("LOCATION_SCOPE", default="state")
-INCLUDE_EXPANDED_COUNTRY = env.bool("INCLUDE_EXPANDED_COUNTRY", default=False)
+# <-------------- Global places env settings -------------->
+GLOBAL_PLACES = {
+    "INCLUDE_LOCATION": env.bool("INCLUDE_LOCATION", default=False),
+    "LOCATION_SCOPE": env("LOCATION_SCOPE", default="state"),
+    "INCLUDE_EXPANDED_COUNTRY": env.bool("INCLUDE_EXPANDED_COUNTRY", default=False),
+}
 
 # <-------------- ExpoGO env settings -------------->
 USE_EXPO_NOTIFICATIONS = env.bool("USE_EXPO_NOTIFICATIONS", default=False)
@@ -112,7 +114,11 @@ THIRD_APPS = [
     "notifications",
 ]
 
-MY_APPS = ["users", "platform_configurations", "user_notifications", "test_media"]
+MY_APPS = [
+    "users",
+    "django_global_places",
+    "user_notifications",
+    ]
 
 INSTALLED_APPS = THIRD_APPS + BASE_APPS + MY_APPS
 
@@ -344,13 +350,6 @@ if USE_DEBUG_TOOLBAR:
 
     hostname, _, ips = socket.gethostbyname_ex(socket.gethostname())
     INTERNAL_IPS = [ip[: ip.rfind(".")] + ".1" for ip in ips] + ["127.0.0.1", "0.0.0.0"]
-
-
-# <-------------- Platform configurations -------------->
-if INCLUDE_LOCATION:
-    valid_location_scopes = ["country", "state", "city"]
-    if LOCATION_SCOPE not in valid_location_scopes:
-        raise Exception("LOCATION_SCOPE not allowed")
 
 # <-------------- Celery configurations -------------->
 if USE_CELERY:

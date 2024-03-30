@@ -9,7 +9,7 @@ from django.contrib import admin
 from django.urls import path, include, re_path
 
 from users.urls import router as users_router
-from platform_configurations.urls import router as platform_configurations_router
+from django_global_places.urls import router as django_global_places_router
 from user_notifications.urls import router as user_notifications_router
 from users.register_views import EmailVerification
 
@@ -26,7 +26,7 @@ schema_view = get_schema_view(
 
 base_router = DefaultRouter()
 base_router.registry.extend(users_router.registry)
-base_router.registry.extend(platform_configurations_router.registry)
+base_router.registry.extend(django_global_places_router.registry)
 base_router.registry.extend(user_notifications_router.registry)
 
 # fmt: off
@@ -62,7 +62,6 @@ urlpatterns += [
 #<-------------- Our apps includes -------------->
 urlpatterns += [
     path('api/users/', include('users.urls')),
-    path('api/platform_configurations/', include('platform_configurations.urls')),
 ]
 
 #<-------------- Our base router -------------->
