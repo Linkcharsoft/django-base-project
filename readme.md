@@ -1,6 +1,6 @@
 
 # General information
-
+ 
   
 
 Pre-config Django with django-rest-framework and docker.
