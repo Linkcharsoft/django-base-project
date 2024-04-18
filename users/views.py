@@ -50,6 +50,7 @@ class UserViewSet(GenericViewSet, RetrieveModelMixin, UpdateModelMixin):
 
     @action(detail=False, url_path="unregister-device", methods=["POST"]) # Delete if not needed
     def unregister_device(self, request, *args, **kwargs):
+        from user_notifications.models import ExpoToken
         if not USE_EXPO_NOTIFICATIONS:
             return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
         
