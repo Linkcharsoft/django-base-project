@@ -37,9 +37,10 @@ DB_PORT = env("DB_PORT", default="")
 DB_NAME = env("DB_NAME", default="")
 
 # <-------------- Auth env settings -------------->
-USE_EMAIL_FOR_AUTHENTICATION = env.bool("USE_EMAIL_FOR_AUTHENTICATION", default=False)
-PASSWORD_EMAIL_SEND = env.bool("PASSWORD_EMAIL_SEND", default="link")
-PASSWORD_CHANGE_BY_EMAIL = env.bool("PASSWORD_CHANGE_BY_EMAIL", default=True)
+USE_EMAIL_FOR_AUTHENTICATION = True
+PASSWORD_EMAIL_SEND = "link" #link/code
+PASSWORD_CHANGE_BY_EMAIL = False
+USE_JWT = False
 
 # <-------------- Email env settings -------------->
 EMAIL_PROVIDER = env("EMAIL_PROVIDER", default="console")
@@ -307,7 +308,6 @@ REST_AUTH = {
     "USER_DETAILS_SERIALIZER": "users.serializers.UserSerializer",
 }
 
-USE_JWT = env.bool("USE_JWT", default=False)
 if USE_JWT:
     REST_FRAMEWORK["DEFAULT_AUTHENTICATION_CLASSES"] = (
         ("dj_rest_auth.jwt_auth.JWTAuthentication",),
