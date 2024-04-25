@@ -34,7 +34,6 @@ base_router.registry.extend(user_notifications_router.registry)
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('__debug__/', include('debug_toolbar.urls')),
-    re_path(r'^watchman/', include('watchman.urls')),
 
 ]
 
@@ -47,7 +46,7 @@ urlpatterns += [
     path('api/auth/register/', RegisterView.as_view(), name='rest_register'),
 
     path('api/auth/registration/resend-email/', ResendEmailVerificationView.as_view(), name="rest_resend_email"),
-    re_path("api/auth/registration/account-confirm-email/(?P<key>[\s\d\w().+-_',:&]+)/$", EmailVerification.as_view(), name='account_confirm_email'),
+    re_path(r"api/auth/registration/account-confirm-email/(?P<key>[\s\d\w().+-_',:&]+)/$", EmailVerification.as_view(), name='account_confirm_email'),
 
     path('api/allauth/', include('allauth.urls')),
 ]
@@ -66,9 +65,5 @@ urlpatterns += [
 
 #<-------------- Our base router -------------->
 urlpatterns += [path('api/', include(base_router.urls)),]
-
-#<-------------- Media urls -------------->
-# Uncomment the following line to serve media files
-# urlpatterns += [re_path(r"media/(?P<path>.*)", SignedMediaView.as_view(), name="signed-media")]
 
 # fmt: on

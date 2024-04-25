@@ -31,8 +31,6 @@ And the next libraries (plus the ones that the frameworks include):
 
 - django-extensions
 
-- django-watchman
-
 - drf-writable-nested
 
   
@@ -200,8 +198,6 @@ python manage.py generate_secret_key
 - In the "Email Settings" section, you can select the email provider. If you choose "console," no further configuration is necessary. However, if you select "aws," you must specify your credentials.
 
   
-
-- The "WATCHMAN_TOKEN" is used by the Django-watchman library to protect the system status endpoint. If this value is set to None, there will be no protection.
 
   
   
@@ -528,25 +524,6 @@ We included the "django-extensions" library in our project because it provides a
 
 For more detailed information about the "django-extensions" library and its various tools, I recommend referring to the official documentation
 
-  
-
-[**django-watchman**](https://django-watchman.readthedocs.io/en/latest/)
-
-"django-watchman exposes a status endpoint for your backing services like databases, caches, etc."
-
-  
-
-The Django Watchman library is an invaluable tool for monitoring all your services. By default, it is configured with essential checks, but you can continuously add more services to be monitored.
-
-  
-
-If you assign a value to the environment variable "WATCHMAN_TOKEN," it will add a layer of protection to the status endpoint. In this case, you will need to include the token as a query parameter in each call to the endpoint.
-
-  
-
-I highly recommend watching the presentation video available in the documentation.
-
-  
 
 [drf-writable-nested](https://pypi.org/project/drf-writable-nested/)
 
