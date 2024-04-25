@@ -9,12 +9,16 @@ services:
       - POSTGRES_DB=${DB_NAME}
       - POSTGRES_USER=${DB_USER}
       - POSTGRES_PASSWORD=${DB_PASSWORD}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   web:
     build: .
     command: bash -c "
-      python manage.py wait_for_db
-      && python manage.py migrate
+      python manage.py migrate
       && python manage.py runserver 0.0.0.0:8000"
     ports:
       - "8000:8000"
@@ -25,7 +29,9 @@ services:
     volumes:
       - .:/code
     depends_on:
-      - db
+      db:
+        condition: service_healthy
+
 
   # redis:
   #   image: redis:7
