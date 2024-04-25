@@ -46,7 +46,7 @@ urlpatterns += [
     path('api/auth/register/', RegisterView.as_view(), name='rest_register'),
 
     path('api/auth/registration/resend-email/', ResendEmailVerificationView.as_view(), name="rest_resend_email"),
-    re_path("api/auth/registration/account-confirm-email/(?P<key>[\s\d\w().+-_',:&]+)/$", EmailVerification.as_view(), name='account_confirm_email'),
+    re_path(r"api/auth/registration/account-confirm-email/(?P<key>[\s\d\w().+-_',:&]+)/$", EmailVerification.as_view(), name='account_confirm_email'),
 
     path('api/allauth/', include('allauth.urls')),
 ]
