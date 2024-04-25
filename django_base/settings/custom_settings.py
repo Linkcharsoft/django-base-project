@@ -109,12 +109,11 @@ if USE_DEBUG_TOOLBAR:
 
 
 # <-------------- Celery configurations -------------->
-{% coockiecutter.use_celery %}
 if USE_CELERY:
     CELERY_BROKER = f"redis://:@{BROKER_SERVER}:{BROKER_SERVER_PORT}/0"
     CELERY_BROKER_URL = CELERY_BROKER
     CELERY_RESULT_BACKEND = CELERY_BROKER
-{% endif %}
+
 # <-------------- Socket configurations -------------->
 if USE_WEB_SOCKET:
     CHANNEL_LAYERS = {
