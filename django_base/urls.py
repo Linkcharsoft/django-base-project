@@ -34,7 +34,6 @@ base_router.registry.extend(user_notifications_router.registry)
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('__debug__/', include('debug_toolbar.urls')),
-    re_path(r'^watchman/', include('watchman.urls')),
 
 ]
 
