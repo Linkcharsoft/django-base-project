@@ -1,7 +1,5 @@
 from storages.backends.s3boto3 import S3Boto3Storage
 from django.core.files.storage import get_storage_class
-from django.core.files.storage import FileSystemStorage
-from django.core.signing import TimestampSigner, b64_encode
 
 
 class MediaStorage(S3Boto3Storage):
@@ -51,13 +49,3 @@ class CachedS3Boto3Storage(S3Boto3Storage):
         self.local_storage._save(name, content)
         super().save(name, self.local_storage._open(name))
         return name
-
-
-class SignedStorage(FileSystemStorage):
-    def url(self, name: str | None) -> str:
-        url = super().url(name)
-        signer = TimestampSigner()
-        name = b64_encode(name.encode()).decode()
-        sign = signer.sign(name)
-
-        return url + "?signature=" + sign

@@ -1,7 +1,7 @@
 from django_base.settings.django_settings import BASE_APPS, AUTH_PASSWORD_VALIDATORS
 from django_base.settings.environment_variables import (
     BROKER_SERVER, BROKER_SERVER_PORT, EMAIL_PROVIDER,
-    CORS_ALLOWED_URLS, BASE_DIR, USE_S3
+    CORS_ALLOWED_URLS, BASE_DIR, USE_S3, AWS_STORAGE_BUCKET_NAME
 )
 from django_base.settings.configurations import (
     USE_EMAIL_FOR_AUTHENTICATION, USE_JWT, USE_DEBUG_TOOLBAR,
@@ -25,26 +25,24 @@ INSTALLED_APPS = THIRD_APPS + MY_APPS + BASE_APPS
 ASGI_APPLICATION = 'django_base.asgi.application'
 
 # <-------------- Media and Static settings --------- ----->
-# AWS_S3_CUSTOM_DOMAIN = f"{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com"
-AWS_S3_OBJECT_PARAMETERS = {
-    "CacheControl": "max-age=86400",
-}
 
 if USE_S3:
-    STORAGES = {
-        "default": {
-            "BACKEND": "storages.backends.s3.S3Storage",
-            "OPTIONS": {
-                "location": "media",
-            },
-        },
-        "staticfiles": {
-            "BACKEND": "storages.backends.s3.S3Storage",
-            "OPTIONS": {
-                "location": "static",
-            },
-        },
+    # aws settings
+    AWS_S3_CUSTOM_DOMAIN = f"{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com"
+    AWS_S3_OBJECT_PARAMETERS = {
+        "CacheControl": "max-age=86400",
     }
+    AWS_LOCATION = "static"
+    AWS_DEFAULT_ACL = None
+    # s3 static settings
+    # STATICFILES_STORAGE = "django_base.storage_backends.StaticStorage"
+    # s3 public media settings
+    DEFAULT_FILE_STORAGE = "django_base.storage_backends.PublicMediaStorage"
+    # s3 private media settings
+    PRIVATE_MEDIA_LOCATION = "private"
+    PRIVATE_FILE_STORAGE = "django_base.storage_backends.PrivateMediaStorage"
+    PUBLIC_MEDIA_LOCATION = "media"
+    MEDIA_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/{PUBLIC_MEDIA_LOCATION}/"
 else:
     MEDIA_URL = "/media/"
     MEDIA_ROOT = BASE_DIR / "media"

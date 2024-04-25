@@ -66,8 +66,4 @@ urlpatterns += [
 #<-------------- Our base router -------------->
 urlpatterns += [path('api/', include(base_router.urls)),]
 
-#<-------------- Media urls -------------->
-# Uncomment the following line to serve media files
-# urlpatterns += [re_path(r"media/(?P<path>.*)", SignedMediaView.as_view(), name="signed-media")]
-
 # fmt: on

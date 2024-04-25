@@ -12,7 +12,6 @@ DEBUG = env.bool("DEBUG", default=True)
 IS_SERVER = env.bool("IS_SERVER", default=True)
 AWS_ACCESS_KEY_ID = env("AWS_ACCESS_KEY_ID", default="")
 AWS_SECRET_ACCESS_KEY = env("AWS_SECRET_ACCESS_KEY", default="")
-USE_S3 = env.bool("USE_S3", default=False)
 
 
 #<-------------- urls settings -------------->
@@ -44,7 +43,8 @@ EMAIL_PORT = env("EMAIL_PORT", default=587)
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 
-# <-------------- Media and Static settings -------------->
+#<-------------- S3 -------------->
+USE_S3 = env.bool("USE_S3", default=False)
 AWS_STORAGE_BUCKET_NAME = env("AWS_STORAGE_BUCKET_NAME", default="")
 
 
