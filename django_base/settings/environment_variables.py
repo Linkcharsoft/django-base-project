@@ -40,7 +40,7 @@ EMAIL_HOST_USER = env("EMAIL_HOST_USER", default="")
 EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD", default="")
 EMAIL_USE_TLS = env("EMAIL_USE_TLS", default=True)
 EMAIL_PORT = env("EMAIL_PORT", default=587)
-DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+DEFAULT_FROM_EMAIL = env("DEFAULT_FROM_EMAIL", default='project@linkchar.com')
 
 
 #<-------------- S3 -------------->
