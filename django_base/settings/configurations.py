@@ -34,6 +34,3 @@ GLOBAL_PLACES = {
 USE_CELERY=False
 USE_WEB_SOCKET=False
 
-
-# <-------------- ExpoGO env settings -------------->
-USE_EXPO_NOTIFICATIONS = False
