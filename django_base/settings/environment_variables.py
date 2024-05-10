@@ -10,6 +10,7 @@ environ.Env.read_env(os.path.join(BASE_DIR, ".env"))
 SECRET_KEY = env("SECRET_KEY", default="-----------")
 DEBUG = env.bool("DEBUG", default=True)
 IS_SERVER = env.bool("IS_SERVER", default=True)
+IS_PRODUCTION = env.bool("IS_PRODUCTION", default=False)
 AWS_ACCESS_KEY_ID = env("AWS_ACCESS_KEY_ID", default="")
 AWS_SECRET_ACCESS_KEY = env("AWS_SECRET_ACCESS_KEY", default="")
 
@@ -55,3 +56,6 @@ EXPO_APP_ID = env("EXPO_APP_ID", default="")
 # <-------------- Broker settings -------------->
 BROKER_SERVER = env("BROKER_SERVER", default="redis")
 BROKER_SERVER_PORT = env("BROKER_SERVER_PORT", default=6379)
+
+# <-------------- Sentry settings -------------->
+SENTRY_DSN = env("SENTRY_DSN", default="")
