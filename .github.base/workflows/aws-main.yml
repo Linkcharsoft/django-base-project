@@ -34,7 +34,7 @@ env:
   PROJECT_NAME: base-project
   ENVIRONMENT: production
   AWS_REGION: us-east-1                   # set this to your preferred AWS region, e.g. us-west-1
-  ECR_REPOSITORY: base-project-backend           # set this to your Amazon ECR repository name
+  ECR_REPOSITORY: base-project-backend-develop           # set this to your Amazon ECR repository name
   ECS_SERVICE: base-project-production-web              # set this to your Amazon ECS service name
   ECS_CLUSTER: base-project-production                 # set this to your Amazon ECS cluster name
   CONTAINER_NAME: base-project-production-web           # set this to the name of the container in the

@@ -13,12 +13,12 @@ from django_base.settings.configurations import (
 THIRD_APPS = [
     # 'daphne',
     # 'channels',
+    'django_notifications_views'
 ]
 
 MY_APPS = [
     "users",
     "django_global_places",
-    "user_notifications",
 ]
 
 INSTALLED_APPS = THIRD_APPS + MY_APPS + BASE_APPS
