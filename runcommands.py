@@ -2,6 +2,8 @@ import os
 import argparse
 import subprocess
 
+from django_base.settings.configurations import LANGUAGES
+
 DJANGO_CONTAINER_NAME = "web"
 POSTGRES_CONTAINER_NAME = "db"
 
@@ -21,18 +23,10 @@ def get_env_value(key, filename=".env"):
         print(f"Could not find the environment file {filename}.")
     return None
 
-def extract_language_codes(languages_string):
-    languages = languages_string.split(" ")
+def extract_language_codes(languages):
     codes = []
-    
-    for pos, element in enumerate(languages):
-        if pos == 0:
-            codes.append(element[2:4])
-        elif pos == len(languages) - 1:
-            break
-        else:
-            codes.append(element.split(",")[1][2:4])
-    
+    for lenguage in languages:
+        codes.append(lenguage[0])
     return codes
 
 def check_language_directories_exist(language_codes):
@@ -72,7 +66,7 @@ def run_migrations():
 def run_makemessages():
     command = "makemessages"
 
-    language_codes = extract_language_codes(get_env_value("LANGUAGES"))
+    language_codes = extract_language_codes(LANGUAGES)
     missing_directories = check_language_directories_exist(language_codes)
 
     if missing_directories:

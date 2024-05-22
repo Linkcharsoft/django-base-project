@@ -57,3 +57,4 @@ vine~=5.1
 wcwidth~=0.2
 wheel~=0.43
 whitenoise~=6.6
+split_settings~=1.0

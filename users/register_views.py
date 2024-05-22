@@ -122,7 +122,7 @@ class Password_recovery_confirm(APIView):
         user.set_password(password)
         user.save()
         token_recovery.delete()
-        return Response("Password reset successful", status=status.HTTP_200_OK)
+        return Response(_("Password reset successful"), status=status.HTTP_200_OK)
 
 
 # / <------------------ Password recovery ------------------>
@@ -158,5 +158,4 @@ class PasswordChangeViewModify(PasswordChangeView):
         serializer.save()
         request.user.is_register_completed = True
         request.user.save()
-        return Response("New password has been saved.", status=status.HTTP_200_OK)
-            
+        return Response(_("New password has been saved."), status=status.HTTP_200_OK)
