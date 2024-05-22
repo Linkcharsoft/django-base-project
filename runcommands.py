@@ -107,6 +107,7 @@ def run_tests():
 def interactive_menu():
     while True:
         print("\nOptions:")
+        print("\n--- Comandos Generales ---")
         print("1. Enter Django shell")
         print("2. Run make migrations")
         print("3. Run migrations")
@@ -118,6 +119,8 @@ def interactive_menu():
         print("9. Enter PostgreSQL shell (psql)")
         print("10. Run tests")
         print("11. Quit")
+
+        # print("\n--- Comandos de Proyecto Específico ---")
         choice = input("Enter your choice: ")
 
         if choice == "1":
