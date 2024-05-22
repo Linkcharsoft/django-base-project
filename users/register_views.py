@@ -76,6 +76,7 @@ class Password_recovery_email_send(APIView):
                 "APP_NAME": settings.APP_NAME,
                 "REQUEST_TYPE": request_type,
                 "PASSWORD_EMAIL_SEND": settings.PASSWORD_EMAIL_SEND,
+                "EMAIL": user.email,
             }
 
             email_template_sender(
@@ -84,12 +85,10 @@ class Password_recovery_email_send(APIView):
                 context,
                 user.email,
             )
+        except Exception:
+            pass
+        return Response(_("Email sent"), status=status.HTTP_200_OK)
 
-            return Response("Email sent", status=status.HTTP_200_OK)
-
-        except Exception as e:
-            print(e)
-            return Response("Email sent", status=status.HTTP_200_OK)
 
 
 class Check_token(APIView):
