@@ -1,7 +1,8 @@
 from django_base.settings.django_settings import BASE_APPS, AUTH_PASSWORD_VALIDATORS
 from django_base.settings.environment_variables import (
     BROKER_SERVER, BROKER_SERVER_PORT, EMAIL_PROVIDER,
-    CORS_ALLOWED_URLS, BASE_DIR, USE_S3, AWS_STORAGE_BUCKET_NAME
+    CORS_ALLOWED_URLS, BASE_DIR, USE_S3, AWS_STORAGE_BUCKET_NAME, 
+    IS_PRODUCTION, SENTRY_DSN
 )
 from django_base.settings.configurations import (
     USE_EMAIL_FOR_AUTHENTICATION, USE_JWT, USE_DEBUG_TOOLBAR,
@@ -179,3 +180,22 @@ if USE_JWT: #WITH COOKIECUTTER
     REST_AUTH["USE_JWT"] = True
     REST_AUTH["JWT_AUTH_HTTPONLY"] = False
     REST_AUTH["JWT_AUTH_RETURN_EXPIRATION"] = True
+
+
+# <-------------- Sentry -------------->
+if IS_PRODUCTION:
+    import sentry_sdk
+
+    if not SENTRY_DSN:
+        raise Exception("SENTRY_DSN not found in environment variables")
+    
+    sentry_sdk.init(
+        dsn=SENTRY_DSN,
+        # Set traces_sample_rate to 1.0 to capture 100%
+        # of transactions for performance monitoring.
+        traces_sample_rate=1.0,
+        # Set profiles_sample_rate to 1.0 to profile 100%
+        # of sampled transactions.
+        # We recommend adjusting this value in production.
+        profiles_sample_rate=1.0,
+    )

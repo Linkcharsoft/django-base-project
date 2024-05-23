@@ -1,0 +1,85 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-05-22 11:03+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: English <LL@li.org>\n"
+"Language: en\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: django_base/base_utils/base_validators.py:18
+msgid "Password must contain at least one number."
+msgstr "Password must contain at least one number."
+
+#: django_base/base_utils/base_validators.py:31
+#, python-format
+msgid "Password must contain at least one symbol: %(simbol)s."
+msgstr "Password must contain at least one symbol: %(simbol)s."
+
+#: django_base/base_utils/base_validators.py:46
+msgid "Password must contain at least one uppercase letter."
+msgstr "Password must contain at least one uppercase letter."
+
+#: django_base/base_utils/base_validators.py:57
+#, python-format
+msgid "File too large. Size should not exceed %(file_limit)s MiB."
+msgstr "File too large. Size should not exceed %(file_limit)s MiB."
+
+#: django_base/base_utils/utils.py:25
+msgid "This field is required"
+msgstr "This field is required."
+
+#: django_base/base_utils/utils.py:32
+msgid "Invalid option"
+msgstr "Invalid option."
+
+#: users/register_views.py:30
+msgid "Token expired"
+msgstr "Token expired."
+
+#: users/register_views.py:90
+msgid "Email sent"
+msgstr "Email sent."
+
+#: users/register_views.py:102 users/register_views.py:120
+msgid "Token is invalid"
+msgstr "Token is invalid."
+
+#: users/register_views.py:104
+msgid "Token is valid"
+msgstr "Token is valid."
+
+#: users/register_views.py:125
+msgid "Password reset successful"
+msgstr "Password reset successful."
+
+#: users/register_views.py:135
+msgid "Only password change by email is allowed"
+msgstr "Only password change by email is allowed."
+
+#: users/register_views.py:141
+msgid "old_password is required"
+msgstr "old_password is required."
+
+#: users/register_views.py:146
+msgid "Old password is incorrect"
+msgstr "Old password is incorrect."
+
+#: users/register_views.py:150
+msgid "New password must be different from old password"
+msgstr "New password must be different from old password."
+
+#: users/register_views.py:161
+msgid "New password has been saved."
+msgstr "New password has been saved."

@@ -76,6 +76,7 @@ class Password_recovery_email_send(APIView):
                 "APP_NAME": settings.APP_NAME,
                 "REQUEST_TYPE": request_type,
                 "PASSWORD_EMAIL_SEND": settings.PASSWORD_EMAIL_SEND,
+                "EMAIL": user.email,
             }
 
             email_template_sender(
@@ -84,12 +85,10 @@ class Password_recovery_email_send(APIView):
                 context,
                 user.email,
             )
+        except Exception:
+            pass
+        return Response(_("Email sent"), status=status.HTTP_200_OK)
 
-            return Response("Email sent", status=status.HTTP_200_OK)
-
-        except Exception as e:
-            print(e)
-            return Response("Email sent", status=status.HTTP_200_OK)
 
 
 class Check_token(APIView):
@@ -123,7 +122,7 @@ class Password_recovery_confirm(APIView):
         user.set_password(password)
         user.save()
         token_recovery.delete()
-        return Response("Password reset successful", status=status.HTTP_200_OK)
+        return Response(_("Password reset successful"), status=status.HTTP_200_OK)
 
 
 # / <------------------ Password recovery ------------------>
@@ -159,5 +158,4 @@ class PasswordChangeViewModify(PasswordChangeView):
         serializer.save()
         request.user.is_register_completed = True
         request.user.save()
-        return Response("New password has been saved.", status=status.HTTP_200_OK)
-            
+        return Response(_("New password has been saved."), status=status.HTTP_200_OK)
