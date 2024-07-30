@@ -12,6 +12,7 @@ from users.urls import router as users_router
 from users.register_views import EmailVerification
 from django_notifications_views.urls import router as django_notifications_router
 from django_global_places.urls import router as django_global_places_router
+from platform_configurations.urls import router as platform_configurations_router
 from users.register_views import EmailVerification
 
 
@@ -29,6 +30,7 @@ base_router = DefaultRouter()
 base_router.registry.extend(users_router.registry)
 base_router.registry.extend(django_global_places_router.registry)
 base_router.registry.extend(django_notifications_router.registry)
+base_router.registry.extend(platform_configurations_router.registry)
 
 
 # fmt: off
@@ -36,6 +38,7 @@ base_router.registry.extend(django_notifications_router.registry)
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('__debug__/', include('debug_toolbar.urls')),
+
 
 ]
 

@@ -18,10 +18,14 @@ class ViewSetPermissionMixin:
         "update": [],
         "partial_update": [],
         "destroy": [],
+        "default": [],
     }
 
+    extra_permissions = []
+
     def get_permissions(self):
-        permission_classes = self.permissions.get(self.action, [])
+        permission_classes = self.permissions.get(self.action, self.permissions["default"])
+        permission_classes += self.extra_permissions
 
         assert permission_classes != [], (
             "Permission classes are empty or not defined for action `%s` in '%s',"
@@ -41,10 +45,11 @@ class ViewSetSerializerMixin:
         "update": None,
         "partial_update": None,
         "destroy": None,
+        "default": None,
     }
 
     def get_serializer_class(self, *args, **kwargs):
-        serializer_class = self.serializers.get(self.action, None)
+        serializer_class = self.serializers.get(self.action, self.serializers["default"])
 
         assert serializer_class is not None, (
             "'%s' should either define a serializer class for action `%s`, "
