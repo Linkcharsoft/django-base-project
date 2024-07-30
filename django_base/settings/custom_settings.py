@@ -26,9 +26,9 @@ THIRD_APPS = [
 ]
 
 MY_APPS = [
-    "django_base",
     "users",
     "django_global_places",
+    "platform_configurations",
 ]
 
 INSTALLED_APPS = THIRD_APPS + MY_APPS + BASE_APPS

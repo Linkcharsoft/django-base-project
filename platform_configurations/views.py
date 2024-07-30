@@ -5,7 +5,7 @@ from rest_framework.response import Response
 
 from rest_framework import mixins
 
-from django_base import models
+from platform_configurations import models
 
 
 class SytemStatusViewSet(GenericViewSet, mixins.ListModelMixin):

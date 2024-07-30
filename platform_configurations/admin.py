@@ -1,5 +1,5 @@
 from django.contrib import admin
-from django_base.models import SystemStatus
+from platform_configurations.models import SystemStatus
 
 
 @admin.register(SystemStatus)
