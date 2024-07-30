@@ -1,29 +1,39 @@
 from django_base.settings.django_settings import BASE_APPS, AUTH_PASSWORD_VALIDATORS
 from django_base.settings.environment_variables import (
-    BROKER_SERVER, BROKER_SERVER_PORT, EMAIL_PROVIDER,
-    CORS_ALLOWED_URLS, BASE_DIR, USE_S3, AWS_STORAGE_BUCKET_NAME, 
-    IS_PRODUCTION, SENTRY_DSN
+    BROKER_SERVER,
+    BROKER_SERVER_PORT,
+    EMAIL_PROVIDER,
+    CORS_ALLOWED_URLS,
+    BASE_DIR,
+    USE_S3,
+    AWS_STORAGE_BUCKET_NAME,
+    IS_PRODUCTION,
+    SENTRY_DSN,
 )
 from django_base.settings.configurations import (
-    USE_EMAIL_FOR_AUTHENTICATION, USE_JWT, USE_DEBUG_TOOLBAR,
-    USE_CELERY, USE_WEB_SOCKET
+    USE_EMAIL_FOR_AUTHENTICATION,
+    USE_JWT,
+    USE_DEBUG_TOOLBAR,
+    USE_CELERY,
+    USE_WEB_SOCKET,
 )
 
 
 THIRD_APPS = [
     # 'daphne',
     # 'channels',
-    'django_notifications_views'
+    "django_notifications_views"
 ]
 
 MY_APPS = [
+    "django_base",
     "users",
     "django_global_places",
 ]
 
 INSTALLED_APPS = THIRD_APPS + MY_APPS + BASE_APPS
 
-ASGI_APPLICATION = 'django_base.asgi.application'
+ASGI_APPLICATION = "django_base.asgi.application"
 
 # <-------------- Media and Static settings --------- ----->
 
@@ -53,7 +63,7 @@ STATIC_ROOT = BASE_DIR / "static"
 
 
 # <---------------------- Auth configurations ---------------------->
-if USE_EMAIL_FOR_AUTHENTICATION: #WITH COOKIECUTTER
+if USE_EMAIL_FOR_AUTHENTICATION:  # WITH COOKIECUTTER
     ACCOUNT_ADAPTER = "users.adapter.CustomAccountAdapter"
     ACCOUNT_EMAIL_REQUIRED = True
     ACOOUNT_UNIQUE_EMAIL = True
@@ -149,9 +159,7 @@ REST_FRAMEWORK = {
     "DEFAULT_PAGINATION_CLASS": "django_base.base_utils.base_pagination.CustomPagination",
     "DEFAULT_SCHEMA_CLASS": "rest_framework.schemas.coreapi.AutoSchema",
     "PAGE_SIZE": 10,
-    "DEFAULT_RENDERER_CLASSES": (
-        "rest_framework.renderers.JSONRenderer",    
-    ),
+    "DEFAULT_RENDERER_CLASSES": ("rest_framework.renderers.JSONRenderer",),
 }
 
 SITE_ID = 1
@@ -172,7 +180,7 @@ SWAGGER_SETTINGS = {
 }
 
 
-if USE_JWT: #WITH COOKIECUTTER
+if USE_JWT:  # WITH COOKIECUTTER
     REST_FRAMEWORK["DEFAULT_AUTHENTICATION_CLASSES"] = (
         ("dj_rest_auth.jwt_auth.JWTAuthentication",),
     )
@@ -188,7 +196,7 @@ if IS_PRODUCTION:
 
     if not SENTRY_DSN:
         raise Exception("SENTRY_DSN not found in environment variables")
-    
+
     sentry_sdk.init(
         dsn=SENTRY_DSN,
         # Set traces_sample_rate to 1.0 to capture 100%

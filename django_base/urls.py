@@ -8,6 +8,7 @@ from rest_framework.routers import DefaultRouter
 from django.contrib import admin
 from django.urls import path, include, re_path
 
+from django_base.views import SytemStatusViewSet
 from users.urls import router as users_router
 from users.register_views import EmailVerification
 from django_notifications_views.urls import router as django_notifications_router
@@ -26,6 +27,8 @@ schema_view = get_schema_view(
 )
 
 base_router = DefaultRouter()
+base_router.register("system-status", SytemStatusViewSet, basename="system-status")
+
 base_router.registry.extend(users_router.registry)
 base_router.registry.extend(django_global_places_router.registry)
 base_router.registry.extend(django_notifications_router.registry)
@@ -36,6 +39,7 @@ base_router.registry.extend(django_notifications_router.registry)
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('__debug__/', include('debug_toolbar.urls')),
+
 
 ]
 
