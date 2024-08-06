@@ -1,0 +1,32 @@
+#!/bin/bash
+
+# Define tu nombre de contenedor Docker
+DOCKER_CONTAINER_NAME="web"
+
+echo "Iniciando tests pre push..."
+
+# Ejecuta los tests de Django dentro del contenedor Docker
+TEST_RESULT=$(docker compose exec -it $DOCKER_CONTAINER_NAME python3 manage.py test 2>&1)
+
+# Verifica si el contenedor está corriendo
+if echo "$TEST_RESULT" | grep -q "is not running"; then
+    echo "Error: El contenedor Docker '$DOCKER_CONTAINER_NAME' no está en ejecución."
+    exit 1
+fi
+
+# Verifica si hay un error en la respuesta del demonio de Docker
+if echo "$TEST_RESULT" | grep -q "Error response from daemon: No such container"; then
+    echo "Error: No se encontró el contenedor Docker '$DOCKER_CONTAINER_NAME'."
+    exit 1
+fi
+
+echo "$TEST_RESULT"
+# Verifica si hay fallos en los resultados de los tests
+if ! echo "$TEST_RESULT" | grep -q "FAILED"; then
+    echo "Procediendo con el push..."
+    exit 0
+fi
+
+# Si es un entorno gráfico, asume automáticamente la respuesta como 'no'
+echo "Abortando el push debido a los fallos en los tests."
+exit 1
