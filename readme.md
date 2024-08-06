@@ -187,7 +187,7 @@ python manage.py generate_secret_key
 
 ```
 
-- In the "DB settings" sectio, you can select the database you want to use. If you choose "sqlite3", no further configuration is necessary.
+- In the "settings/db_settings.py", you can select the database you want to use. If you choose "sqlite3", no further configuration is necessary.
 
   
 
@@ -197,10 +197,7 @@ python manage.py generate_secret_key
 
 - In the "Email Settings" section, you can select the email provider. If you choose "console," no further configuration is necessary. However, if you select "aws," you must specify your credentials.
 
-  
 
-  
-  
 
 **Install all requirements:**
 
@@ -397,7 +394,7 @@ To enable async functionalities, follow these steps:
 	#gunicorn  -w  3  -b  :8000  django_base.wsgi:application
 	daphne -b 0.0.0.0 -p 8000 django_base.asgi:application
 	 ```
-- Uncomment "daphne" in the THIRD_APPS section of the`settings.py` file. **Ensure that it remains at the top of the list.***
+- Uncomment "daphne" in the THIRD_APPS section of the`settings/custom_settings.py` file. **Ensure that it remains at the top of the list.***
 	```
 	THIRD_APPS = [
 	'daphne',
@@ -416,7 +413,7 @@ Please follow these steps:
 	'channels',
 	...
 	``` 
-- Uncomment "ASGI_APPLICATION" from THIRD_APPS in the `settings.py` file.
+- Uncomment "ASGI_APPLICATION" from THIRD_APPS in the `settings/custom_settings.py` file.
 - Fill in the values for `BROKER_SERVER` and `BROKER_SERVER_PORT` within the `.env` file and make sure to use `USE_WEB_SOCKET` in True.
 	- You can use the default configuration for Redis. In that case, confirm that you have enabled redis in your project, as described in the **Redis** section of the documentation.
 		- `BROKER_SERVER='redis'`
@@ -442,7 +439,7 @@ We have a default configuration for celery to activate it, follow this steps:
 
 Within the .env file, you will find a variable named "CORS_ALLOWED_URLS."
 
-The URLs specified in this variable will be utilized in both the "CORS_ALLOWED_ORIGINS" and "CORS_ORIGIN_WHITELIST" settings.
+The URLs specified in this variable will be utilized in both the "CORS_ALLOWED_ORIGINS" and "CORS_ORIGIN_WHITELIST" settings. (The value for FRONT_URL will automatically be added to the list of allowed URLs.)
 
   
 

@@ -6,7 +6,9 @@ from django_base.settings.configurations import LANGUAGES
 
 DJANGO_CONTAINER_NAME = "web"
 POSTGRES_CONTAINER_NAME = "db"
-
+DATABASES = [
+    "default",
+]
 
 def get_env_value(key, filename=".env"):
     """
@@ -60,7 +62,11 @@ def run_make_migrations():
 
 
 def run_migrations():
-    run_django_command("migrate")
+    for database in DATABASES:
+        print(f"Running migrations for database: {database}\n")
+        run_django_command(f"migrate --database={database}")
+        print("\n")
+
 
 
 def run_makemessages():
