@@ -18,8 +18,7 @@ services:
   web:
     build: .
     command: bash -c "
-      chmod +x ./move_hooks.sh
-      && ./move_hooks.sh
+      python move_hooks.py
       && python manage.py migrate
       && python manage.py runserver 0.0.0.0:8000"
     ports:
