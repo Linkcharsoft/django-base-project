@@ -383,6 +383,8 @@ After this, an ExpoToken model will be created, and two new endpoints will be en
 To activate it in the project just uncomment the `redis` service in the `docker-compose.yml` file.
 This allows you to use it in env configurations as `BROKER_SERVER`.
 
+I you are using our infrastructure in AWS, you can uncomment all the lines in the terraform file `elasticache.tf` and it will create everything you need to use it and show `redis_service_host` as output this will be the value for `BROKER_SERVER`. (The redis port is almost always 6379)
+
 ## Async functionalities
 This template includes pre-configurations for implementing asynchronous functionalities, particularly useful for features like web sockets.
 
