@@ -255,6 +255,7 @@ This hook behavior can be bypassed using “git commit –no-verify” or “git
 
   
 **Runcommands**
+
 We also have a `runcommands.py` file in the project's root directory. This file contains some useful commands that can be executed from the command line. It has an interactive menu that allows you to select the desired command.
 
 Keep in mind that Docker Compose must be running to use it.

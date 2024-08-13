@@ -21,7 +21,6 @@ BASE_APPS = [
     "debug_toolbar",
     "django_extensions",
     "django_filters",
-    "notifications",
 ]
 
 # <-------------- Apps settings -------------->
