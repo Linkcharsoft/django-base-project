@@ -4,7 +4,7 @@ import subprocess
 
 print("Instalando hooks...")
 
-# Ruta del directorio donde están los hooks en el repositorio
+# Ruta del directorio donde están los hooks en el repositorio 
 HOOKS_DIR = "hooks"
 
 # Ruta del directorio de hooks de git
