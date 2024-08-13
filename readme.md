@@ -243,27 +243,21 @@ sudo  docker-compose  -f  docker-compose-production.yml  up  -d
 
   
 
-**Code Formater**
+**Hooks**
 
 In the requirements file, we have included the [black](https://pypi.org/project/black/) library to ensure a high standard of code formatting.
 
-Additionally, you will find a "pre-commit" file in the project's root directory, which should be copied to the hooks folder within the .git folder.
+There is a file called “move_hook.py” that moves files from the hooks folder to the .git/hooks directory so that when you execute “git commit,” the code is automatically formatted. 
+
+Additionally, there is another hook that, in case tests have been created, ensures that when “git push” is executed, the tests are run first, and the code is only pushed if the tests pass successfully.
+
+This hook behavior can be bypassed using “git commit –no-verify” or “git push –no-verify.”
 
   
-
-For Linux users, it is necessary to execute the following command to make it executable.
-
-```bash
-
-chmod  +x  .git/hooks/pre-commit
-
-```
-
-  
-  
-
+**Runcommands**
 We also have a `runcommands.py` file in the project's root directory. This file contains some useful commands that can be executed from the command line. It has an interactive menu that allows you to select the desired command.
 
+Keep in mind that Docker Compose must be running to use it.
   
   
 
