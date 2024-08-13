@@ -1,0 +1,11 @@
+#!/bin/bash
+
+# Run black on staged files
+files=$(git diff --cached --name-only --diff-filter=ACM "*.py" | tr '\n' ' ')
+if [[ -n $files ]]; then
+    black $files
+    git add $files
+fi
+
+# Proceed with the original commit
+exit 0
