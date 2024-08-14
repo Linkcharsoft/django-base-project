@@ -109,6 +109,10 @@ def run_tests():
     cmd = f"docker compose exec {DJANGO_CONTAINER_NAME} python manage.py test"
     subprocess.run(cmd, shell=True)
 
+def run_pytest_with_coverage():
+    cmd = f"docker compose exec {DJANGO_CONTAINER_NAME} pytest --cov=. --cov-report=html"
+    subprocess.run(cmd, shell=True)
+
 
 def interactive_menu():
     while True:
@@ -124,7 +128,8 @@ def interactive_menu():
         print("8. Enter PostgreSQL container")
         print("9. Enter PostgreSQL shell (psql)")
         print("10. Run tests")
-        print("11. Quit")
+        print("11. Run pytest with coverage")
+        print("12. Quit")
 
         # print("\n--- Comandos de Proyecto Específico ---")
         choice = input("Enter your choice: ")
@@ -160,6 +165,9 @@ def interactive_menu():
             run_tests()
             break
         elif choice == "11":
+            run_pytest_with_coverage()
+            break
+        elif choice == "12":
             break
         else:
             print("Invalid choice. Please try again.")
@@ -194,6 +202,7 @@ def main():
         "--postgres-shell", action="store_true", help="Enter PostgreSQL shell (psql)"
     )
     parser.add_argument("--tests", action="store_true", help="Run tests")
+    parser.add_argument("--pytest-cov", action="store_true", help="Run pytest with coverage")
 
     args = parser.parse_args()
 
@@ -219,6 +228,8 @@ def main():
             enter_postgres_shell()
         elif args.tests:
             run_tests()
+        elif args.pytest_cov:
+            run_pytest_with_coverage()
     else:
         # No arguments provided, show interactive menu
         interactive_menu()

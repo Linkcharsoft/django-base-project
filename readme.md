@@ -253,6 +253,80 @@ Additionally, there is another hook that, in case tests have been created, ensur
 
 This hook behavior can be bypassed using “git commit –no-verify” or “git push –no-verify.”
 
+
+**Running Tests and Generating Coverage Report with pytest**
+
+This project uses pytest along with coverage.py and pytest-django to run tests and generate a code coverage report. Below are the steps to configure and execute these tools:
+
+- *1. Installing Dependencies*
+
+Before running the tests, make sure you have the necessary dependencies installed. 
+
+```bash
+
+pip install -r requirements.txt
+
+```
+
+Make sure that pytest, coverage.py, and pytest-django are installed. 
+
+
+- *2. Configuring pytest with pytest-django*
+
+To integrate pytest with Django, you need to create a pytest.ini configuration file in the root directory of your project. This file should contain the necessary settings for pytest-django to work correctly.
+
+Create a pytest.ini file with the following content:
+
+```bash
+
+DJANGO_SETTINGS_MODULE = myproject.settings  
+python_files = test_*.py *_test.py
+
+```
+
+This tells pytest where to find the Django settings and which files to consider as tests.
+
+- *3. Running Tests with pytest*
+
+To run all tests in the project, simply use the following command:
+
+```bash
+
+pytest
+
+```
+
+This will run all test files that follow the test_*.py or *_test.py naming conventions.
+
+- *4. Generating Coverage Report*
+
+To obtain a code coverage report along with running the tests, use the following command:
+
+```bash
+
+"pytest --cov=<package_or_module_name> --cov-report=html"
+
+"pytest --cov=. --cov-report=html" (full project coverage)
+
+```
+
+Parameter Descriptions:
+
+--cov=<package_or_module_name>: Specifies the package or module for which you want to measure coverage.
+
+--cov-report=html: Generates a coverage report in HTML format, which will be saved in a directory called htmlcov. You can open the index.html file in a browser to view a detailed report.
+
+
+- *5. Interpreting the Coverage Report*
+
+Terminal Coverage: After running the above command, you will see a summary in the terminal indicating the coverage percentage for each file, along with the lines of code that were not covered.
+
+HTML Report: Open the htmlcov/index.html file in your browser to view an interactive report. This report allows you to explore the project's files and see which lines of code were executed during the tests and which were not.
+
+- *6. Excluding Code from Coverage*
+
+If there are parts of the code that you do not want to include in the coverage report (e.g., code that only runs in specific environments), you can mark them using the # pragma: no cover comment on the corresponding line.
+
   
 **Runcommands**
 
