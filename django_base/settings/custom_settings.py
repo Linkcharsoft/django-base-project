@@ -22,7 +22,8 @@ from django_base.settings.configurations import (
 THIRD_APPS = [
     # 'daphne',
     # 'channels',
-    "django_notifications_views"
+    "django_notifications_views",
+    "notifications",
 ]
 
 MY_APPS = [
@@ -103,6 +104,12 @@ CORS_ORIGIN_WHITELIST = CORS_ALLOWED_URLS
 #     "127.0.0.1",
 #     "0.0.0.0"
 # ]
+
+# <---------------------- DJANGO_NOTIFICATIONS_VIEWS ---------------------->
+DJANGO_NOTIFICATIONS_VIEWS = {
+    'AUTO_DELETE_NOTIFICATIONS': True,  
+    'NOTIFICATIONS_DELETE_DAYS': 70,
+}
 
 # <---------------------- CRON ---------------------->
 CRONJOBS = [
