@@ -428,9 +428,9 @@ Now if the client sends the "Accept-Language" header with the desired language, 
 
 
 ## Notifications
-We use [**django-notifications-hq**](https://pypi.org/project/django-notifications-hq/) to manage notifications.
+We use [**django-notifications-views**](https://pypi.org/project/django-notifications-views/) which is a custom version of [**django-notifications-hq**](https://pypi.org/project/django-notifications-hq/) to manage notifications.
 
-We have already developed a ViewSet with 3 endpoints, one for listing notifications, one for details, and an extra one to mark all notifications as read.
+This custom library has new 3 endpoints, one for listing notifications, one for details, and an extra one to mark all notifications as read.
 
 If you want to create notifications at any point in the system, you can do it with the following lines:
 
@@ -440,12 +440,21 @@ notify.send(actor, recipient, verb, action_object, target, level, description, p
 ```
 
 
-On the other hand, if you want to send push notifications through ExpoGO, you can also do that. For this, you will need to turn on a variable in the .env file, specifically USE_EXPO_NOTIFICATIONS=True.
+On the other hand, if you want to send push notifications through ExpoGO you will need to turn on some config in the django_base/settings/configurations.py file:
+
+```python
+DJANGO_NOTIFICATIONS_VIEWS = {
+    'USE_EXPO_NOTIFICATIONS': True,
+    'EXPO_APP_ID': 'YOUR_EXPO_APP_ID', 
+}
+```
 
 After this, an ExpoToken model will be created, and two new endpoints will be enabled:
 
 1. The first one is for registering Expo tokens for the registered user. This should be used every time the user logs in or registers from the frontend.
 2. The second one is for deleting the mentioned token, and it should be used when the user logs out of the system.
+
+More info [here](https://pypi.org/project/django-notifications-views/)
 
 
 ## Redis
