@@ -108,13 +108,16 @@ CORS_ORIGIN_WHITELIST = CORS_ALLOWED_URLS
 # <---------------------- DJANGO_NOTIFICATIONS_VIEWS ---------------------->
 DJANGO_NOTIFICATIONS_VIEWS = {
     'AUTO_DELETE_NOTIFICATIONS': True,  
-    'NOTIFICATIONS_DELETE_DAYS': 70,
+    'NOTIFICATIONS_DELETE_DAYS': 30,
 }
+
+DJANGO_NOTIFICATIONS_CRON_SCHEDULE = "* * * * *" # every minute
 
 # <---------------------- CRON ---------------------->
 CRONJOBS = [
     # ('0 0 * * *', '<app_name>.cron.<def_name>'),
 ]
+
 
 
 if USE_DEBUG_TOOLBAR:
