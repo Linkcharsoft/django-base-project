@@ -187,7 +187,7 @@ python manage.py generate_secret_key
 
 ```
 
-- In the "DB settings" sectio, you can select the database you want to use. If you choose "sqlite3", no further configuration is necessary.
+- In the "settings/db_settings.py", you can select the database you want to use. If you choose "sqlite3", no further configuration is necessary.
 
   
 
@@ -197,10 +197,7 @@ python manage.py generate_secret_key
 
 - In the "Email Settings" section, you can select the email provider. If you choose "console," no further configuration is necessary. However, if you select "aws," you must specify your credentials.
 
-  
 
-  
-  
 
 **Install all requirements:**
 
@@ -246,27 +243,96 @@ sudo  docker-compose  -f  docker-compose-production.yml  up  -d
 
   
 
-**Code Formater**
+**Hooks**
 
 In the requirements file, we have included the [black](https://pypi.org/project/black/) library to ensure a high standard of code formatting.
 
-Additionally, you will find a "pre-commit" file in the project's root directory, which should be copied to the hooks folder within the .git folder.
+There is a file called “move_hook.py” that moves files from the hooks folder to the .git/hooks directory so that when you execute “git commit,” the code is automatically formatted. 
 
-  
+Additionally, there is another hook that, in case tests have been created, ensures that when “git push” is executed, the tests are run first, and the code is only pushed if the tests pass successfully.
 
-For Linux users, it is necessary to execute the following command to make it executable.
+This hook behavior can be bypassed using “git commit –no-verify” or “git push –no-verify.”
+
+
+**Running Tests and Generating Coverage Report with pytest**
+
+This project uses pytest along with coverage.py and pytest-django to run tests and generate a code coverage report. Below are the steps to configure and execute these tools:
+
+- *1. Installing Dependencies*
+
+Before running the tests, make sure you have the necessary dependencies installed. 
 
 ```bash
 
-chmod  +x  .git/hooks/pre-commit
+pip install -r requirements.txt
 
 ```
 
+Make sure that pytest, coverage.py, and pytest-django are installed. 
+
+
+- *2. Configuring pytest with pytest-django*
+
+To integrate pytest with Django, you need to create a pytest.ini configuration file in the root directory of your project. This file should contain the necessary settings for pytest-django to work correctly.
+
+Create a pytest.ini file with the following content:
+
+```bash
+
+DJANGO_SETTINGS_MODULE = myproject.settings  
+python_files = test_*.py *_test.py
+
+```
+
+This tells pytest where to find the Django settings and which files to consider as tests.
+
+- *3. Running Tests with pytest*
+
+To run all tests in the project, simply use the following command:
+
+```bash
+
+pytest
+
+```
+
+This will run all test files that follow the test_*.py or *_test.py naming conventions.
+
+- *4. Generating Coverage Report*
+
+To obtain a code coverage report along with running the tests, use the following command:
+
+```bash
+
+"pytest --cov=<package_or_module_name> --cov-report=html"
+
+"pytest --cov=. --cov-report=html" (full project coverage)
+
+```
+
+Parameter Descriptions:
+
+--cov=<package_or_module_name>: Specifies the package or module for which you want to measure coverage.
+
+--cov-report=html: Generates a coverage report in HTML format, which will be saved in a directory called htmlcov. You can open the index.html file in a browser to view a detailed report.
+
+
+- *5. Interpreting the Coverage Report*
+
+Terminal Coverage: After running the above command, you will see a summary in the terminal indicating the coverage percentage for each file, along with the lines of code that were not covered.
+
+HTML Report: Open the htmlcov/index.html file in your browser to view an interactive report. This report allows you to explore the project's files and see which lines of code were executed during the tests and which were not.
+
+- *6. Excluding Code from Coverage*
+
+If there are parts of the code that you do not want to include in the coverage report (e.g., code that only runs in specific environments), you can mark them using the # pragma: no cover comment on the corresponding line.
+
   
-  
+**Runcommands**
 
 We also have a `runcommands.py` file in the project's root directory. This file contains some useful commands that can be executed from the command line. It has an interactive menu that allows you to select the desired command.
 
+Keep in mind that Docker Compose must be running to use it.
   
   
 
@@ -362,9 +428,9 @@ Now if the client sends the "Accept-Language" header with the desired language, 
 
 
 ## Notifications
-We use [**django-notifications-hq**](https://pypi.org/project/django-notifications-hq/) to manage notifications.
+We use [**django-notifications-views**](https://pypi.org/project/django-notifications-views/) which is a custom version of [**django-notifications-hq**](https://pypi.org/project/django-notifications-hq/) to manage notifications.
 
-We have already developed a ViewSet with 3 endpoints, one for listing notifications, one for details, and an extra one to mark all notifications as read.
+This custom library has new 3 endpoints, one for listing notifications, one for details, and an extra one to mark all notifications as read.
 
 If you want to create notifications at any point in the system, you can do it with the following lines:
 
@@ -374,17 +440,28 @@ notify.send(actor, recipient, verb, action_object, target, level, description, p
 ```
 
 
-On the other hand, if you want to send push notifications through ExpoGO, you can also do that. For this, you will need to turn on a variable in the .env file, specifically USE_EXPO_NOTIFICATIONS=True.
+On the other hand, if you want to send push notifications through ExpoGO you will need to turn on some config in the django_base/settings/configurations.py file:
+
+```python
+DJANGO_NOTIFICATIONS_VIEWS = {
+    'USE_EXPO_NOTIFICATIONS': True,
+    'EXPO_APP_ID': 'YOUR_EXPO_APP_ID', 
+}
+```
 
 After this, an ExpoToken model will be created, and two new endpoints will be enabled:
 
 1. The first one is for registering Expo tokens for the registered user. This should be used every time the user logs in or registers from the frontend.
 2. The second one is for deleting the mentioned token, and it should be used when the user logs out of the system.
 
+More info [here](https://pypi.org/project/django-notifications-views/)
+
 
 ## Redis
 To activate it in the project just uncomment the `redis` service in the `docker-compose.yml` file.
 This allows you to use it in env configurations as `BROKER_SERVER`.
+
+I you are using our infrastructure in AWS, you can uncomment all the lines in the terraform file `elasticache.tf` and it will create everything you need to use it and show `redis_service_host` as output this will be the value for `BROKER_SERVER`. (The redis port is almost always 6379)
 
 ## Async functionalities
 This template includes pre-configurations for implementing asynchronous functionalities, particularly useful for features like web sockets.
@@ -397,7 +474,7 @@ To enable async functionalities, follow these steps:
 	#gunicorn  -w  3  -b  :8000  django_base.wsgi:application
 	daphne -b 0.0.0.0 -p 8000 django_base.asgi:application
 	 ```
-- Uncomment "daphne" in the THIRD_APPS section of the`settings.py` file. **Ensure that it remains at the top of the list.***
+- Uncomment "daphne" in the THIRD_APPS section of the`settings/custom_settings.py` file. **Ensure that it remains at the top of the list.***
 	```
 	THIRD_APPS = [
 	'daphne',
@@ -416,7 +493,7 @@ Please follow these steps:
 	'channels',
 	...
 	``` 
-- Uncomment "ASGI_APPLICATION" from THIRD_APPS in the `settings.py` file.
+- Uncomment "ASGI_APPLICATION" from THIRD_APPS in the `settings/custom_settings.py` file.
 - Fill in the values for `BROKER_SERVER` and `BROKER_SERVER_PORT` within the `.env` file and make sure to use `USE_WEB_SOCKET` in True.
 	- You can use the default configuration for Redis. In that case, confirm that you have enabled redis in your project, as described in the **Redis** section of the documentation.
 		- `BROKER_SERVER='redis'`
@@ -442,7 +519,7 @@ We have a default configuration for celery to activate it, follow this steps:
 
 Within the .env file, you will find a variable named "CORS_ALLOWED_URLS."
 
-The URLs specified in this variable will be utilized in both the "CORS_ALLOWED_ORIGINS" and "CORS_ORIGIN_WHITELIST" settings.
+The URLs specified in this variable will be utilized in both the "CORS_ALLOWED_ORIGINS" and "CORS_ORIGIN_WHITELIST" settings. (The value for FRONT_URL will automatically be added to the list of allowed URLs.)
 
   
 
