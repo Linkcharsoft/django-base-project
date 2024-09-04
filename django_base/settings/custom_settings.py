@@ -24,6 +24,7 @@ THIRD_APPS = [
     # 'channels',
     "django_notifications_views",
     "notifications",
+    "django_crontab",
 ]
 
 MY_APPS = [
@@ -107,17 +108,17 @@ CORS_ORIGIN_WHITELIST = CORS_ALLOWED_URLS
 
 # <---------------------- DJANGO_NOTIFICATIONS_VIEWS ---------------------->
 DJANGO_NOTIFICATIONS_VIEWS = {
-    'AUTO_DELETE_NOTIFICATIONS': True,  
-    'NOTIFICATIONS_DELETE_DAYS': 30,
+    "AUTO_DELETE_NOTIFICATIONS": True,
+    "NOTIFICATIONS_DELETE_DAYS": 30,
+    "DJANGO_NOTIFICATIONS_CRON_SCHEDULE": "* * * * *",  # every minute
 }
 
-DJANGO_NOTIFICATIONS_CRON_SCHEDULE = "* * * * *" # every minute
 
 # <---------------------- CRON ---------------------->
 CRONJOBS = [
     # ('0 0 * * *', '<app_name>.cron.<def_name>'),
+    ("* * * * *", "django.core.management.call_command", ["delete_old_notifications"]),
 ]
-
 
 
 if USE_DEBUG_TOOLBAR:

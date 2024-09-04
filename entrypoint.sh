@@ -8,7 +8,7 @@ python manage.py collectstatic --noinput
 python manage.py shell -c "from django_notifications_views.cron_config import write_cron_job; write_cron_job()"
 
 # Registrar el archivo de cron
-crontab /code/notifications_cron
+crontab /django_base/notifications_cron
 
 # Iniciar el servicio de cron
 service cron start
