@@ -5,6 +5,9 @@ from channels.exceptions import DenyConnection, AcceptConnection
 
 
 class ConsumerPermission:
+    def has_object_permission(self, scope, obj):
+        raise NotImplementedError
+
     def has_permission(self, scope):
         raise NotImplementedError
 
@@ -15,7 +18,6 @@ class IsAuthenticated(ConsumerPermission):
 
     def has_permission(self, scope):
         user = scope.get("user", None)
-        print(user)
 
         if user is None:
             return False
@@ -23,7 +25,14 @@ class IsAuthenticated(ConsumerPermission):
         return user.is_authenticated
 
 
-class WebSocketConsumerPermissionsMixin:
+class AllowAny(ConsumerPermission):
+    def has_permission(self, scope):
+        return True
+
+
+class CustomAsyncWebsocketConsumer(AsyncWebsocketConsumer):
+    permission_classes = [AllowAny]
+
     def permission_denied(self, scope, message=None, code=None):
         raise DenyConnection(message, code)
 
@@ -40,18 +49,18 @@ class WebSocketConsumerPermissionsMixin:
                 )
 
     async def websocket_connect(self, message):
-        print(self.groups)
         try:
             self.check_permissions(self.scope)
             await self.connect()
         except AcceptConnection:
             await self.accept()
         except DenyConnection as e:
-            code, message = e.args
-            await self.close(code=code, reason=message)
+            message, code = e.args
+            # TODO reason is not accepted in this version of channels?
+            await self.close(code=code)  # , reason=message)
 
 
-class ChatConsumer(WebSocketConsumerPermissionsMixin, AsyncWebsocketConsumer):
+class ChatConsumer(CustomAsyncWebsocketConsumer):
     permission_classes = [IsAuthenticated]
 
     async def connect(self):
@@ -86,7 +95,6 @@ class ChatConsumer(WebSocketConsumerPermissionsMixin, AsyncWebsocketConsumer):
     # Handler for messages sent to the group
     async def chat_message(self, event):
         message = event["message"]
-        role = event["role"]
 
         # Send message to WebSocket
         await self.send(
