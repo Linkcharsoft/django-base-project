@@ -6,7 +6,10 @@ from django.db.models import UniqueConstraint
 from django.dispatch import receiver
 from django.db import models
 
-from django_base.base_utils.base_models import BaseSoftDeleteModel, BaseUserCustomManager
+from django_base.base_utils.base_models import (
+    BaseSoftDeleteModel,
+    BaseUserCustomManager,
+)
 
 
 class User(BaseSoftDeleteModel, AbstractUser):
@@ -29,6 +32,11 @@ class User(BaseSoftDeleteModel, AbstractUser):
 
 class Profile(BaseSoftDeleteModel):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="profile")
+    is_register_complete = models.BooleanField(default=False)
+
+    def complete_register(self):
+        self.is_register_complete = True
+        self.save()
 
 
 class TokenRecovery(models.Model):

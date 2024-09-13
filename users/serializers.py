@@ -9,9 +9,17 @@ from users.models import User, Profile
 
 
 class UserProfileSerializer(BaseSoftDeleteSerializer):
+    is_register_complete = serializers.BooleanField(read_only=True)
+
     class Meta:
         model = Profile
-        exclude = ["user", "created_at", "updated_at", "deleted", "deleted_at"]
+        exclude = [
+            "user",
+            "created_at",
+            "updated_at",
+            "deleted",
+            "deleted_at",
+        ]
 
 
 class UserSerializer(WritableNestedModelSerializer, BaseSoftDeleteSerializer):
@@ -25,3 +33,11 @@ class UserSerializer(WritableNestedModelSerializer, BaseSoftDeleteSerializer):
         data = super().to_representation(instance)
         data["email"] = instance.email
         return data
+
+
+class UserCompleteRegisterSerializer(UserProfileSerializer):
+    profile = UserProfileSerializer()
+
+    class Meta:
+        model = User
+        fields = ("profile",)
