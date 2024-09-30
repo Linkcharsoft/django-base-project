@@ -26,6 +26,10 @@ THIRD_APPS = [
     "django_notifications_views"
 ]
 
+if USE_WEB_SOCKET:
+    # Load daphne and channels first
+    THIRD_APPS = ["daphne", "channels"] + THIRD_APPS
+
 MY_APPS = [
     "users",
     "django_global_places",
