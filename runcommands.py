@@ -2,12 +2,13 @@ import os
 import argparse
 import subprocess
 
-from django_base.settings.configurations import LANGUAGES
-
 DJANGO_CONTAINER_NAME = "web"
 POSTGRES_CONTAINER_NAME = "db"
 DATABASES = [
     "default",
+]
+LANGUAGES = [
+    ("en", "English"),
 ]
 
 def get_env_value(key, filename=".env"):
