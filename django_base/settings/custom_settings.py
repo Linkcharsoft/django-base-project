@@ -41,24 +41,25 @@ INSTALLED_APPS = THIRD_APPS + MY_APPS + BASE_APPS
 ASGI_APPLICATION = "django_base.asgi.application"
 
 # <-------------- Media and Static settings --------- ----->
-
 if USE_S3:
     # aws settings
     AWS_S3_CUSTOM_DOMAIN = f"{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com"
     AWS_S3_OBJECT_PARAMETERS = {
         "CacheControl": "max-age=86400",
     }
-    AWS_LOCATION = "static"
     AWS_DEFAULT_ACL = None
-    # s3 static settings
-    # STATICFILES_STORAGE = "django_base.storage_backends.StaticStorage"
     # s3 public media settings
-    DEFAULT_FILE_STORAGE = "django_base.storage_backends.PublicMediaStorage"
-    # s3 private media settings
-    PRIVATE_MEDIA_LOCATION = "private"
-    PRIVATE_FILE_STORAGE = "django_base.storage_backends.PrivateMediaStorage"
     PUBLIC_MEDIA_LOCATION = "media"
     MEDIA_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/{PUBLIC_MEDIA_LOCATION}/"
+
+    STORAGES = {
+        "default": {
+            "BACKEND": "django_base.storage_backends.PublicMediaStorage",
+        },
+        "staticfiles": {
+            "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
+        },
+    }
 else:
     MEDIA_URL = "/media/"
     MEDIA_ROOT = BASE_DIR / "media"
