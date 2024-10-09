@@ -13,7 +13,7 @@ RUN apt-get install -y wget gnupg2 lsb-release && \
     wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add -
 
 RUN apt-get update && \
-    apt-get install -y cron gettext vim postgresql-client-15
+    apt-get install -y cron gettext vim postgresql-client-15 htop
 
 COPY requirements.txt ./
 COPY requirements ./requirements
