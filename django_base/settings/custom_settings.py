@@ -1,3 +1,4 @@
+from datetime import timedelta
 from django_base.settings.django_settings import BASE_APPS, AUTH_PASSWORD_VALIDATORS
 from django_base.settings.environment_variables import (
     BROKER_SERVER,
@@ -20,10 +21,14 @@ from django_base.settings.configurations import (
 
 
 THIRD_APPS = [
-    # 'daphne',
-    # 'channels',
+    # "daphne",
+    # "channels",
     "django_notifications_views"
 ]
+
+if USE_WEB_SOCKET:
+    # Load daphne and channels first
+    THIRD_APPS = ["daphne", "channels"] + THIRD_APPS
 
 MY_APPS = [
     "users",
@@ -183,13 +188,17 @@ SWAGGER_SETTINGS = {
 
 if USE_JWT:  # WITH COOKIECUTTER
     REST_FRAMEWORK["DEFAULT_AUTHENTICATION_CLASSES"] = (
-        ("dj_rest_auth.jwt_auth.JWTAuthentication",),
+        "dj_rest_auth.jwt_auth.JWTAuthentication",
     )
 
     REST_AUTH["USE_JWT"] = True
     REST_AUTH["JWT_AUTH_HTTPONLY"] = False
     REST_AUTH["JWT_AUTH_RETURN_EXPIRATION"] = True
 
+    SIMPLE_JWT = {
+        "ACCESS_TOKEN_LIFETIME": timedelta(days=2),
+        "REFRESH_TOKEN_LIFETIME": timedelta(days=5),
+    }
 
 # <-------------- Sentry -------------->
 if IS_PRODUCTION:
