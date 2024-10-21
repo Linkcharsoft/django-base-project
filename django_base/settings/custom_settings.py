@@ -21,9 +21,7 @@ from django_base.settings.configurations import (
 
 
 THIRD_APPS = [
-    # "daphne",
-    # "channels",
-    "django_notifications_views"
+    # "django_crontab",
 ]
 
 if USE_WEB_SOCKET:
@@ -34,6 +32,7 @@ MY_APPS = [
     "users",
     "django_global_places",
     "platform_configurations",
+    "notifications",
 ]
 
 INSTALLED_APPS = THIRD_APPS + MY_APPS + BASE_APPS
@@ -110,10 +109,6 @@ CORS_ORIGIN_WHITELIST = CORS_ALLOWED_URLS
 #     "0.0.0.0"
 # ]
 
-# <---------------------- CRON ---------------------->
-CRONJOBS = [
-    # ('0 0 * * *', '<app_name>.cron.<def_name>'),
-]
 
 
 if USE_DEBUG_TOOLBAR:

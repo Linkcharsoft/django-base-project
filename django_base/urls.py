@@ -5,12 +5,12 @@ from rest_framework.routers import DefaultRouter
 
 from django.contrib import admin
 from django.urls import path, include, re_path
+from notifications.urls import router as notifications_router
 
 from users.urls import router as users_router
 
 from platform_configurations.urls import router as platform_configurations_router
 
-from django_notifications_views.urls import router as django_notifications_router
 from django_global_places.urls import router as django_global_places_router
 
 
@@ -26,9 +26,10 @@ schema_view = get_schema_view(
 
 base_router = DefaultRouter()
 base_router.registry.extend(users_router.registry)
-base_router.registry.extend(django_global_places_router.registry)
-base_router.registry.extend(django_notifications_router.registry)
 base_router.registry.extend(platform_configurations_router.registry)
+base_router.registry.extend(django_global_places_router.registry)
+base_router.registry.extend(notifications_router.registry)
+
 
 
 # fmt: off
