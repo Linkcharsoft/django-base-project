@@ -14,23 +14,35 @@ def get_random_string(length):
     result_str = "".join(random.choice(characters) for i in range(length))
     return result_str
 
+
 def get_date_with_timezone(date):
     return timezone.make_aware(date, timezone.get_default_timezone())
+
 
 def check_required_fields(data, required_fields):
     errors = {}
     for field in required_fields:
         if field not in data:
-            errors[field] = (
-                _("This field is required"),
-                )
+            errors[field] = (_("This field is required"),)
     return errors
+
 
 def check_fields_options(field_name, field_value, options):
     if field_value not in options:
-        return {field_name: (
-            _("Invalid option"),
-            )}
+        return {field_name: (_("Invalid option"),)}
+
+
+def check_required_fields_options(data, required_fields_options):
+    errors = {}
+    for field, options in required_fields_options.items():
+        if field not in data:
+            errors[field] = (_("This field is required"),)
+        else:
+            error = check_fields_options(field, data[field], options)
+            if error:
+                errors.update(error)
+    return errors
+
 
 def email_template_sender(
     subject, template_name, context, to_email, from_email=settings.DEFAULT_FROM_EMAIL
