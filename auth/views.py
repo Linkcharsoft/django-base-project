@@ -1,9 +1,15 @@
+from allauth.socialaccount.providers.google.views import GoogleOAuth2Adapter
+from allauth.socialaccount.providers.oauth2.client import OAuth2Client
+
+
+from dj_rest_auth.registration.views import SocialLoginView
 from dj_rest_auth.views import PasswordChangeView
 
-from rest_framework.response import Response
-from rest_framework import status
+
 from rest_framework.permissions import AllowAny
+from rest_framework.response import Response
 from rest_framework.decorators import action
+from rest_framework import status
 
 from django.contrib.auth.password_validation import validate_password
 from django.utils.translation import gettext_lazy as _
@@ -11,9 +17,9 @@ from django.core.exceptions import ValidationError
 from django.utils import timezone
 from django.conf import settings
 
+from django_base.base_utils.utils import get_random_string, email_template_sender
 from django_base.base_utils.base_viewsets import BaseGenericViewSet
 from users.models import User, TokenRecovery
-from django_base.base_utils.utils import get_random_string, email_template_sender
 
 
 class PasswordRecoveryViewSet(BaseGenericViewSet):
@@ -165,3 +171,9 @@ class PasswordChangeViewModify(PasswordChangeView):
         # request.user.save()
 
         return Response(_("New password has been saved."), status=status.HTTP_200_OK)
+
+
+class GoogleLogin(SocialLoginView):
+    adapter_class = GoogleOAuth2Adapter
+    client_class = OAuth2Client
+    callback_url = settings.GOOGLE_REDIRECT_URI

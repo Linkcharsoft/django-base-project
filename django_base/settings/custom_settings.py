@@ -110,7 +110,6 @@ CORS_ORIGIN_WHITELIST = CORS_ALLOWED_URLS
 # ]
 
 
-
 if USE_DEBUG_TOOLBAR:
     import socket  # only if you haven't already imported this
 
@@ -164,7 +163,7 @@ REST_FRAMEWORK = {
 }
 
 SITE_ID = 1
-
+REST_USE_JWT = True
 
 # <-------------- SWAGGER configurations -------------->
 SWAGGER_SETTINGS = {
@@ -212,3 +211,12 @@ if IS_PRODUCTION:
         # We recommend adjusting this value in production.
         profiles_sample_rate=1.0,
     )
+
+
+# <-------------- Google settings -------------->
+SOCIALACCOUNT_PROVIDERS = {
+    "google": {
+        "SCOPE": ["profile", "email", "openid"],
+        "AUTH_PARAMS": {"access_type": "offline"},
+    }
+}
