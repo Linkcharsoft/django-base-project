@@ -31,9 +31,9 @@ urlpatterns = [
     path("password/recovery/confirm/", recovery_confirm, name="rest_password_recovery_confirm"),
 
     # Registration
-    path("api/auth/registration/", include("dj_rest_auth.registration.urls")),
+    path("registration/", include("dj_rest_auth.registration.urls")),
 
-    path("api/allauth/", include("allauth.urls")),
+    path("allauth/", include("allauth.urls")),
 
     path("dj-rest-auth/google/", GoogleLogin.as_view(), name="google_login"),
 ]
