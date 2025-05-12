@@ -5,6 +5,9 @@ from django_base.settings.environment_variables import BASE_DIR
 # <-------------- General configurations -------------->
 APP_NAME = "Django Base"
 USE_DEBUG_TOOLBAR = False
+BASE_EMAILS_BANNER_URL = (
+    "https://linkchar-static-bk.s3.us-east-1.amazonaws.com/Linkchar-banner.jpg"
+)
 
 # <-------------- Auth configurations -------------->
 USE_EMAIL_FOR_AUTHENTICATION = True

@@ -5,7 +5,6 @@ from allauth.socialaccount.providers.oauth2.client import OAuth2Client
 from dj_rest_auth.registration.views import SocialLoginView
 from dj_rest_auth.views import PasswordChangeView
 
-
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.decorators import action
@@ -17,7 +16,11 @@ from django.core.exceptions import ValidationError
 from django.utils import timezone
 from django.conf import settings
 
-from django_base.base_utils.utils import get_random_string, email_template_sender
+from django_base.base_utils.utils import (
+    get_random_string,
+    email_template_sender,
+    get_default_for_email_template,
+)
 from django_base.base_utils.base_viewsets import BaseGenericViewSet
 from users.models import User, TokenRecovery
 
@@ -65,18 +68,31 @@ class PasswordRecoveryViewSet(BaseGenericViewSet):
 
             TokenRecovery.objects.create(user=user, token=recovery_token)
 
-            email_subject = _("Password Reset for %(app_name)s") % {
-                "app_name": settings.APP_NAME
-            }
+            url = (
+                "/cambiar-contrasena/confirmar/"
+                if request_type == "change"
+                else "/recuperar-contrasena/confirmar/"
+            )
+            full_url = f"{settings.FRONT_URL}/{url}/{recovery_token}/{user.email}/"
+
+            normalized_request_type = (
+                "cambio" if request_type == "change" else "reseteo"
+            )
+
+            email_subject = (
+                f"{settings.APP_NAME} - {normalized_request_type} de contraseña"
+            )
 
             context = {
-                "FRONT_URL": settings.FRONT_URL,
+                "password_recovery_token_type": settings.PASSWORD_RECOVERY_TOKEN_TYPE,
+                "normalized_request_type": normalized_request_type,
                 "recovery_token": recovery_token,
-                "APP_NAME": settings.APP_NAME,
-                "REQUEST_TYPE": request_type,
-                "PASSWORD_RECOVERY_TOKEN_TYPE": settings.PASSWORD_RECOVERY_TOKEN_TYPE,
-                "EMAIL": user.email,
+                "front_url": settings.FRONT_URL,
+                "request_type": request_type,
+                "full_url": full_url,
+                "user": user,
             }
+            context.update(get_default_for_email_template())
 
             email_template_sender(
                 email_subject,

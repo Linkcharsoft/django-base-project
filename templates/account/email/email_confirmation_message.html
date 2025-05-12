@@ -1,0 +1,24 @@
+{% extends "base_templates/base.html" %}
+{% block content %}
+<h1 style="margin-top:0;">Confirma tu e-mail</h1>
+
+<p>Hola {{ user.get_full_name|default:user.username }},</p>
+
+<p>Para activar tu cuenta en <strong>{{ site_name }}</strong>, pulsa el botón o usa el enlace que aparece más abajo:</p>
+
+<p style="text-align:center;margin:32px 0;">
+    <a href="{{ activate_url }}"
+        style="background:#4caf50;color:#ffffff;padding:14px 28px;text-decoration:none;border-radius:4px;display:inline-block;">
+        Confirmar e-mail
+    </a>
+</p>
+
+<p>Si el botón no funciona, copia y pega este enlace en tu navegador:</p>
+<p style="word-break:break-all;">{{ activate_url }}</p>
+
+<hr style="border:none;border-top:1px solid #e0e0e0;margin:32px 0;">
+
+<p style="font-size:0.85rem;color:#666;">
+    Si no solicitaste este registro, puedes ignorar este mensaje.
+</p>
+{% endblock %}
