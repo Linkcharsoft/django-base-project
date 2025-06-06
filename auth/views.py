@@ -79,9 +79,7 @@ class PasswordRecoveryViewSet(BaseGenericViewSet):
                 "cambio" if request_type == "change" else "reseteo"
             )
 
-            email_subject = (
-                f"{settings.APP_NAME} - {normalized_request_type} de contraseña"
-            )
+            email_subject = f"Mail {normalized_request_type} de contraseña"
 
             context = {
                 "password_recovery_token_type": settings.PASSWORD_RECOVERY_TOKEN_TYPE,
