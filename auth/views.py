@@ -69,9 +69,9 @@ class PasswordRecoveryViewSet(BaseGenericViewSet):
             TokenRecovery.objects.create(user=user, token=recovery_token)
 
             url = (
-                "/cambiar-contrasena/confirmar/"
+                "cambiar-contrasena/confirmar"
                 if request_type == "change"
-                else "/recuperar-contrasena/confirmar/"
+                else "recuperar-contrasena/confirmar"
             )
             full_url = f"{settings.FRONT_URL}/{url}/{recovery_token}/{user.email}/"
 
