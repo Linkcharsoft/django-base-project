@@ -1,0 +1,1 @@
+Confirma tu e-mail en {{ site_name }}

@@ -44,9 +44,19 @@ def check_required_fields_options(data, required_fields_options):
     return errors
 
 
+def get_default_for_email_template():
+    context = {
+        "banner_url": settings.BASE_EMAILS_BANNER_URL,
+        "site_name": settings.APP_NAME,
+        "year": timezone.now().year,
+    }
+    return context
+
+
 def email_template_sender(
     subject, template_name, context, to_email, from_email=settings.DEFAULT_FROM_EMAIL
 ):
+    context.update(get_default_for_email_template())
     message = render_to_string(template_name, context)
     email = EmailMessage(subject, message, to=[to_email], from_email=from_email)
     email.content_subtype = "html"

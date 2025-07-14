@@ -71,7 +71,7 @@ STATIC_ROOT = BASE_DIR / "static"
 if USE_EMAIL_FOR_AUTHENTICATION:  # WITH COOKIECUTTER
     ACCOUNT_ADAPTER = "users.adapter.CustomAccountAdapter"
     ACCOUNT_EMAIL_REQUIRED = True
-    ACOOUNT_UNIQUE_EMAIL = True
+    ACCOUNT_UNIQUE_EMAIL = True
 
     ACCOUNT_EMAIL_VERIFICATION = "mandatory"
     ACCOUNT_AUTHENTICATION_METHOD = "email"
@@ -87,7 +87,10 @@ AUTH_USER_MODEL = "users.User"
 
 REST_AUTH = {
     "USER_DETAILS_SERIALIZER": "users.serializers.UserSerializer",
+    "REGISTER_SERIALIZER": "users.serializers.CustomRegisterSerializer",
 }
+
+ACCOUNT_EMAIL_SUBJECT_PREFIX = "\u200B"
 
 # <---------------------- Email configurations ---------------------->
 if EMAIL_PROVIDER == "console":
@@ -108,7 +111,6 @@ CORS_ORIGIN_WHITELIST = CORS_ALLOWED_URLS
 #     "127.0.0.1",
 #     "0.0.0.0"
 # ]
-
 
 
 if USE_DEBUG_TOOLBAR:
@@ -143,9 +145,6 @@ CUSTOM_AUTH_PASSWORD_VALIDATORS = [
     {
         "NAME": "django_base.base_utils.base_validators.SymbolValidator",
     },
-    {
-        "NAME": "django_base.base_utils.base_validators.NumberRequiredValidator",
-    },
 ]
 
 for validator in CUSTOM_AUTH_PASSWORD_VALIDATORS:
@@ -164,6 +163,7 @@ REST_FRAMEWORK = {
 }
 
 SITE_ID = 1
+REST_USE_JWT = True
 
 
 # <-------------- SWAGGER configurations -------------->
@@ -212,3 +212,12 @@ if IS_PRODUCTION:
         # We recommend adjusting this value in production.
         profiles_sample_rate=1.0,
     )
+
+
+# <-------------- Google settings -------------->
+SOCIALACCOUNT_PROVIDERS = {
+    "google": {
+        "SCOPE": ["profile", "email", "openid"],
+        "AUTH_PARAMS": {"access_type": "offline"},  # refresh_token
+    }
+}

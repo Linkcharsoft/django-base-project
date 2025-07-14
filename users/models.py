@@ -1,36 +1,23 @@
 from allauth.account.models import EmailAddress
 
+from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.models import AbstractUser
 from django.db.models.signals import post_save
-from django.db.models import UniqueConstraint
 from django.dispatch import receiver
 from django.db import models
 
 from django_base.base_utils.base_models import (
-    BaseSoftDeleteModel,
-    BaseUserCustomManager,
+    BaseModel,
 )
 
 
-class User(BaseSoftDeleteModel, AbstractUser):
-    objects = BaseUserCustomManager()
-
+class User(BaseModel, AbstractUser):
     class Meta:
-        constraints = [
-            UniqueConstraint(
-                name="unique_username",
-                fields=["username"],
-                condition=models.Q(deleted=False),
-            ),
-            UniqueConstraint(
-                name="unique_email",
-                fields=["email"],
-                condition=models.Q(deleted=False),
-            ),
-        ]
+        verbose_name = "User"
+        verbose_name_plural = "Users"
 
 
-class Profile(BaseSoftDeleteModel):
+class Profile(BaseModel):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="profile")
     is_register_complete = models.BooleanField(default=False)
 
@@ -53,6 +40,3 @@ def create_profile(sender, instance, **kwargs):
             EmailAddress.objects.create(
                 user=instance, email=instance.email, verified=True, primary=True
             )
-    else:
-        instance.profile.deleted = instance.deleted
-        instance.profile.save()
