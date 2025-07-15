@@ -15,7 +15,7 @@ BASE_APPS = [
     "allauth",
     "allauth.account",
     "allauth.socialaccount",
-    "allauth.socialaccount.providers.twitter",
+    "allauth.socialaccount.providers.google",
     "drf_yasg",
     "corsheaders",
     "debug_toolbar",

@@ -56,3 +56,9 @@ BROKER_SERVER_PORT = env("BROKER_SERVER_PORT", default=6379)
 
 # <-------------- Sentry settings -------------->
 SENTRY_DSN = env("SENTRY_DSN", default="")
+
+
+# <-------------- Google settings -------------->
+CLIENT_ID = env("CLIENT_ID", default="")
+CLIENT_SECRET = env("CLIENT_SECRET", default="")
+GOOGLE_REDIRECT_URI = env("GOOGLE_REDIRECT_URI", default="")

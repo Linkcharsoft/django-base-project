@@ -1,0 +1,10 @@
+Hola {{ user.get_full_name|default:user.username }},
+
+Para activar tu cuenta en {{ site_name }}, haz clic en el siguiente enlace o cópialo en tu navegador:
+
+{{ activate_url }}
+
+Si no solicitaste este registro, simplemente ignora este mensaje.
+
+-- El equipo de {{ site_name }}
+{{ year }}

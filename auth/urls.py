@@ -5,7 +5,7 @@ from dj_rest_auth.jwt_auth import get_refresh_view
 
 from rest_framework_simplejwt.views import TokenVerifyView
 
-from auth.views import PasswordChangeViewModify, PasswordRecoveryViewSet
+from auth.views import PasswordChangeViewModify, PasswordRecoveryViewSet, GoogleLogin
 
 
 recovery_send_mail = PasswordRecoveryViewSet.as_view({"post": "recovery_send_mail"})
@@ -31,8 +31,10 @@ urlpatterns = [
     path("password/recovery/confirm/", recovery_confirm, name="rest_password_recovery_confirm"),
 
     # Registration
-    path("api/auth/registration/", include("dj_rest_auth.registration.urls")),
+    path("registration/", include("dj_rest_auth.registration.urls")),
 
-    path("api/allauth/", include("allauth.urls")),
+    path("allauth/", include("allauth.urls")),
+
+    path("dj-rest-auth/google/", GoogleLogin.as_view(), name="google_login"),
 ]
 # fmt: on

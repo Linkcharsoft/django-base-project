@@ -15,9 +15,11 @@ RUN apt-get install -y wget gnupg2 lsb-release && \
 RUN apt-get update && \
     apt-get install -y cron gettext vim postgresql-client-15 htop
 
+RUN pip install --upgrade pip && \
+    pip install pip-tools
+
 COPY requirements.txt ./
-COPY requirements ./requirements
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip-sync requirements.txt
 
 COPY . .
 
