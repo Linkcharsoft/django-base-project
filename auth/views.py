@@ -51,11 +51,12 @@ class PasswordRecoveryViewSet(BaseGenericViewSet):
         url_name="password_recovery_email_send",
     )
     def recovery_send_mail(self, request):
-        request_type = (
-            request.data.get("request_type", "reset")
-            if settings.PASSWORD_CHANGE_BY_EMAIL
-            else "reset"
-        )
+        request_type = request.data.get("request_type", "reset")
+        if not settings.PASSWORD_CHANGE_BY_EMAIL and request_type == "change":
+            return Response(
+                _("Password change by email is not allowed"),
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
         try:
             user = self.get_user(request.data.get("email"))
@@ -153,7 +154,7 @@ class PasswordRecoveryViewSet(BaseGenericViewSet):
 
 class PasswordChangeViewModify(PasswordChangeView):
     def post(self, request, *args, **kwargs):
-        if not settings.PASSWORD_CHANGE_BY_EMAIL:
+        if settings.PASSWORD_CHANGE_BY_EMAIL:
             return Response(
                 _("Only password change by email is allowed"),
                 status=status.HTTP_400_BAD_REQUEST,
@@ -168,14 +169,19 @@ class PasswordChangeViewModify(PasswordChangeView):
             return Response(
                 _("Old password is incorrect"), status=status.HTTP_400_BAD_REQUEST
             )
-        if old_password == request.data["new_password"]:
+
+        if not (new_password := request.data.get("new_password")):
+            return Response(
+                _("new_password is required"), status=status.HTTP_400_BAD_REQUEST
+            )
+        if old_password == new_password:
             return Response(
                 _("New password must be different from old password"),
                 status=status.HTTP_400_BAD_REQUEST,
             )
         data = request.data.copy()
-        data["new_password1"] = data["new_password"]
-        data["new_password2"] = data["new_password"]
+        data["new_password1"] = new_password
+        data["new_password2"] = new_password
         serializer = self.get_serializer(data=data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
