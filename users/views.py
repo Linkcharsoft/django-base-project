@@ -77,7 +77,7 @@ class UserViewSet(
         queryset = (
             get_user_model()
             .objects.all()
-            .prefetch_related("profile", "contest_applicants")
+            .prefetch_related("profile")
             .annotate(
                 full_name=Concat(
                     F("first_name"),
@@ -139,8 +139,10 @@ class UserViewSet(
             )
 
         return Response(
-            _("User is blocked")
-            if is_active.lower() == "false"
-            else _("User is unblocked"),
+            (
+                _("User is blocked")
+                if is_active.lower() == "false"
+                else _("User is unblocked")
+            ),
             status=status.HTTP_200_OK,
         )
