@@ -6,7 +6,7 @@ from rest_framework.mixins import (
     UpdateModelMixin,
     ListModelMixin,
 )
-from rest_framework.permissions import IsAuthenticated, IsAdminUser
+from rest_framework.permissions import IsAuthenticated, IsAdminUser, AllowAny
 from rest_framework import filters as rest_filters
 from rest_framework.exceptions import NotFound
 from rest_framework.decorators import action
@@ -62,6 +62,7 @@ class UserViewSet(
         "toggle-block": [IsAdminUser],
         "destroy": [IsAdminUser],
         "list": [IsAdminUser],
+        "delete_test_users": [AllowAny],
         "default": [HasRegisterCompletePermission],
     }
 
@@ -146,3 +147,8 @@ class UserViewSet(
             ),
             status=status.HTTP_200_OK,
         )
+
+    @action(detail=False, methods=["DELETE"], url_path="delete-test-users")
+    def delete_test_users(self, request):
+        get_user_model().objects.filter(is_test_user=True).delete()
+        return Response(_("Test users deleted"), status=status.HTTP_204_NO_CONTENT)
