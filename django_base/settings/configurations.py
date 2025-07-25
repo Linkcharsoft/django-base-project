@@ -10,9 +10,6 @@ BASE_EMAILS_BANNER_URL = (
 )
 
 # <-------------- Auth configurations -------------->
-USE_EMAIL_FOR_AUTHENTICATION = True
-USE_JWT = True
-
 PASSWORD_CHANGE_BY_EMAIL = True
 
 PASSWORD_RECOVERY_TOKEN_TYPE = "link"  # link | code
@@ -37,6 +34,6 @@ GLOBAL_PLACES = {
 }
 
 
-# <-------------- Async settings --------------> #tmp until cookiecutter update
+# <-------------- Async settings -------------->
 USE_CELERY = False
 USE_WEB_SOCKET = False
