@@ -4,19 +4,20 @@
 #
 #    pip-compile --output-file=requirements.txt
 #
-amqp==5.2.0
+amqp==5.3.1
     # via
     #   -r requirements.in
     #   kombu
-asgiref==3.8.1
+asgiref==3.9.1
     # via
     #   -r requirements.in
     #   channels
     #   channels-redis
     #   daphne
     #   django
+    #   django-allauth
     #   django-cors-headers
-attrs==24.2.0
+attrs==25.3.0
     # via
     #   -r requirements.in
     #   service-identity
@@ -25,38 +26,38 @@ autobahn==24.4.2
     # via
     #   -r requirements.in
     #   daphne
-automat==24.8.1
+automat==25.4.16
     # via
     #   -r requirements.in
     #   twisted
-billiard==4.2.0
+billiard==4.2.1
     # via
     #   -r requirements.in
     #   celery
-black==24.8.0
+black==25.1.0
     # via -r requirements.in
-celery==5.4.0
+celery==5.5.3
     # via -r requirements.in
-certifi==2024.8.30
+certifi==2025.7.14
     # via
     #   -r requirements.in
     #   requests
     #   sentry-sdk
-cffi==1.17.0
+cffi==1.17.1
     # via
     #   -r requirements.in
     #   cryptography
-channels[daphne]==4.1.0
+channels[daphne]==4.2.2
     # via
     #   -r requirements.in
     #   channels-redis
-channels-redis==4.2.0
+channels-redis==4.3.0
     # via -r requirements.in
-charset-normalizer==3.3.2
+charset-normalizer==3.4.2
     # via
     #   -r requirements.in
     #   requests
-click==8.1.7
+click==8.2.1
     # via
     #   -r requirements.in
     #   black
@@ -68,7 +69,7 @@ click-didyoumean==0.3.1
     # via
     #   -r requirements.in
     #   celery
-click-plugins==1.1.1
+click-plugins==1.1.1.2
     # via
     #   -r requirements.in
     #   celery
@@ -84,26 +85,24 @@ constantly==23.10.4
     # via
     #   -r requirements.in
     #   twisted
-coverage[toml]==7.6.1
+coverage[toml]==7.10.0
     # via
     #   -r requirements.in
     #   pytest-cov
-cryptography==43.0.0
+cryptography==45.0.5
     # via
     #   -r requirements.in
     #   autobahn
     #   pyjwt
     #   pyopenssl
     #   service-identity
-daphne==4.1.2
+daphne==4.2.1
     # via
     #   -r requirements.in
     #   channels
-defusedxml==0.7.1
-    # via python3-openid
-dj-rest-auth[with-social,with_social]==6.0.0
+dj-rest-auth[with-social,with_social]==7.0.1
     # via -r requirements.in
-django==5.2.2
+django==5.2.4
     # via
     #   -r requirements.in
     #   channels
@@ -120,21 +119,21 @@ django==5.2.2
     #   djangorestframework-simplejwt
     #   drf-yasg
     #   jsonfield
-django-allauth==0.61.1
+django-allauth[socialaccount]==65.10.0
     # via
     #   -r requirements.in
     #   dj-rest-auth
-django-cors-headers==4.4.0
+django-cors-headers==4.7.0
     # via -r requirements.in
-django-debug-toolbar==4.4.6
+django-debug-toolbar==6.0.0
     # via -r requirements.in
-django-environ==0.11.2
+django-environ==0.12.0
     # via -r requirements.in
-django-extensions==3.2.3
+django-extensions==4.1
     # via -r requirements.in
-django-filter==24.3
+django-filter==25.1
     # via -r requirements.in
-django-global-places==0.8.13
+django-global-places==0.10.1
     # via -r requirements.in
 django-model-utils==5.0.0
     # via
@@ -144,21 +143,21 @@ django-notifications-pro==0.4.0
     # via -r requirements.in
 django-split-settings==1.3.2
     # via -r requirements.in
-djangorestframework==3.15.2
+djangorestframework==3.16.0
     # via
     #   -r requirements.in
     #   dj-rest-auth
     #   djangorestframework-simplejwt
     #   drf-yasg
-djangorestframework-simplejwt==5.3.1
+djangorestframework-simplejwt==5.5.1
     # via -r requirements.in
-drf-writable-nested==0.7.0
+drf-writable-nested==0.7.2
     # via -r requirements.in
-drf-yasg==1.21.7
+drf-yasg==1.21.10
     # via -r requirements.in
-factory-boy==3.3.1
+factory-boy==3.3.3
     # via -r requirements.in
-faker==28.4.1
+faker==37.4.2
     # via
     #   -r requirements.in
     #   factory-boy
@@ -183,42 +182,44 @@ inflection==0.5.1
     # via
     #   -r requirements.in
     #   drf-yasg
-iniconfig==2.0.0
+iniconfig==2.1.0
     # via
     #   -r requirements.in
     #   pytest
-jsonfield==3.1.0
+jsonfield==3.2.0
     # via
     #   -r requirements.in
     #   django-notifications-pro
-kombu==5.4.1
+kombu==5.5.4
     # via
     #   -r requirements.in
     #   celery
-msgpack==1.0.8
+msgpack==1.1.1
     # via
     #   -r requirements.in
     #   channels-redis
-mypy-extensions==1.0.0
+mypy-extensions==1.1.0
     # via
     #   -r requirements.in
     #   black
-numpy==2.1.1
+numpy==2.3.2
     # via
     #   -r requirements.in
     #   pandas
-oauthlib==3.2.2
+oauthlib==3.3.1
     # via
     #   -r requirements.in
+    #   django-allauth
     #   requests-oauthlib
-packaging==24.1
+packaging==25.0
     # via
     #   -r requirements.in
     #   black
     #   drf-yasg
     #   gunicorn
+    #   kombu
     #   pytest
-pandas==2.2.2
+pandas==2.3.1
     # via
     #   -r requirements.in
     #   django-global-places
@@ -227,15 +228,16 @@ pathspec==0.12.1
     # via
     #   -r requirements.in
     #   black
-platformdirs==4.3.6
+platformdirs==4.3.8
     # via
     #   -r requirements.in
     #   black
-pluggy==1.5.0
+pluggy==1.6.0
     # via
     #   -r requirements.in
     #   pytest
-prompt-toolkit==3.0.47
+    #   pytest-cov
+prompt-toolkit==3.0.51
     # via
     #   -r requirements.in
     #   click-repl
@@ -243,12 +245,12 @@ psycopg[binary]==3.2.9
     # via -r requirements.in
 psycopg-binary==3.2.9
     # via psycopg
-pyasn1==0.6.0
+pyasn1==0.6.1
     # via
     #   -r requirements.in
     #   pyasn1-modules
     #   service-identity
-pyasn1-modules==0.4.0
+pyasn1-modules==0.4.2
     # via
     #   -r requirements.in
     #   service-identity
@@ -256,33 +258,32 @@ pycparser==2.22
     # via
     #   -r requirements.in
     #   cffi
-pyjwt[crypto]==2.9.0
+pygments==2.19.2
+    # via pytest
+pyjwt[crypto]==2.10.1
     # via
     #   -r requirements.in
     #   django-allauth
     #   djangorestframework-simplejwt
-pyopenssl==24.2.1
+pyopenssl==25.1.0
     # via
     #   -r requirements.in
     #   twisted
-pytest==8.3.3
+pytest==8.4.1
     # via
     #   -r requirements.in
     #   pytest-cov
     #   pytest-django
-pytest-cov==5.0.0
+pytest-cov==6.2.1
     # via -r requirements.in
-pytest-django==4.9.0
+pytest-django==4.11.1
     # via -r requirements.in
 python-dateutil==2.9.0.post0
     # via
     #   -r requirements.in
     #   celery
-    #   faker
     #   pandas
-python3-openid==3.2.0
-    # via django-allauth
-pytz==2024.2
+pytz==2025.2
     # via
     #   -r requirements.in
     #   django-notifications-pro
@@ -292,11 +293,11 @@ pyyaml==6.0.2
     # via
     #   -r requirements.in
     #   drf-yasg
-redis==5.0.8
+redis==6.2.0
     # via
     #   -r requirements.in
     #   channels-redis
-requests==2.32.3
+requests==2.32.4
     # via
     #   -r requirements.in
     #   django-allauth
@@ -304,22 +305,20 @@ requests==2.32.3
     #   django-notifications-pro
     #   requests-oauthlib
 requests-oauthlib==2.0.0
-    # via
-    #   -r requirements.in
-    #   django-allauth
-sentry-sdk==2.14.0
     # via -r requirements.in
-service-identity==24.1.0
+sentry-sdk==2.33.2
+    # via -r requirements.in
+service-identity==24.2.0
     # via
     #   -r requirements.in
     #   twisted
-six==1.16.0
+six==1.17.0
     # via
     #   -r requirements.in
     #   python-dateutil
 split-settings==1.0.0
     # via -r requirements.in
-sqlparse==0.5.1
+sqlparse==0.5.3
     # via
     #   -r requirements.in
     #   django
@@ -328,30 +327,31 @@ swapper==1.4.0
     # via
     #   -r requirements.in
     #   django-notifications-pro
-twisted[tls]==24.7.0
+twisted[tls]==25.5.0
     # via
     #   -r requirements.in
     #   daphne
-txaio==23.1.1
+txaio==25.6.1
     # via
     #   -r requirements.in
     #   autobahn
-typing-extensions==4.12.2
+typing-extensions==4.14.1
     # via
     #   -r requirements.in
     #   twisted
-tzdata==2024.1
+tzdata==2025.2
     # via
     #   -r requirements.in
-    #   celery
     #   django
+    #   faker
+    #   kombu
     #   pandas
     #   psycopg
-uritemplate==4.1.1
+uritemplate==4.2.0
     # via
     #   -r requirements.in
     #   drf-yasg
-urllib3==2.2.3
+urllib3==2.5.0
     # via
     #   -r requirements.in
     #   requests
@@ -366,11 +366,11 @@ wcwidth==0.2.13
     # via
     #   -r requirements.in
     #   prompt-toolkit
-wheel==0.44.0
+wheel==0.45.1
     # via -r requirements.in
-whitenoise==6.7.0
+whitenoise==6.9.0
     # via -r requirements.in
-zope-interface==7.1.0
+zope-interface==7.2
     # via
     #   -r requirements.in
     #   twisted

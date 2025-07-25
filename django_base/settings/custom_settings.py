@@ -12,8 +12,6 @@ from django_base.settings.environment_variables import (
     SENTRY_DSN,
 )
 from django_base.settings.configurations import (
-    USE_EMAIL_FOR_AUTHENTICATION,
-    USE_JWT,
     USE_DEBUG_TOOLBAR,
     USE_CELERY,
     USE_WEB_SOCKET,
@@ -68,15 +66,14 @@ STATIC_ROOT = BASE_DIR / "static"
 
 
 # <---------------------- Auth configurations ---------------------->
-if USE_EMAIL_FOR_AUTHENTICATION:  # WITH COOKIECUTTER
-    ACCOUNT_ADAPTER = "users.adapter.CustomAccountAdapter"
-    ACCOUNT_EMAIL_REQUIRED = True
-    ACCOUNT_UNIQUE_EMAIL = True
 
-    ACCOUNT_EMAIL_VERIFICATION = "mandatory"
-    ACCOUNT_AUTHENTICATION_METHOD = "email"
-
-    ACCOUNT_USERNAME_REQUIRED = False
+# Allauth configurations
+ACCOUNT_SIGNUP_FIELDS = ("email*", "password1*", "is_test_user")
+ACCOUNT_ADAPTER = "users.adapter.CustomAccountAdapter"
+ACCOUNT_SIGNUP_PASSWORD_ENTER_TWICE = False
+ACCOUNT_EMAIL_SUBJECT_PREFIX = "\u200B"
+ACCOUNT_LOGIN_METHODS = {"email"}
+ACCOUNT_UNIQUE_EMAIL = True
 
 AUTHENTICATION_BACKENDS = (
     "django.contrib.auth.backends.ModelBackend",
@@ -88,9 +85,16 @@ AUTH_USER_MODEL = "users.User"
 REST_AUTH = {
     "USER_DETAILS_SERIALIZER": "users.serializers.UserSerializer",
     "REGISTER_SERIALIZER": "users.serializers.CustomRegisterSerializer",
+    "USE_JWT": True,
+    "JWT_AUTH_HTTPONLY": False,
+    "JWT_AUTH_RETURN_EXPIRATION": True,
 }
 
-ACCOUNT_EMAIL_SUBJECT_PREFIX = "\u200B"
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(days=2),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=5),
+}
+
 
 # <---------------------- Email configurations ---------------------->
 if EMAIL_PROVIDER == "console":
@@ -155,6 +159,7 @@ for validator in CUSTOM_AUTH_PASSWORD_VALIDATORS:
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "rest_framework.authentication.TokenAuthentication",
+        "dj_rest_auth.jwt_auth.JWTAuthentication",
     ),
     "DEFAULT_PAGINATION_CLASS": "django_base.base_utils.base_pagination.CustomPagination",
     "DEFAULT_SCHEMA_CLASS": "rest_framework.schemas.coreapi.AutoSchema",
@@ -163,8 +168,6 @@ REST_FRAMEWORK = {
 }
 
 SITE_ID = 1
-REST_USE_JWT = True
-
 
 # <-------------- SWAGGER configurations -------------->
 SWAGGER_SETTINGS = {
@@ -180,20 +183,6 @@ SWAGGER_SETTINGS = {
     },
 }
 
-
-if USE_JWT:  # WITH COOKIECUTTER
-    REST_FRAMEWORK["DEFAULT_AUTHENTICATION_CLASSES"] = (
-        "dj_rest_auth.jwt_auth.JWTAuthentication",
-    )
-
-    REST_AUTH["USE_JWT"] = True
-    REST_AUTH["JWT_AUTH_HTTPONLY"] = False
-    REST_AUTH["JWT_AUTH_RETURN_EXPIRATION"] = True
-
-    SIMPLE_JWT = {
-        "ACCESS_TOKEN_LIFETIME": timedelta(days=2),
-        "REFRESH_TOKEN_LIFETIME": timedelta(days=5),
-    }
 
 # <-------------- Sentry -------------->
 if IS_PRODUCTION:
