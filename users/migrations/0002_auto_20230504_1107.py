@@ -26,11 +26,10 @@ class Migration(migrations.Migration):
 
             Profile.objects.create(user=user)
 
-            if settings.USE_EMAIL_FOR_AUTHENTICATION:
-                EmailAddress = apps.all_models.get("account").get("emailaddress")
-                EmailAddress.objects.create(
-                    user=user, email=user.email, verified=True, primary=True
-                )
+            EmailAddress = apps.all_models.get("account").get("emailaddress")
+            EmailAddress.objects.create(
+                user=user, email=user.email, verified=True, primary=True
+            )
 
     operations = [
         migrations.RunPython(create_super_user),

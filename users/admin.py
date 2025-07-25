@@ -10,8 +10,8 @@ class UserProfileInline(admin.StackedInline):
 
 class CustomUserAdmin(UserAdmin):
     inlines = [UserProfileInline]
-    fieldsets = UserAdmin.fieldsets  # add here custom fields if you need to
-    list_display = ("id",) + UserAdmin.list_display
+    fieldsets = UserAdmin.fieldsets + ((None, {"fields": ("is_test_user",)}),)
+    list_display = ("id",) + UserAdmin.list_display + ("is_test_user",)
 
 
 admin.site.register(User, CustomUserAdmin)

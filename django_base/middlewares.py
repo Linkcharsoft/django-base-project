@@ -7,12 +7,8 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.models import AnonymousUser
 from django.db import close_old_connections
 
-from channels.auth import AuthMiddlewareStack
-from channels.db import database_sync_to_async
-
 from jwt import InvalidSignatureError, ExpiredSignatureError, DecodeError
 from jwt import decode as jwt_decode
-
 
 from rest_framework.authtoken.models import Token
 
@@ -30,74 +26,79 @@ class HealthCheckMiddleware:
 User = get_user_model()
 
 
-class JWTAuthMiddleware:
-    """Middleware to authenticate user for channels"""
+if settings.USE_WEB_SOCKET:
+    from channels.auth import AuthMiddlewareStack
+    from channels.db import database_sync_to_async
 
-    def __init__(self, app):
-        """Initializing the app."""
-        self.app = app
+    class JWTAuthMiddleware:
+        """Middleware to authenticate user for channels"""
 
-    async def __call__(self, scope, receive, send):
-        """Authenticate the user based on jwt."""
-        close_old_connections()
-        try:
-            token = parse_qs(scope["query_string"].decode("utf8")).get("token", None)[0]
+        def __init__(self, app):
+            """Initializing the app."""
+            self.app = app
 
-            data = jwt_decode(token, settings.SECRET_KEY, algorithms=["HS256"])
+        async def __call__(self, scope, receive, send):
+            """Authenticate the user based on jwt."""
+            close_old_connections()
+            try:
+                token = parse_qs(scope["query_string"].decode("utf8")).get(
+                    "token", None
+                )[0]
 
-            scope["user"] = await self.get_user(data["user_id"])
-        except (
-            TypeError,
-            KeyError,
-            InvalidSignatureError,
-            ExpiredSignatureError,
-            DecodeError,
-        ):
-            scope["user"] = AnonymousUser()
-        return await self.app(scope, receive, send)
+                data = jwt_decode(token, settings.SECRET_KEY, algorithms=["HS256"])
 
-    @database_sync_to_async
-    def get_user(self, user_id):
-        """Return the user based on user id."""
-        try:
-            return User.objects.get(id=user_id)
-        except User.DoesNotExist:
-            return AnonymousUser()
+                scope["user"] = await self.get_user(data["user_id"])
+            except (
+                TypeError,
+                KeyError,
+                InvalidSignatureError,
+                ExpiredSignatureError,
+                DecodeError,
+            ):
+                scope["user"] = AnonymousUser()
+            return await self.app(scope, receive, send)
 
+        @database_sync_to_async
+        def get_user(self, user_id):
+            """Return the user based on user id."""
+            try:
+                return User.objects.get(id=user_id)
+            except User.DoesNotExist:
+                return AnonymousUser()
 
-def JWTAuthMiddlewareStack(app):
-    """This function wrap channels authentication stack with JWTAuthMiddleware."""
-    return JWTAuthMiddleware(AuthMiddlewareStack(app))
+    def JWTAuthMiddlewareStack(app):
+        """This function wrap channels authentication stack with JWTAuthMiddleware."""
+        return JWTAuthMiddleware(AuthMiddlewareStack(app))
 
+    class TokenAuthMiddleware:
+        """Middleware to authenticate user for channels"""
 
-class TokenAuthMiddleware:
-    """Middleware to authenticate user for channels"""
+        def __init__(self, app):
+            """Initializing the app."""
+            self.app = app
 
-    def __init__(self, app):
-        """Initializing the app."""
-        self.app = app
+        async def __call__(self, scope, receive, send):
+            """Authenticate the user based on jwt."""
+            close_old_connections()
+            try:
+                token = parse_qs(scope["query_string"].decode("utf8")).get(
+                    "token", None
+                )[0]
 
-    async def __call__(self, scope, receive, send):
-        """Authenticate the user based on jwt."""
-        close_old_connections()
-        try:
-            token = parse_qs(scope["query_string"].decode("utf8")).get("token", None)[0]
+                scope["user"] = await self.get_user_by_token(token)
+            except Exception:
+                scope["user"] = AnonymousUser()
 
-            scope["user"] = await self.get_user_by_token(token)
-        except Exception:
-            scope["user"] = AnonymousUser()
+            return await self.app(scope, receive, send)
 
-        return await self.app(scope, receive, send)
+        @database_sync_to_async
+        def get_user_by_token(self, token):
+            try:
+                token = Token.objects.prefetch_related("user").get(key=token)
+                return token.user
+            except Token.DoesNotExist:
+                return AnonymousUser()
 
-    @database_sync_to_async
-    def get_user_by_token(self, token):
-        try:
-            token = Token.objects.prefetch_related("user").get(key=token)
-            return token.user
-        except Token.DoesNotExist:
-            return AnonymousUser()
-
-
-def TokenAuthMiddlewareStack(app):
-    """This function wrap channels authentication stack with JWTAuthMiddleware."""
-    return TokenAuthMiddleware(AuthMiddlewareStack(app))
+    def TokenAuthMiddlewareStack(app):
+        """This function wrap channels authentication stack with JWTAuthMiddleware."""
+        return TokenAuthMiddleware(AuthMiddlewareStack(app))

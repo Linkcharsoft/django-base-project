@@ -191,11 +191,6 @@ python manage.py generate_secret_key
 
 - In the "settings/db_settings.py", you can select the database you want to use. If you choose "sqlite3", no further configuration is necessary.
 
-  
-
-- The "USE_EMAIL_FOR_AUTHENTICATION" field determines the authentication method to be used. If set to True, email addresses will be required, and validation will be necessary. Email addresses must also be unique on the platform.
-
-  
 
 - In the "Email Settings" section, you can select the email provider. If you choose "console," no further configuration is necessary. However, if you select "aws," you must specify your credentials.
 

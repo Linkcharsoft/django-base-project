@@ -23,7 +23,7 @@ RUN pip-sync requirements.txt
 
 COPY . .
 
-RUN chmod +x ./entrypoint-dev.sh
+RUN chmod +x ./entrypoint.sh
 RUN chmod +x ./entrypoint-dev.sh
 
 # RUN mkdir -p /var/log/cron

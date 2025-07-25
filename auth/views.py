@@ -25,6 +25,15 @@ from django_base.base_utils.base_viewsets import BaseGenericViewSet
 from users.models import User, TokenRecovery
 
 
+class TemporalOAuth2Client(OAuth2Client):
+    def __init__(self, request, *args, **kwargs):
+        tmp_args = list(args)
+        (
+            tmp_args.pop() if tmp_args else None
+        )  # TMP: remove scope field until dj-rest-auth updates
+        super().__init__(request, *tmp_args, **kwargs)
+
+
 class PasswordRecoveryViewSet(BaseGenericViewSet):
     queryset = User.objects.all()
     permissions = {
@@ -195,5 +204,5 @@ class PasswordChangeViewModify(PasswordChangeView):
 
 class GoogleLogin(SocialLoginView):
     adapter_class = GoogleOAuth2Adapter
-    client_class = OAuth2Client
     callback_url = settings.GOOGLE_REDIRECT_URI
+    client_class = TemporalOAuth2Client
