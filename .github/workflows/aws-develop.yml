@@ -12,7 +12,7 @@ env:
   ECR_REPOSITORY: basetest-backend-ecr-develop
   ECS_CLUSTER: basetest-backend-cluster-develop
   ECS_SERVICE: basetest-backend-service-develop
-  TASK_DEFINITION_FAMILY: basetest-backend-task-develop
+  TASK_DEFINITION_FAMILY: basetest-backend-task-web-develop
   CONTAINER_NAME: basetest-backend-container-develop
 
   MIGRATION_TASK_DEFINITION_FAMILY: basetest-backend-task-migration-develop #TODO: Still required?
