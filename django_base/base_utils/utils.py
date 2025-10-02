@@ -54,10 +54,13 @@ def get_default_for_email_template():
 
 
 def email_template_sender(
-    subject, template_name, context, to_email, from_email=settings.DEFAULT_FROM_EMAIL
+    subject, template_name, context, to_email, from_email=settings.DEFAULT_FROM_EMAIL, attachments=None
 ):
     context.update(get_default_for_email_template())
     message = render_to_string(template_name, context)
     email = EmailMessage(subject, message, to=[to_email], from_email=from_email)
     email.content_subtype = "html"
+    if attachments:
+        for attachment in attachments:
+            email.attach_file(attachment)
     email.send()
