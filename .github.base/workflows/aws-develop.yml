@@ -15,8 +15,6 @@ env:
   TASK_DEFINITION_FAMILY: <project_name>-backend-task-develop
   CONTAINER_NAME: <project_name>-backend-container-develop
 
-  MIGRATION_TASK_DEFINITION_FAMILY: <project_name>-backend-task-migration-develop #TODO: Still required?
-
 permissions:
   contents: read
 
