@@ -9,7 +9,7 @@ env:
   
   ENVIRONMENT: develop
 
-  ECR_REPOSITORY: <project_name>-backend-ECR-develop
+  ECR_REPOSITORY: <project_name>-backend-ecr-develop
   ECS_CLUSTER: <project_name>-backend-cluster-develop
   ECS_SERVICE: <project_name>-backend-service-develop
   TASK_DEFINITION_FAMILY: <project_name>-backend-task-develop

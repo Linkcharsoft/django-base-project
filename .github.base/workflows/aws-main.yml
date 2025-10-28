@@ -9,7 +9,7 @@ env:
   
   ENVIRONMENT: production
 
-  ECR_REPOSITORY: <project_name>-backend-ECR-production
+  ECR_REPOSITORY: <project_name>-backend-ecr-production
   ECS_CLUSTER: <project_name>-backend-cluster-production
   ECS_SERVICE: <project_name>-backend-service-production
   TASK_DEFINITION_FAMILY: <project_name>-backend-task-production
