@@ -1,5 +1,5 @@
 from datetime import timedelta
-from django_base.settings.django_settings import BASE_APPS, AUTH_PASSWORD_VALIDATORS
+from django_base.settings.django_settings import BASE_APPS, AUTH_PASSWORD_VALIDATORS, MIDDLEWARE
 from django_base.settings.environment_variables import (
     BROKER_SERVER,
     BROKER_SERVER_PORT,
@@ -23,7 +23,6 @@ THIRD_APPS = [
 ]
 
 if USE_WEB_SOCKET:
-    # Load daphne and channels first
     THIRD_APPS = ["daphne", "channels"] + THIRD_APPS
 
 MY_APPS = [
@@ -118,7 +117,10 @@ CORS_ORIGIN_WHITELIST = CORS_ALLOWED_URLS
 
 
 if USE_DEBUG_TOOLBAR:
-    import socket  # only if you haven't already imported this
+    import socket
+
+    INSTALLED_APPS = INSTALLED_APPS + ["debug_toolbar"]
+    MIDDLEWARE = MIDDLEWARE + ["debug_toolbar.middleware.DebugToolbarMiddleware"]
 
     hostname, _, ips = socket.gethostbyname_ex(socket.gethostname())
     INTERNAL_IPS = [ip[: ip.rfind(".")] + ".1" for ip in ips] + ["127.0.0.1", "0.0.0.0"]
@@ -165,6 +167,16 @@ REST_FRAMEWORK = {
     "DEFAULT_SCHEMA_CLASS": "rest_framework.schemas.coreapi.AutoSchema",
     "PAGE_SIZE": 10,
     "DEFAULT_RENDERER_CLASSES": ("rest_framework.renderers.JSONRenderer",),
+    "DEFAULT_THROTTLE_CLASSES": [
+        "rest_framework.throttling.AnonRateThrottle",
+        "rest_framework.throttling.UserRateThrottle",
+        "rest_framework.throttling.ScopedRateThrottle",
+    ],
+    "DEFAULT_THROTTLE_RATES": {
+        "anon": "60/minute",
+        "user": "300/minute",
+        "password_recovery": "5/hour",
+    },
 }
 
 SITE_ID = 1
@@ -186,21 +198,20 @@ SWAGGER_SETTINGS = {
 
 # <-------------- Sentry -------------->
 if IS_PRODUCTION:
-    import sentry_sdk
+    import logging as _logging
 
     if not SENTRY_DSN:
-        raise Exception("SENTRY_DSN not found in environment variables")
+        _logging.getLogger(__name__).warning(
+            "SENTRY_DSN not set in production — error tracking disabled"
+        )
+    else:
+        import sentry_sdk
 
-    sentry_sdk.init(
-        dsn=SENTRY_DSN,
-        # Set traces_sample_rate to 1.0 to capture 100%
-        # of transactions for performance monitoring.
-        traces_sample_rate=1.0,
-        # Set profiles_sample_rate to 1.0 to profile 100%
-        # of sampled transactions.
-        # We recommend adjusting this value in production.
-        profiles_sample_rate=1.0,
-    )
+        sentry_sdk.init(
+            dsn=SENTRY_DSN,
+            traces_sample_rate=1.0,
+            profiles_sample_rate=1.0,
+        )
 
 
 # <-------------- Google settings -------------->

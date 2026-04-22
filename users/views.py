@@ -125,26 +125,36 @@ class UserViewSet(
     @action(detail=True, methods=["PATCH"], url_path="toggle-block")
     def toggle_block(self, request, pk=None):
         user = self.get_object()
-        if not (is_active := request.data.get("is_active")):
+        is_active = request.data.get("is_active")
+
+        if is_active is None:
             return Response(
                 {"detail": _("is_active field is required")},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-        try:
-            user.is_active = is_active
-            user.save()
-        except Exception as e:
+
+        if isinstance(is_active, str):
+            if is_active.lower() in ("true", "1"):
+                is_active = True
+            elif is_active.lower() in ("false", "0"):
+                is_active = False
+            else:
+                return Response(
+                    {"detail": _("is_active field should be boolean")},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+        if not isinstance(is_active, bool):
             return Response(
                 {"detail": _("is_active field should be boolean")},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
+        user.is_active = is_active
+        user.save(update_fields=["is_active"])
+
         return Response(
-            (
-                _("User is blocked")
-                if is_active.lower() == "false"
-                else _("User is unblocked")
-            ),
+            _("User is unblocked") if is_active else _("User is blocked"),
             status=status.HTTP_200_OK,
         )
 

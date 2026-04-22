@@ -1,28 +1,34 @@
-from allauth.socialaccount.providers.google.views import GoogleOAuth2Adapter
+import logging
+
 from allauth.socialaccount.providers.oauth2.client import OAuth2Client
+from allauth.socialaccount.providers.google.views import GoogleOAuth2Adapter
 
 
-from dj_rest_auth.registration.views import SocialLoginView
 from dj_rest_auth.views import PasswordChangeView
+from dj_rest_auth.registration.views import SocialLoginView
 
-from rest_framework.permissions import AllowAny
-from rest_framework.response import Response
-from rest_framework.decorators import action
 from rest_framework import status
+from rest_framework.decorators import action
+from rest_framework.response import Response
+from rest_framework.permissions import AllowAny
 
-from django.contrib.auth.password_validation import validate_password
-from django.utils.translation import gettext_lazy as _
-from django.core.exceptions import ValidationError
-from django.utils import timezone
 from django.conf import settings
+from django.utils import timezone
+from django.core.exceptions import ValidationError
+from django.utils.translation import gettext_lazy as _
+from django.contrib.auth.password_validation import validate_password
 
 from django_base.base_utils.utils import (
     get_random_string,
     email_template_sender,
     get_default_for_email_template,
 )
-from django_base.base_utils.base_viewsets import BaseGenericViewSet
+
 from users.models import User, TokenRecovery
+from django_base.base_utils.base_viewsets import BaseGenericViewSet
+
+
+logger = logging.getLogger(__name__)
 
 
 class TemporalOAuth2Client(OAuth2Client):
@@ -36,6 +42,7 @@ class TemporalOAuth2Client(OAuth2Client):
 
 class PasswordRecoveryViewSet(BaseGenericViewSet):
     queryset = User.objects.all()
+    throttle_scope = "password_recovery"
     permissions = {
         "default": [AllowAny],
     }
@@ -108,9 +115,8 @@ class PasswordRecoveryViewSet(BaseGenericViewSet):
                 context,
                 user.email,
             )
-        except Exception as e:
-            print(e)
-            pass
+        except Exception:
+            logger.exception("Failed to send password recovery email")
 
         return Response(_("Email sent"), status=status.HTTP_200_OK)
 
@@ -127,8 +133,8 @@ class PasswordRecoveryViewSet(BaseGenericViewSet):
             )
         except ValidationError as e:
             return Response(str(e.message), status=status.HTTP_400_BAD_REQUEST)
-        except Exception as e:
-            print(e)
+        except Exception:
+            logger.exception("Failed to validate recovery token")
             return Response(_("Token is invalid"), status=status.HTTP_400_BAD_REQUEST)
 
         return Response(_("Token is valid"), status=status.HTTP_200_OK)
@@ -151,8 +157,8 @@ class PasswordRecoveryViewSet(BaseGenericViewSet):
             if hasattr(e, "message"):
                 return Response(str(e.message), status=status.HTTP_400_BAD_REQUEST)
             return Response(e, status=status.HTTP_400_BAD_REQUEST)
-        except Exception as e:
-            print(e)
+        except Exception:
+            logger.exception("Failed to confirm password recovery")
             return Response(_("Token is invalid"), status=status.HTTP_400_BAD_REQUEST)
 
         user.set_password(password)

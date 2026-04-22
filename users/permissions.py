@@ -9,7 +9,7 @@ class HasRegisterCompletePermission(permissions.BasePermission):
     message = "You need to complete your registration to access this resource."
 
     def has_permission(self, request, view):
-        # Check if the user is authenticated and has 'is_register_complete' status
-        return (
-            request.user.is_authenticated and request.user.profile.is_register_complete
-        )
+        if not request.user.is_authenticated:
+            return False
+        profile = getattr(request.user, "profile", None)
+        return bool(profile and profile.is_register_complete)

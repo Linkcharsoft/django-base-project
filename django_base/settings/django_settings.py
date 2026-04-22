@@ -19,7 +19,6 @@ BASE_APPS = [
     "allauth.socialaccount.providers.google",
     "drf_yasg",
     "corsheaders",
-    "debug_toolbar",
     "django_extensions",
     "django_filters",
 ]
@@ -40,7 +39,6 @@ MIDDLEWARE = [
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    "debug_toolbar.middleware.DebugToolbarMiddleware",
     "allauth.account.middleware.AccountMiddleware",
 ]
 
