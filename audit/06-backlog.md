@@ -367,6 +367,48 @@ La elección depende de qué tan frecuentemente se usan estos features en proyec
 
 ---
 
+### Item 6.16 — Rediseñar campos de archivo con nombre único + validación
+
+**Problema:** en la Fase 3 se eliminaron `CustomFileField` y `CustomImageField` de `base_models.py` porque la implementación tenía bugs (hash con `datetime.now()` no es único bajo concurrencia, marcado `# Not tested`, MD5). Pero la idea base — un campo que renombre archivos a un identificador único y aplique validaciones — sigue siendo deseable para el template.
+
+**Ubicación nueva:** `django_base/base_utils/base_models.py` (o un módulo aparte `base_fields.py`).
+
+**Plan sugerido:**
+
+1. Implementar un `upload_to` callable que use `uuid.uuid4().hex` para el nombre final, preservando la extensión original:
+
+```python
+import uuid
+from pathlib import Path
+
+
+def unique_upload_to(subdir):
+    def _wrapper(instance, filename):
+        ext = Path(filename).suffix.lower()
+        return f"{subdir}/{uuid.uuid4().hex}{ext}"
+    return _wrapper
+```
+
+2. Para validación de tamaño y tipo, reutilizar `FileSizeValidator` que ya existe en `base_validators.py` (se mantuvo en Fase 3) y combinarlo con `FileExtensionValidator` de Django.
+
+3. Ejemplo de uso esperado:
+
+```python
+avatar = models.ImageField(
+    upload_to=unique_upload_to("avatars"),
+    validators=[FileSizeValidator(max_mb=5), FileExtensionValidator(["jpg", "jpeg", "png"])],
+    blank=True,
+)
+```
+
+4. Documentar el patrón en el `readme.md` (o en `docs/` tras Item 6.15).
+
+**Por qué no se mantuvo en Fase 3:** la implementación previa tenía bugs reales (no era "preservable"); reescribirla como feature mezcla scope con la poda. Acá queda como tarea independiente cuando se quiera ofrecer un patrón canónico de upload en el template.
+
+**Esfuerzo:** 1-2 h · **Breaking:** No (es opt-in para modelos nuevos)
+
+---
+
 ### Item 6.15 — Consolidar docs de setup
 
 **Problema:** el setup está explicado en 3 lugares distintos (readme.md, .env.example, runcommands.py) con información parcial en cada uno y sin un quickstart de 3 pasos.
@@ -422,4 +464,5 @@ docker compose exec web pytest
 - [ ] 6.13 — destino de celery/websockets placeholders
 - [ ] 6.14 — limpiar `wsgi.py`
 - [ ] 6.15 — consolidar docs de setup en `docs/`
+- [ ] 6.16 — rediseñar `CustomFileField`/`CustomImageField` (uuid + validators)
 - [ ] Actualizar estado de Fase 6 en `audit/README.md` a ✅ (o ✅ parcial con checklist)

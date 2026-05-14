@@ -307,31 +307,21 @@ This means that you already have access to the admin panel.
 
 **Base models and serializers**
 
-In the "django_base/base_models.py" file, you will find some base models and managers. You should always inherit from them depending on whether you want a model with soft delete or not, as they add some fields and functionality.
+In `django_base/base_utils/base_models.py` you'll find `BaseModel`, an abstract model with `created_at` and `updated_at` fields. Inherit from it whenever you want those timestamps.
 
   
 
-If you use the "BaseSoftDeleteModel", when you access the "objects" manager, it will give you a filtered queryset. If you want to see all objects, you should use the "unfiltered_objects" manager, which will retrieve the deleted objects as well.
+`django_base/base_utils/base_serializers.py` provides `BaseSerializer`, a `ModelSerializer` that exposes `created_at` and `updated_at` in the response.
 
   
 
-In adittion to this base models, you need to use ours base serializers. This ones adds some fields that you should exclude in the serializer definition. (creation_date, update_date, etc.)
-
-  
-
-We have also incorporated two new model fields, one for images (CustomImageField), and the other for files (CustomFileField). These function identically to the standard fields but have the added capability of automatically renaming the files with a unique hash.
-
-  
-
-The project includes a custom paginator to use with ViewSets. When using a list action, you can pass the "page_size" parameter to specify the number of elements you want per page. This is in addition to the predefined fields of "PageNumberPagination".
+The project includes a custom paginator (`CustomPagination`) used by ViewSets. When using a list action, you can pass the `page_size` parameter to specify the number of elements you want per page (capped at 100).
 
   
 
 Some additions:
 
 - We have added some extra password validators to the ones already provided by Django.
-
-- We include a function in the "django_base/utils.py" to make aware naive datetimes.
 
   
 
