@@ -3,7 +3,7 @@ from dj_rest_auth.views import LoginView, LogoutView, UserDetailsView
 from django.urls import include, path
 from rest_framework_simplejwt.views import TokenVerifyView
 
-from auth.views import GoogleLogin, PasswordChangeViewModify, PasswordRecoveryViewSet
+from auth_api.views import GoogleLogin, PasswordChangeViewModify, PasswordRecoveryViewSet
 
 recovery_send_mail = PasswordRecoveryViewSet.as_view({"post": "recovery_send_mail"})
 recovery_check_token = PasswordRecoveryViewSet.as_view({"post": "recovery_check_token"})

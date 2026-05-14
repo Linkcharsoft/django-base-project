@@ -9,11 +9,18 @@ from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
+from drf_spectacular.utils import extend_schema
 from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 
+from auth_api.serializers import (
+    PasswordRecoveryCheckTokenSerializer,
+    PasswordRecoveryConfirmSerializer,
+    PasswordRecoveryResponseSerializer,
+    PasswordRecoverySendMailSerializer,
+)
 from django_base.base_utils.base_viewsets import BaseGenericViewSet
 from django_base.base_utils.utils import (
     email_template_sender,
@@ -49,6 +56,10 @@ class PasswordRecoveryViewSet(BaseGenericViewSet):
         user = User.objects.get(email=email)
         return user
 
+    @extend_schema(
+        request=PasswordRecoverySendMailSerializer,
+        responses=PasswordRecoveryResponseSerializer,
+    )
     @action(
         detail=False,
         methods=["post"],
@@ -107,6 +118,10 @@ class PasswordRecoveryViewSet(BaseGenericViewSet):
 
         return Response(_("Email sent"), status=status.HTTP_200_OK)
 
+    @extend_schema(
+        request=PasswordRecoveryCheckTokenSerializer,
+        responses=PasswordRecoveryResponseSerializer,
+    )
     @action(
         detail=False,
         methods=["post"],
@@ -124,6 +139,10 @@ class PasswordRecoveryViewSet(BaseGenericViewSet):
 
         return Response(_("Token is valid"), status=status.HTTP_200_OK)
 
+    @extend_schema(
+        request=PasswordRecoveryConfirmSerializer,
+        responses=PasswordRecoveryResponseSerializer,
+    )
     @action(
         detail=False,
         methods=["post"],

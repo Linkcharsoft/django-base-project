@@ -34,7 +34,7 @@ urlpatterns += [
 
 #<-------------- Our apps includes -------------->
 urlpatterns += [
-    path("api/auth/", include("auth.urls")),
+    path("api/auth/", include("auth_api.urls")),
 ]
 
 #<-------------- Our base router -------------->
