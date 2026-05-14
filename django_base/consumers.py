@@ -1,7 +1,7 @@
 import json
 
+from channels.exceptions import AcceptConnection, DenyConnection
 from channels.generic.websocket import AsyncWebsocketConsumer
-from channels.exceptions import DenyConnection, AcceptConnection
 
 
 class ConsumerPermission:
@@ -75,9 +75,7 @@ class ChatConsumer(CustomAsyncWebsocketConsumer):
     async def disconnect(self, close_code):
         # Leave room group
         if hasattr(self, "room_group_name"):
-            await self.channel_layer.group_discard(
-                self.room_group_name, self.channel_name
-            )
+            await self.channel_layer.group_discard(self.room_group_name, self.channel_name)
 
     # Receive message from WebSocket
     async def receive(self, text_data):

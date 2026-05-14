@@ -1,13 +1,11 @@
 from datetime import timedelta
-from django_base.settings.environment_variables import BASE_DIR
 
+from django_base.settings.environment_variables import BASE_DIR
 
 # <-------------- General configurations -------------->
 APP_NAME = "Django Base"
 USE_DEBUG_TOOLBAR = False
-BASE_EMAILS_BANNER_URL = (
-    "https://linkchar-static-bk.s3.us-east-1.amazonaws.com/Linkchar-banner.jpg"
-)
+BASE_EMAILS_BANNER_URL = "https://linkchar-static-bk.s3.us-east-1.amazonaws.com/Linkchar-banner.jpg"
 
 # <-------------- Auth configurations -------------->
 PASSWORD_CHANGE_BY_EMAIL = True

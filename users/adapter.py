@@ -1,5 +1,4 @@
 from allauth.account.adapter import DefaultAccountAdapter
-
 from django.conf import settings
 
 from django_base.base_utils.utils import get_default_for_email_template
@@ -7,9 +6,7 @@ from django_base.base_utils.utils import get_default_for_email_template
 
 class CustomAccountAdapter(DefaultAccountAdapter):
     def get_email_confirmation_url(self, request, emailconfirmation):
-        activate_url = (
-            settings.FRONT_URL + f"/registro/validar-email/{emailconfirmation.key}/"
-        )
+        activate_url = settings.FRONT_URL + f"/registro/validar-email/{emailconfirmation.key}/"
 
         return activate_url
 

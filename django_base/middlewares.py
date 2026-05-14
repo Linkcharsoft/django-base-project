@@ -1,15 +1,12 @@
 from urllib.parse import parse_qs
 
-from django.http import HttpResponse
-from django.utils.translation import gettext as _
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import AnonymousUser
 from django.db import close_old_connections
-
-from jwt import InvalidSignatureError, ExpiredSignatureError, DecodeError
+from django.http import HttpResponse
+from jwt import DecodeError, ExpiredSignatureError, InvalidSignatureError
 from jwt import decode as jwt_decode
-
 from rest_framework.authtoken.models import Token
 
 
@@ -41,9 +38,7 @@ if settings.USE_WEB_SOCKET:
             """Authenticate the user based on jwt."""
             close_old_connections()
             try:
-                token = parse_qs(scope["query_string"].decode("utf8")).get(
-                    "token", None
-                )[0]
+                token = parse_qs(scope["query_string"].decode("utf8")).get("token", None)[0]
 
                 data = jwt_decode(token, settings.SECRET_KEY, algorithms=["HS256"])
 
@@ -81,9 +76,7 @@ if settings.USE_WEB_SOCKET:
             """Authenticate the user based on jwt."""
             close_old_connections()
             try:
-                token = parse_qs(scope["query_string"].decode("utf8")).get(
-                    "token", None
-                )[0]
+                token = parse_qs(scope["query_string"].decode("utf8")).get("token", None)[0]
 
                 scope["user"] = await self.get_user_by_token(token)
             except Exception:

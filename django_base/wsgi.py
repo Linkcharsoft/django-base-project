@@ -1,6 +1,7 @@
 import os
-import environ
 from pathlib import Path
+
+import environ
 from django.core.wsgi import get_wsgi_application
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -9,10 +10,10 @@ environ.Env.read_env(os.path.join(BASE_DIR, ".env"))
 
 
 if env("IS_SERVER", default=True):
-    import time
-    import traceback
     import signal
     import sys
+    import time
+    import traceback
 
     BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     sys.path.append(BASE_DIR)

@@ -47,7 +47,7 @@ class UpperValidator:
 
 
 @deconstructible
-class FileSizeValidator(object):
+class FileSizeValidator:
     def __init__(self, mb_limit=5):
         self.mb_limit = mb_limit
 

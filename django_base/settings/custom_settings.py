@@ -1,22 +1,22 @@
 from datetime import timedelta
-from django_base.settings.django_settings import BASE_APPS, AUTH_PASSWORD_VALIDATORS, MIDDLEWARE
-from django_base.settings.environment_variables import (
-    BROKER_SERVER,
-    BROKER_SERVER_PORT,
-    EMAIL_PROVIDER,
-    CORS_ALLOWED_URLS,
-    BASE_DIR,
-    USE_S3,
-    AWS_STORAGE_BUCKET_NAME,
-    IS_PRODUCTION,
-    SENTRY_DSN,
-)
+
 from django_base.settings.configurations import (
-    USE_DEBUG_TOOLBAR,
     USE_CELERY,
+    USE_DEBUG_TOOLBAR,
     USE_WEB_SOCKET,
 )
-
+from django_base.settings.django_settings import AUTH_PASSWORD_VALIDATORS, BASE_APPS, MIDDLEWARE
+from django_base.settings.environment_variables import (
+    AWS_STORAGE_BUCKET_NAME,
+    BASE_DIR,
+    BROKER_SERVER,
+    BROKER_SERVER_PORT,
+    CORS_ALLOWED_URLS,
+    EMAIL_PROVIDER,
+    IS_PRODUCTION,
+    SENTRY_DSN,
+    USE_S3,
+)
 
 THIRD_APPS = []
 
@@ -66,7 +66,7 @@ STATIC_ROOT = BASE_DIR / "static"
 ACCOUNT_SIGNUP_FIELDS = ("email*", "password1*", "is_test_user")
 ACCOUNT_ADAPTER = "users.adapter.CustomAccountAdapter"
 ACCOUNT_SIGNUP_PASSWORD_ENTER_TWICE = False
-ACCOUNT_EMAIL_SUBJECT_PREFIX = "\u200B"
+ACCOUNT_EMAIL_SUBJECT_PREFIX = "\u200b"
 ACCOUNT_LOGIN_METHODS = {"email"}
 ACCOUNT_UNIQUE_EMAIL = True
 

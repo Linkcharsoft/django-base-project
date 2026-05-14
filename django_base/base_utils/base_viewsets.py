@@ -1,6 +1,6 @@
-from rest_framework.response import Response
 from rest_framework import status
-from rest_framework.viewsets import GenericViewSet, ReadOnlyModelViewSet, ModelViewSet
+from rest_framework.response import Response
+from rest_framework.viewsets import GenericViewSet, ModelViewSet, ReadOnlyModelViewSet
 
 
 class NoPutViewSetMixin:

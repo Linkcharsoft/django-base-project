@@ -19,8 +19,6 @@ MiddlewareStack = JWTAuthMiddlewareStack
 application = ProtocolTypeRouter(
     {
         "http": django_asgi_app,
-        "websocket": AllowedHostsOriginValidator(
-            MiddlewareStack(URLRouter(websocket_urlpatterns))
-        ),
+        "websocket": AllowedHostsOriginValidator(MiddlewareStack(URLRouter(websocket_urlpatterns))),
     }
 )

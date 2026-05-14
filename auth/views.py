@@ -1,32 +1,26 @@
 import logging
 
-from allauth.socialaccount.providers.oauth2.client import OAuth2Client
 from allauth.socialaccount.providers.google.views import GoogleOAuth2Adapter
-
-
-from dj_rest_auth.views import PasswordChangeView
+from allauth.socialaccount.providers.oauth2.client import OAuth2Client
 from dj_rest_auth.registration.views import SocialLoginView
-
+from dj_rest_auth.views import PasswordChangeView
+from django.conf import settings
+from django.contrib.auth.password_validation import validate_password
+from django.core.exceptions import ValidationError
+from django.utils import timezone
+from django.utils.translation import gettext_lazy as _
 from rest_framework import status
 from rest_framework.decorators import action
-from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
+from rest_framework.response import Response
 
-from django.conf import settings
-from django.utils import timezone
-from django.core.exceptions import ValidationError
-from django.utils.translation import gettext_lazy as _
-from django.contrib.auth.password_validation import validate_password
-
+from django_base.base_utils.base_viewsets import BaseGenericViewSet
 from django_base.base_utils.utils import (
-    get_random_string,
     email_template_sender,
     get_default_for_email_template,
+    get_random_string,
 )
-
-from users.models import User, TokenRecovery
-from django_base.base_utils.base_viewsets import BaseGenericViewSet
-
+from users.models import TokenRecovery, User
 
 logger = logging.getLogger(__name__)
 
@@ -34,9 +28,7 @@ logger = logging.getLogger(__name__)
 class TemporalOAuth2Client(OAuth2Client):
     def __init__(self, request, *args, **kwargs):
         tmp_args = list(args)
-        (
-            tmp_args.pop() if tmp_args else None
-        )  # TMP: remove scope field until dj-rest-auth updates
+        (tmp_args.pop() if tmp_args else None)  # TMP: remove scope field until dj-rest-auth updates
         super().__init__(request, *tmp_args, **kwargs)
 
 
@@ -49,10 +41,7 @@ class PasswordRecoveryViewSet(BaseGenericViewSet):
 
     def get_validated_token(self, email, token):
         token_recovery = TokenRecovery.objects.get(user__email=email, token=token)
-        if (
-            token_recovery.created_at + settings.PASSWORD_RECOVERY_TOKEN_EXPIRE_AT
-            < timezone.now()
-        ):
+        if token_recovery.created_at + settings.PASSWORD_RECOVERY_TOKEN_EXPIRE_AT < timezone.now():
             raise ValidationError(_("Token expired"))
         return token_recovery
 
@@ -92,9 +81,7 @@ class PasswordRecoveryViewSet(BaseGenericViewSet):
             )
             full_url = f"{settings.FRONT_URL}/{url}/{recovery_token}/{user.email}/"
 
-            normalized_request_type = (
-                "cambio" if request_type == "change" else "reseteo"
-            )
+            normalized_request_type = "cambio" if request_type == "change" else "reseteo"
 
             email_subject = f"Mail {normalized_request_type} de contraseña"
 
@@ -128,9 +115,7 @@ class PasswordRecoveryViewSet(BaseGenericViewSet):
     )
     def recovery_check_token(self, request):
         try:
-            self.get_validated_token(
-                request.data.get("email"), request.data.get("token")
-            )
+            self.get_validated_token(request.data.get("email"), request.data.get("token"))
         except ValidationError as e:
             return Response(str(e.message), status=status.HTTP_400_BAD_REQUEST)
         except Exception:
@@ -175,20 +160,14 @@ class PasswordChangeViewModify(PasswordChangeView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        if not "old_password" in request.data:
-            return Response(
-                _("old_password is required"), status=status.HTTP_400_BAD_REQUEST
-            )
+        if "old_password" not in request.data:
+            return Response(_("old_password is required"), status=status.HTTP_400_BAD_REQUEST)
         old_password = request.data["old_password"]
         if not request.user.check_password(old_password):
-            return Response(
-                _("Old password is incorrect"), status=status.HTTP_400_BAD_REQUEST
-            )
+            return Response(_("Old password is incorrect"), status=status.HTTP_400_BAD_REQUEST)
 
         if not (new_password := request.data.get("new_password")):
-            return Response(
-                _("new_password is required"), status=status.HTTP_400_BAD_REQUEST
-            )
+            return Response(_("new_password is required"), status=status.HTTP_400_BAD_REQUEST)
         if old_password == new_password:
             return Response(
                 _("New password must be different from old password"),

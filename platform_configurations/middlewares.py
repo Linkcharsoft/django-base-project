@@ -1,6 +1,7 @@
 from django.http import JsonResponse
 from django.urls import resolve
 from django.utils.translation import gettext as _
+
 from platform_configurations.models import SystemStatus
 
 
@@ -21,9 +22,7 @@ class IsSystemUpMiddleware:
 
         status = SystemStatus.get_status()
         if not status.is_operational:
-            return JsonResponse(
-                {"error": _("The system is under maintenance")}, status=503
-            )
+            return JsonResponse({"error": _("The system is under maintenance")}, status=503)
 
         response = self.get_response(request)
         return response

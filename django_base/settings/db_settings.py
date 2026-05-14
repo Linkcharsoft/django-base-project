@@ -1,7 +1,11 @@
 from django_base.settings.django_settings import BASE_DIR
 from django_base.settings.environment_variables import (
-    DB_ENGINE, DB_HOST, DB_NAME,
-    DB_PASSWORD, DB_PORT, DB_USER
+    DB_ENGINE,
+    DB_HOST,
+    DB_NAME,
+    DB_PASSWORD,
+    DB_PORT,
+    DB_USER,
 )
 
 # <-------------- DB settings -------------->
@@ -12,7 +16,7 @@ ALLOWED_DB_ENGINES = {
     "oracle": "django.db.backends.oracle",
 }
 
-if DB_ENGINE not in ALLOWED_DB_ENGINES.keys():
+if DB_ENGINE not in ALLOWED_DB_ENGINES:
     raise Exception("DB_ENGINE not allowed")
 
 if DB_ENGINE == "sqlite3":

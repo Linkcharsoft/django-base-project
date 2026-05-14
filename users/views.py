@@ -1,26 +1,24 @@
-from django_filters import rest_framework as filters
-
-from rest_framework.mixins import (
-    RetrieveModelMixin,
-    DestroyModelMixin,
-    UpdateModelMixin,
-    ListModelMixin,
-)
-from rest_framework.permissions import IsAuthenticated, IsAdminUser, AllowAny
-from rest_framework import filters as rest_filters
-from rest_framework.exceptions import NotFound
-from rest_framework.decorators import action
-from rest_framework.response import Response
-from rest_framework import status
-
-from django.utils.translation import gettext_lazy as _
-from django.db.models import F, Value, CharField
 from django.contrib.auth import get_user_model
+from django.db.models import CharField, F, Value
 from django.db.models.functions import Concat
+from django.utils.translation import gettext_lazy as _
+from django_filters import rest_framework as filters
+from rest_framework import filters as rest_filters
+from rest_framework import status
+from rest_framework.decorators import action
+from rest_framework.exceptions import NotFound
+from rest_framework.mixins import (
+    DestroyModelMixin,
+    ListModelMixin,
+    RetrieveModelMixin,
+    UpdateModelMixin,
+)
+from rest_framework.permissions import AllowAny, IsAdminUser, IsAuthenticated
+from rest_framework.response import Response
 
 from django_base.base_utils.base_viewsets import BaseGenericViewSet
-from users.permissions import HasRegisterCompletePermission
 from users.filters import UserFilter
+from users.permissions import HasRegisterCompletePermission
 from users.serializers import (
     UserCompleteRegisterSerializer,
     UserListSerializer,

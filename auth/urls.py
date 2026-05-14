@@ -1,12 +1,9 @@
-from django.urls import path, include
-
-from dj_rest_auth.views import LoginView, LogoutView, UserDetailsView
 from dj_rest_auth.jwt_auth import get_refresh_view
-
+from dj_rest_auth.views import LoginView, LogoutView, UserDetailsView
+from django.urls import include, path
 from rest_framework_simplejwt.views import TokenVerifyView
 
-from auth.views import PasswordChangeViewModify, PasswordRecoveryViewSet, GoogleLogin
-
+from auth.views import GoogleLogin, PasswordChangeViewModify, PasswordRecoveryViewSet
 
 recovery_send_mail = PasswordRecoveryViewSet.as_view({"post": "recovery_send_mail"})
 recovery_check_token = PasswordRecoveryViewSet.as_view({"post": "recovery_check_token"})
@@ -23,7 +20,7 @@ urlpatterns = [
     # JWT
     path("token/verify/", TokenVerifyView.as_view(), name="rest_token_verify"),
     path("token/refresh/", get_refresh_view().as_view(), name="rest_token_refresh"),
-    
+
     # Password
     path("password/change/", PasswordChangeViewModify.as_view(), name="rest_password_change"),
     path("password/recovery/", recovery_send_mail, name="rest_password_recovery_email_send"),

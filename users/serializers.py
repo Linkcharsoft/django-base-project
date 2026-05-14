@@ -1,13 +1,9 @@
+from dj_rest_auth.registration.serializers import RegisterSerializer
 from drf_writable_nested.serializers import WritableNestedModelSerializer
-
 from rest_framework import serializers
 
-from dj_rest_auth.registration.serializers import RegisterSerializer
-
-from django.utils.translation import gettext_lazy as _
-
 from django_base.base_utils.base_serializers import BaseSerializer
-from users.models import User, Profile
+from users.models import Profile, User
 
 
 class UserProfileCompleteSerializer(BaseSerializer):

@@ -1,5 +1,5 @@
-import os
 import argparse
+import os
 import subprocess
 
 DJANGO_CONTAINER_NAME = "web"
@@ -11,12 +11,13 @@ LANGUAGES = [
     ("en", "English"),
 ]
 
+
 def get_env_value(key, filename=".env"):
     """
     Get the value of a given key from the .env file.
     """
     try:
-        with open(filename, "r") as file:
+        with open(filename) as file:
             for line in file:
                 line = line.strip()  # Remove any whitespace
                 if line.startswith(key + "="):
@@ -26,11 +27,13 @@ def get_env_value(key, filename=".env"):
         print(f"Could not find the environment file {filename}.")
     return None
 
+
 def extract_language_codes(languages):
     codes = []
     for lenguage in languages:
         codes.append(lenguage[0])
     return codes
+
 
 def check_language_directories_exist(language_codes):
     locale_directory = "locale"  # Replace with the actual path to your "locale" directory
@@ -44,24 +47,30 @@ def check_language_directories_exist(language_codes):
 
     return missing_directories
 
+
 DB_USER = get_env_value("DB_USER")
 DB_NAME = get_env_value("DB_NAME")
+
 
 def run_django_command(command):
     cmd = f"docker compose exec {DJANGO_CONTAINER_NAME} python manage.py {command}"
     subprocess.run(cmd, shell=True)
 
+
 def enter_django_shell():
     run_django_command("shell_plus")
 
+
 def run_make_migrations():
     run_django_command("makemigrations")
+
 
 def run_migrations():
     for database in DATABASES:
         print(f"Running migrations for database: {database}\n")
         run_django_command(f"migrate --database={database}")
         print("\n")
+
 
 def run_makemessages():
     command = "makemessages"
@@ -77,22 +86,25 @@ def run_makemessages():
 
     run_django_command(f"{command} --ignore=venv/*")
 
+
 def run_compilemessages():
     run_django_command("compilemessages --ignore=venv/*")
+
 
 def run_other_django_command():
     command = input("Enter Django command: ")
     run_django_command(command)
 
+
 def enter_container(container_name):
     cmd = f"docker compose exec -it {container_name} /bin/bash"
     subprocess.run(cmd, shell=True)
 
+
 def enter_postgres_shell():
-    cmd = (
-        f"docker compose exec -it {POSTGRES_CONTAINER_NAME} psql -U {DB_USER} {DB_NAME}"
-    )
+    cmd = f"docker compose exec -it {POSTGRES_CONTAINER_NAME} psql -U {DB_USER} {DB_NAME}"
     subprocess.run(cmd, shell=True)
+
 
 def drop_database_and_restore_dump(filename):
     cmd = f'docker compose exec {POSTGRES_CONTAINER_NAME} psql -U {DB_USER} -d {DB_NAME} -c "DROP SCHEMA public CASCADE; CREATE SCHEMA public;"'
@@ -101,16 +113,21 @@ def drop_database_and_restore_dump(filename):
     cmd = f"docker cp {filename} {POSTGRES_CONTAINER_NAME}:/dump.sql"
     subprocess.run(cmd, shell=True)
 
-    cmd = f"docker compose exec {POSTGRES_CONTAINER_NAME} psql -U {DB_USER} -d {DB_NAME} -f /dump.sql"
+    cmd = (
+        f"docker compose exec {POSTGRES_CONTAINER_NAME} psql -U {DB_USER} -d {DB_NAME} -f /dump.sql"
+    )
     subprocess.run(cmd, shell=True)
+
 
 def run_tests():
     cmd = f"docker compose exec {DJANGO_CONTAINER_NAME} python manage.py test"
     subprocess.run(cmd, shell=True)
 
+
 def run_pytest_with_coverage():
     cmd = f"docker compose exec {DJANGO_CONTAINER_NAME} pytest --cov=. --cov-report=html"
     subprocess.run(cmd, shell=True)
+
 
 def interactive_menu():
     while True:
@@ -175,26 +192,19 @@ def interactive_menu():
         else:
             print("Invalid choice. Please try again.")
 
+
 def main():
-    parser = argparse.ArgumentParser(
-        description="Manage Django and PostgreSQL inside Docker."
-    )
+    parser = argparse.ArgumentParser(description="Manage Django and PostgreSQL inside Docker.")
 
     parser.add_argument("--shell", action="store_true", help="Enter Django shell")
-    parser.add_argument(
-        "--makemigrations", action="store_true", help="Run make migrations"
-    )
+    parser.add_argument("--makemigrations", action="store_true", help="Run make migrations")
     parser.add_argument("--migrate", action="store_true", help="Run migrations")
     parser.add_argument("--makemessages", action="store_true", help="Run make messages")
-    parser.add_argument(
-        "--compilemessages", action="store_true", help="Run compile messages"
-    )
+    parser.add_argument("--compilemessages", action="store_true", help="Run compile messages")
     parser.add_argument(
         "--django-container", action="store_true", help="Enter the Django container"
     )
-    parser.add_argument(
-        "--django-command", action="store_true", help="Run other Django command"
-    )
+    parser.add_argument("--django-command", action="store_true", help="Run other Django command")
     parser.add_argument(
         "--postgres-container",
         action="store_true",
@@ -243,6 +253,7 @@ def main():
     else:
         # No arguments provided, show interactive menu
         interactive_menu()
+
 
 if __name__ == "__main__":
     main()
