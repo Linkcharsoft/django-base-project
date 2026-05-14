@@ -21,10 +21,10 @@ RUN apt-get update && \
     apt-get autoremove -y && \
     rm -rf /var/lib/apt/lists/*
 
-RUN pip install --upgrade pip && pip install pip-tools
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /usr/local/bin/
 
 COPY requirements.txt ./
-RUN pip-sync requirements.txt
+RUN uv pip sync --system requirements.txt
 
 COPY . .
 

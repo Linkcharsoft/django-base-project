@@ -409,6 +409,20 @@ avatar = models.ImageField(
 
 ---
 
+### Item 6.17 — Resolver warnings de ruff pendientes de Fase 4
+
+**Problema:** tras la primera corrida de `ruff check --fix` quedaron 4 warnings que requieren juicio humano:
+
+- 2× `UP031` en `django_base/base_utils/base_viewsets.py:54-57` — `assert` con `%` formatting. Reemplazar por f-string o `.format()`.
+- 2× `DJ008` (`Model does not define __str__`):
+  - `platform_configurations/models.py:5` `SystemStatus`
+  - `users/models.py:29` `TokenRecovery`
+  Definir `__str__` razonable en cada uno (ej. `f"SystemStatus#{self.pk}"`, `f"TokenRecovery({self.user})"`).
+
+**Esfuerzo:** 15 min · **Breaking:** No
+
+---
+
 ### Item 6.15 — Consolidar docs de setup
 
 **Problema:** el setup está explicado en 3 lugares distintos (readme.md, .env.example, runcommands.py) con información parcial en cada uno y sin un quickstart de 3 pasos.

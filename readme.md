@@ -238,34 +238,32 @@ sudo  docker-compose  -f  docker-compose-production.yml  up  -d
 
 **Hooks**
 
-In the requirements file, we have included the [black](https://pypi.org/project/black/) library to ensure a high standard of code formatting.
+This project uses [pre-commit](https://pre-commit.com) to run [ruff](https://docs.astral.sh/ruff/) (format + lint) and other small checks before every commit. After cloning, install it once:
 
-There is a file called “move_hook.py” that moves files from the hooks folder to the .git/hooks directory so that when you execute “git commit,” the code is automatically formatted. 
+```bash
+pip install pre-commit
+pre-commit install
+```
 
-Additionally, there is another hook that, in case tests have been created, ensures that when “git push” is executed, the tests are run first, and the code is only pushed if the tests pass successfully.
+To bypass a single commit: `git commit --no-verify`.
 
-This hook behavior can be bypassed using “git commit –no-verify” or “git push –no-verify.”
+To run all hooks manually over the whole repo: `pre-commit run --all-files`.
+
+For a clean `git blame` that skips the bulk-format commits, run once:
+
+```bash
+git config blame.ignoreRevsFile .git-blame-ignore-revs
+```
 
 
 **Running Tests and Generating Coverage Report with pytest**
 
-This project uses pytest along with coverage.py and pytest-django to run tests and generate a code coverage report. Below are the steps to configure and execute these tools:
-
-
-- *1. Generating Coverage Report*
-
-To obtain a code coverage report along with running the tests, use the following command:
+Pytest, coverage and pytest-django are configured in `pyproject.toml`. To run tests and generate an HTML coverage report:
 
 ```bash
-
-"pytest --cov=<package_or_module_name> --cov-report=html"
-
-"pytest --cov=. --cov-report=html" (full project coverage)
-
+pytest
+pytest --cov --cov-report=html   # full project coverage
 ```
-Runcommands:
-
-"option 11"
 
 
 - *2. Interpreting the Coverage Report*

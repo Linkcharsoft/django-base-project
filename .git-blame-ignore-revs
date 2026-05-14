@@ -1,0 +1,6 @@
+# Revs to ignore when running `git blame`.
+# Configure locally with:
+#   git config blame.ignoreRevsFile .git-blame-ignore-revs
+
+# Fase 4 auditoría — primera aplicación de ruff format + lint --fix
+93fa0c1515cb02f931c294c17fe95ed21bbe641c

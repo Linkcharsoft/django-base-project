@@ -1,4 +1,4 @@
-black
+ruff
 dj-rest-auth[with_social]
 Django
 django-cors-headers
