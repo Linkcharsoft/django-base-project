@@ -31,6 +31,9 @@ class TokenRecovery(models.Model):
     token = models.CharField(max_length=25, default="")
     created_at = models.DateTimeField(auto_now_add=True)
 
+    def __str__(self):
+        return f"TokenRecovery({self.user})"
+
 
 @receiver(post_save, sender=User)
 def create_profile(sender, instance, **kwargs):

@@ -28,10 +28,9 @@ class ViewSetPermissionMixin:
         permission_classes += self.extra_permissions
 
         assert permission_classes != [], (
-            "Permission classes are empty or not defined for action `%s` in '%s',"
-            "explicitly use [AllowAny] for public access or"
-            "define non empty permission classes for said action."
-            % (self.action, self.__class__.__name__)
+            f"Permission classes are empty or not defined for action `{self.action}` "
+            f"in '{self.__class__.__name__}', explicitly use [AllowAny] for public "
+            f"access or define non empty permission classes for said action."
         )
 
         return [permission() for permission in permission_classes]
@@ -52,9 +51,8 @@ class ViewSetSerializerMixin:
         serializer_class = self.serializers.get(self.action, self.serializers["default"])
 
         assert serializer_class is not None, (
-            "'%s' should either define a serializer class for action `%s`, "
-            "or override the `get_serializer_class()` method."
-            % (self.__class__.__name__, self.action)
+            f"'{self.__class__.__name__}' should either define a serializer class "
+            f"for action `{self.action}`, or override the `get_serializer_class()` method."
         )
 
         return serializer_class

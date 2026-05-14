@@ -9,6 +9,9 @@ class SystemStatus(models.Model):
         verbose_name = _("System Status")
         verbose_name_plural = _("System Status")
 
+    def __str__(self):
+        return f"SystemStatus#{self.pk} (operational={self.is_operational})"
+
     @classmethod
     def get_status(cls):
         status, created = cls.objects.get_or_create(pk=1)

@@ -1,9 +1,6 @@
-version: "3.9"
-
 services:
   db:
     image: postgres:16
-    
     volumes:
       - ./data/db:/var/lib/postgresql/data
     environment:
@@ -22,26 +19,11 @@ services:
     ports:
       - "8000:8000"
     environment:
-      - POSTGRES_NAME=${DB_NAME}
-      - POSTGRES_USER=${DB_USER}
-      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - DB_NAME=${DB_NAME}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
     volumes:
       - .:/code
     depends_on:
       db:
         condition: service_healthy
-
-
-  # redis:
-  #   image: redis:7
-  #   ports:
-  #     - "6379:6379"
-
-  # celery:
-  #   build: .
-  #   command: celery -A django_base worker --loglevel=info
-  #   volumes:
-  #     - .:/code
-  #   depends_on:
-  #     - db
-  #     - redis
