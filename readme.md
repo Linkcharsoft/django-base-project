@@ -542,9 +542,11 @@ To access detailed information about the endpoints in the project, you can utili
 
   
 
-Swagger endpoint: swagger/
+Swagger UI endpoint: api/schema/swagger-ui/
 
-Redoc endpoint: redoc/
+Redoc endpoint: api/schema/redoc/
+
+Raw OpenAPI 3.1 schema: api/schema/
 
   
 

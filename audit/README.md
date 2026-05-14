@@ -14,7 +14,7 @@ Cada fase está pensada para ejecutarse en **una sesión limpia** de Claude (o d
 | 2 | [02-dependencies-diet.md](./02-dependencies-diet.md) | Eliminar librerías no usadas (pandas/numpy out) | ✅ Completada (rama `v1.3`) | 2-4 h | Medio |
 | 3 | [03-base-utils-cleanup.md](./03-base-utils-cleanup.md) | Podar `django_base/base_utils/` huérfano | ✅ Completada (commit `70abc05`, rama `v1.3`) | 2 h | Bajo |
 | 4 | [04-modern-tooling.md](./04-modern-tooling.md) | ruff + uv + pre-commit framework + pyproject | ✅ Completada (rama `v1.3`) | 3-4 h | Bajo |
-| 5 | [05-api-docs-modernization.md](./05-api-docs-modernization.md) | `drf-yasg` → `drf-spectacular` | 🔴 Pendiente | 4-6 h | Medio |
+| 5 | [05-api-docs-modernization.md](./05-api-docs-modernization.md) | `drf-yasg` → `drf-spectacular` | ✅ Completada (rama `v1.3`) | 4-6 h | Medio |
 | 6 | [06-backlog.md](./06-backlog.md) | Backlog menor (tests, squash, readme, runcommands) | 🔴 Pendiente | variable | Bajo |
 
 Orden recomendado: **1 → 2 → 3 → 4 → 5 → 6**. Las fases 1, 2 y 3 son independientes entre sí; 4 y 5 conviene hacerlas después. La 6 es backlog libre.
@@ -34,7 +34,7 @@ Template base corporativo de **Django 5.2 + DRF** que usamos como punto de parti
 - **Auth**: `dj-rest-auth 7.0.1` + `django-allauth 65.10.0` + `djangorestframework-simplejwt 5.5.1`
 - **DB**: PostgreSQL 16 (docker-compose), `psycopg[binary] 3.2.9`
 - **Deploy**: Docker + `gunicorn` + `whitenoise`
-- **Docs API**: `drf-yasg 1.21.10` (a reemplazar en Fase 5)
+- **Docs API**: `drf-spectacular 0.29.0` (OpenAPI 3.1, paths en `/api/schema/`)
 - **Settings**: `split-settings` en `django_base/settings/` (5 archivos)
 
 ### Estructura
@@ -107,7 +107,7 @@ El frontend es también un template que consume estos endpoints. **Cualquier cam
 
 - `admin/` — Django admin.
 - `__debug__/` — debug_toolbar (⚠ montado sin gating por `DEBUG` — Fase 1).
-- `swagger/`, `redoc/`, `swagger.json`, `swagger.yaml` — drf-yasg (Fase 5 las reemplaza por spectacular manteniendo paths).
+- `api/schema/`, `api/schema/swagger-ui/`, `api/schema/redoc/` — drf-spectacular (OpenAPI 3.1).
 - `api/system-status/is-system-up/` — health check (⚠ hardcoded en `platform_configurations/middlewares.py`, no tocar).
 - `api/` — incluye routers de `users`, `platform_configurations`, `django_global_places` (🗑 Fase 2), `notifications` (🗑 Fase 2).
 

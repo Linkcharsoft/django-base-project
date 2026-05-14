@@ -423,6 +423,24 @@ avatar = models.ImageField(
 
 ---
 
+### Item 6.18 — Tipado de schema OpenAPI (warnings de drf-spectacular)
+
+**Problema:** tras la Fase 5, `manage.py spectacular --validate` reporta 4 errores únicos por views sin `serializer_class` declarado en sus actions. Los endpoints afectados quedan **ignorados** del schema generado (no aparecen en Swagger UI ni en `/api/schema/`):
+
+- `auth/views.py:35` `PasswordRecoveryViewSet`: actions `recovery_check_token` y `recovery_confirm` sin serializer asociado.
+- `platform_configurations/views.py:9` `SytemStatusViewSet` (notar el typo del nombre, ver Item 6.3) sin `serializer_class`.
+
+**Plan sugerido:**
+
+1. Definir serializers explícitos para cada action faltante en `PasswordRecoveryViewSet` (`recovery_check_token` → token + email; `recovery_confirm` → token + email + new_password).
+2. Decorar las actions con `@extend_schema(request=..., responses=...)` de `drf_spectacular.utils` para mapearlos al schema.
+3. Para `SystemStatusViewSet`: declarar `serializer_class = SystemStatusSerializer` (ya existe) o `@extend_schema_view`.
+4. Re-correr `docker compose exec web python manage.py spectacular --validate` hasta `Errors: 0`.
+
+**Esfuerzo:** 30-45 min · **Breaking:** No (solo afecta el schema generado, no las responses reales).
+
+---
+
 ### Item 6.15 — Consolidar docs de setup
 
 **Problema:** el setup está explicado en 3 lugares distintos (readme.md, .env.example, runcommands.py) con información parcial en cada uno y sin un quickstart de 3 pasos.
@@ -438,7 +456,7 @@ Crear un `docs/quickstart.md` mínimo:
 2. `docker compose up -d`.
 3. `make migrate && make shell`.
 4. Abrir http://localhost:8000/admin (admin@admin.com / admin123123 en DEBUG).
-5. Docs de la API en http://localhost:8000/swagger/.
+5. Docs de la API en http://localhost:8000/api/schema/swagger-ui/.
 ```
 
 Y que el `README.md` principal sea un índice de 50 líneas apuntando a subdocs.
@@ -479,4 +497,6 @@ docker compose exec web pytest
 - [ ] 6.14 — limpiar `wsgi.py`
 - [ ] 6.15 — consolidar docs de setup en `docs/`
 - [ ] 6.16 — rediseñar `CustomFileField`/`CustomImageField` (uuid + validators)
+- [ ] 6.17 — resolver warnings de ruff pendientes de Fase 4
+- [ ] 6.18 — tipado de schema OpenAPI (warnings de drf-spectacular)
 - [ ] Actualizar estado de Fase 6 en `audit/README.md` a ✅ (o ✅ parcial con checklist)

@@ -159,6 +159,7 @@ REST_FRAMEWORK = {
         "dj_rest_auth.jwt_auth.JWTAuthentication",
     ),
     "DEFAULT_PAGINATION_CLASS": "django_base.base_utils.base_pagination.CustomPagination",
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
     "PAGE_SIZE": 10,
     "DEFAULT_RENDERER_CLASSES": ("rest_framework.renderers.JSONRenderer",),
     "DEFAULT_THROTTLE_CLASSES": [
@@ -175,17 +176,18 @@ REST_FRAMEWORK = {
 
 SITE_ID = 1
 
-# <-------------- SWAGGER configurations -------------->
-SWAGGER_SETTINGS = {
-    "USE_SESSION_AUTH": False,
-    "SHOW_REQUEST_HEADERS": True,
-    "SECURITY_DEFINITIONS": {
-        "api_key": {
-            "type": "apiKey",
-            "in": "header",
-            "name": "Authorization",
-            "description": "Write 'Token' in the field, followed by a space and then your token",
-        }
+# <-------------- drf-spectacular configurations -------------->
+SPECTACULAR_SETTINGS = {
+    "TITLE": "Base project API",
+    "DESCRIPTION": "Base project documentation",
+    "VERSION": "1.0.0",
+    "CONTACT": {"email": "contact@linkchar.com"},
+    "SERVE_INCLUDE_SCHEMA": False,
+    "SWAGGER_UI_DIST": "SIDECAR",
+    "SWAGGER_UI_FAVICON_HREF": "SIDECAR",
+    "REDOC_DIST": "SIDECAR",
+    "SWAGGER_UI_SETTINGS": {
+        "persistAuthorization": True,
     },
 }
 

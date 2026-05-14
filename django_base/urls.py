@@ -1,22 +1,15 @@
 from django.conf import settings
 from django.contrib import admin
-from django.urls import include, path, re_path
-from drf_yasg import openapi
-from drf_yasg.views import get_schema_view
+from django.urls import include, path
+from drf_spectacular.views import (
+    SpectacularAPIView,
+    SpectacularRedocView,
+    SpectacularSwaggerView,
+)
 from rest_framework.routers import DefaultRouter
 
 from platform_configurations.urls import router as platform_configurations_router
 from users.urls import router as users_router
-
-schema_view = get_schema_view(
-    openapi.Info(
-        title="Base project API",
-        default_version="v1",
-        description="Base project documentation",
-        contact=openapi.Contact(email="contact@linkchar.com"),
-    ),
-    public=True,
-)
 
 base_router = DefaultRouter()
 base_router.registry.extend(users_router.registry)
@@ -32,16 +25,15 @@ urlpatterns = [
 if settings.DEBUG and "debug_toolbar" in settings.INSTALLED_APPS:
     urlpatterns += [path("__debug__/", include("debug_toolbar.urls"))]
 
-# <-------------- Swagger urls -------------->
+# <-------------- API schema (drf-spectacular) -------------->
 urlpatterns += [
-    re_path(r"^swagger(?P<format>\.json|\.yaml)$", schema_view.without_ui(cache_timeout=0), name="schema-json"),
-    re_path(r"^swagger/$", schema_view.with_ui("swagger", cache_timeout=0), name="schema-swagger-ui"),
-    re_path(r"^redoc/$", schema_view.with_ui("redoc", cache_timeout=0), name="schema-redoc"),
+    path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
+    path("api/schema/swagger-ui/", SpectacularSwaggerView.as_view(url_name="schema"), name="swagger-ui"),
+    path("api/schema/redoc/", SpectacularRedocView.as_view(url_name="schema"), name="redoc"),
 ]
 
 #<-------------- Our apps includes -------------->
 urlpatterns += [
-    path("api/users/", include("users.urls")),
     path("api/auth/", include("auth.urls")),
 ]
 
