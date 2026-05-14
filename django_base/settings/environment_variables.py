@@ -11,14 +11,12 @@ environ.Env.read_env(os.path.join(BASE_DIR, ".env"))
 # <--------------- General configurations -------------->
 SECRET_KEY = env("SECRET_KEY", default="-----------")
 DEBUG = env.bool("DEBUG", default=True)
-IS_SERVER = env.bool("IS_SERVER", default=True)
 IS_PRODUCTION = env.bool("IS_PRODUCTION", default=False)
 AWS_ACCESS_KEY_ID = env("AWS_ACCESS_KEY_ID", default="")
 AWS_SECRET_ACCESS_KEY = env("AWS_SECRET_ACCESS_KEY", default="")
 
 
 # <-------------- urls settings -------------->
-BACK_URL = env("BACK_URL", default="http://localhost:8000")
 FRONT_URL = env("FRONT_URL", default="http://localhost:3000")
 CSRF_TRUSTED_ORIGINS = env.list("CSRF_TRUSTED_ORIGINS", default=[])
 ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=[]) if not DEBUG else ["*"]
@@ -60,6 +58,4 @@ SENTRY_DSN = env("SENTRY_DSN", default="")
 
 
 # <-------------- Google settings -------------->
-CLIENT_ID = env("CLIENT_ID", default="")
-CLIENT_SECRET = env("CLIENT_SECRET", default="")
 GOOGLE_REDIRECT_URI = env("GOOGLE_REDIRECT_URI", default="")
