@@ -481,22 +481,22 @@ docker compose exec web pytest
 
 ## 📊 Checklist de cierre (marcar item por item)
 
-- [ ] 6.1 — runcommands → Makefile
-- [ ] 6.2 — rename `auth` → `auth_api`
-- [ ] 6.3 — endurecer `IsSystemUpMiddleware` + fix typo `SytemStatusViewSet`
+- [x] 6.1 — runcommands → justfile (commit `1007c9d`)
+- [x] 6.2 — rename `auth` → `auth_api` (commit `18e568d`)
+- [x] 6.3 — endurecer `IsSystemUpMiddleware` + fix typo `SytemStatusViewSet` (commit `855c751`)
 - [ ] 6.4 — tests reales (al menos cobertura mínima de auth y users)
 - [ ] 6.5 — squash migraciones de `users/`
-- [ ] 6.6 — limpiar `.env.example` + documentar `IS_SERVER`
+- [x] 6.6 — limpiar `.env.example` + eliminar `IS_SERVER`/`BACK_URL`/`CLIENT_*` (commit `7daaf1c`)
 - [x] 6.7 — limpiar `.gitignore` duplicado (commit `85e4f51`)
 - [x] 6.8 — `docker-compose.yml` sin `version:` y sin comentarios muertos (commit `85e4f51`)
 - [ ] 6.9 — actualizar `readme.md`
-- [ ] 6.10 — consolidar serializers duplicados en `users/serializers.py`
+- [x] 6.10 — consolidar serializers duplicados en `users/serializers.py` (commit `f111151`)
 - [ ] 6.11 — activar `ROTATE_REFRESH_TOKENS` (tras coordinar con front)
 - [ ] 6.12 — decidir `PASSWORD_CHANGE_BY_EMAIL`
 - [ ] 6.13 — destino de celery/websockets placeholders
-- [ ] 6.14 — limpiar `wsgi.py`
+- [x] 6.14 — limpiar `wsgi.py` (commit `7daaf1c`)
 - [ ] 6.15 — consolidar docs de setup en `docs/`
-- [ ] 6.16 — rediseñar `CustomFileField`/`CustomImageField` (uuid + validators)
+- [x] 6.16 — rediseñar `CustomFileField`/`CustomImageField` → `unique_upload_to` helper (commit `92c8725`)
 - [x] 6.17 — resolver warnings de ruff pendientes de Fase 4 (commit `85e4f51`)
-- [ ] 6.18 — tipado de schema OpenAPI (warnings de drf-spectacular)
+- [x] 6.18 — tipado de schema OpenAPI (commits `855c751` platform + `18e568d` auth)
 - [ ] Actualizar estado de Fase 6 en `audit/README.md` a ✅ (o ✅ parcial con checklist)

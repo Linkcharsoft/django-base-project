@@ -15,7 +15,7 @@ Cada fase está pensada para ejecutarse en **una sesión limpia** de Claude (o d
 | 3 | [03-base-utils-cleanup.md](./03-base-utils-cleanup.md) | Podar `django_base/base_utils/` huérfano | ✅ Completada (commit `70abc05`, rama `v1.3`) | 2 h | Bajo |
 | 4 | [04-modern-tooling.md](./04-modern-tooling.md) | ruff + uv + pre-commit framework + pyproject | ✅ Completada (rama `v1.3`) | 3-4 h | Bajo |
 | 5 | [05-api-docs-modernization.md](./05-api-docs-modernization.md) | `drf-yasg` → `drf-spectacular` | ✅ Completada (rama `v1.3`) | 4-6 h | Medio |
-| 6 | [06-backlog.md](./06-backlog.md) | Backlog menor (tests, squash, readme, runcommands) | 🟡 En progreso (6.7, 6.8, 6.17 ✅ en `85e4f51`) | variable | Bajo |
+| 6 | [06-backlog.md](./06-backlog.md) | Backlog menor (tests, squash, readme, runcommands) | 🟡 En progreso (10/18 items ✅: 6.1, 6.2, 6.3, 6.6, 6.7, 6.8, 6.10, 6.14, 6.16, 6.17, 6.18) | variable | Bajo |
 
 Orden recomendado: **1 → 2 → 3 → 4 → 5 → 6**. Las fases 1, 2 y 3 son independientes entre sí; 4 y 5 conviene hacerlas después. La 6 es backlog libre.
 
