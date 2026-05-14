@@ -20,8 +20,8 @@ from django_base.base_utils.base_viewsets import BaseGenericViewSet
 from users.filters import UserFilter
 from users.permissions import HasRegisterCompletePermission
 from users.serializers import (
-    UserCompleteRegisterSerializer,
     UserListSerializer,
+    UserRegisterSerializer,
     UserSerializer,
 )
 
@@ -67,7 +67,7 @@ class UserViewSet(
     serializers = {
         "retrieve": UserSerializer,
         "update": UserSerializer,
-        "complete_register": UserCompleteRegisterSerializer,
+        "complete_register": UserRegisterSerializer,
         "list": UserListSerializer,
         "default": UserSerializer,
     }

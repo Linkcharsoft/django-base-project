@@ -6,45 +6,10 @@ from django_base.base_utils.base_serializers import BaseSerializer
 from users.models import Profile, User
 
 
-class UserProfileCompleteSerializer(BaseSerializer):
-    """USE THIS FOR USER PROFILE COMPLETE REGISTRATION
-    Serializer for completing user profile registration.
-    This serializer is used to collect all necessary information for a user profile
-    when they are completing their registration.
-    """
+class ProfileSerializer(BaseSerializer):
+    """Serializer del perfil (detalle/registro). Agregá acá los campos
+    requeridos para completar el registro."""
 
-    is_register_complete = serializers.BooleanField(read_only=True)
-
-    class Meta:
-        model = Profile
-        fields = [
-            "is_register_complete",
-            # add other fields that are required for profile completion here
-        ]
-
-
-class UserCompleteRegisterSerializer(WritableNestedModelSerializer, BaseSerializer):
-    """USE THIS FOR USER COMPLETE REGISTRATION
-    Serializer for completing user profile registration.
-    This serializer is used to collect all necessary information for a user profile
-    when they are completing their registration.
-    """
-
-    first_name = serializers.CharField(required=True)
-    last_name = serializers.CharField(required=True)
-    profile = UserProfileCompleteSerializer()
-
-    class Meta:
-        model = User
-        fields = (
-            "first_name",
-            "last_name",
-            "profile",
-            # add other fields that are required for user completion here
-        )
-
-
-class UserProfileSerializer(BaseSerializer):
     is_register_complete = serializers.BooleanField(read_only=True)
 
     class Meta:
@@ -52,36 +17,40 @@ class UserProfileSerializer(BaseSerializer):
         fields = ("is_register_complete",)
 
 
-class UserProfileListSerializer(serializers.ModelSerializer):
+class ProfileListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Profile
         fields = ("id",)
 
 
 class UserSerializer(WritableNestedModelSerializer, BaseSerializer):
-    profile = UserProfileSerializer()
+    profile = ProfileSerializer()
+
+    class Meta:
+        model = User
+        fields = ("id", "email", "first_name", "last_name", "profile")
+        read_only_fields = ("email",)
+
+
+class UserListSerializer(serializers.ModelSerializer):
+    profile = ProfileListSerializer()
 
     class Meta:
         model = User
         fields = ("id", "first_name", "last_name", "profile")
 
-    def to_representation(self, instance):
-        data = super().to_representation(instance)
-        data["email"] = instance.email
-        return data
 
+class UserRegisterSerializer(WritableNestedModelSerializer, BaseSerializer):
+    """Serializer del flow de completar registro. first_name y last_name
+    pasan a ser requeridos."""
 
-class UserListSerializer(serializers.ModelSerializer):
-    profile = UserProfileListSerializer()
+    first_name = serializers.CharField(required=True)
+    last_name = serializers.CharField(required=True)
+    profile = ProfileSerializer()
 
     class Meta:
         model = User
-        fields = (
-            "id",
-            "first_name",
-            "last_name",
-            "profile",
-        )
+        fields = ("first_name", "last_name", "profile")
 
 
 class CustomRegisterSerializer(RegisterSerializer):
