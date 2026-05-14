@@ -487,8 +487,8 @@ docker compose exec web pytest
 - [ ] 6.4 — tests reales (al menos cobertura mínima de auth y users)
 - [ ] 6.5 — squash migraciones de `users/`
 - [ ] 6.6 — limpiar `.env.example` + documentar `IS_SERVER`
-- [ ] 6.7 — limpiar `.gitignore` duplicado
-- [ ] 6.8 — `docker-compose.yml` sin `version:` y sin comentarios muertos
+- [x] 6.7 — limpiar `.gitignore` duplicado (commit `85e4f51`)
+- [x] 6.8 — `docker-compose.yml` sin `version:` y sin comentarios muertos (commit `85e4f51`)
 - [ ] 6.9 — actualizar `readme.md`
 - [ ] 6.10 — consolidar serializers duplicados en `users/serializers.py`
 - [ ] 6.11 — activar `ROTATE_REFRESH_TOKENS` (tras coordinar con front)
@@ -497,6 +497,6 @@ docker compose exec web pytest
 - [ ] 6.14 — limpiar `wsgi.py`
 - [ ] 6.15 — consolidar docs de setup en `docs/`
 - [ ] 6.16 — rediseñar `CustomFileField`/`CustomImageField` (uuid + validators)
-- [ ] 6.17 — resolver warnings de ruff pendientes de Fase 4
+- [x] 6.17 — resolver warnings de ruff pendientes de Fase 4 (commit `85e4f51`)
 - [ ] 6.18 — tipado de schema OpenAPI (warnings de drf-spectacular)
 - [ ] Actualizar estado de Fase 6 en `audit/README.md` a ✅ (o ✅ parcial con checklist)
