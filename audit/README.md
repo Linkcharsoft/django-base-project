@@ -10,8 +10,8 @@ Cada fase está pensada para ejecutarse en **una sesión limpia** de Claude (o d
 
 | # | Archivo | Objetivo | Estado | Esfuerzo | Riesgo |
 |---|---|---|---|---|---|
-| 1 | [01-critical-security.md](./01-critical-security.md) | Fix de bugs y agujeros de seguridad urgentes | 🔴 Pendiente | 1-2 h | Bajo |
-| 2 | [02-dependencies-diet.md](./02-dependencies-diet.md) | Eliminar librerías no usadas (pandas/numpy out) | 🔴 Pendiente | 2-4 h | Medio |
+| 1 | [01-critical-security.md](./01-critical-security.md) | Fix de bugs y agujeros de seguridad urgentes | ✅ Completada (commit `e2fb258`, rama `v1.3`) | 1-2 h | Bajo |
+| 2 | [02-dependencies-diet.md](./02-dependencies-diet.md) | Eliminar librerías no usadas (pandas/numpy out) | ✅ Completada (rama `v1.3`) | 2-4 h | Medio |
 | 3 | [03-base-utils-cleanup.md](./03-base-utils-cleanup.md) | Podar `django_base/base_utils/` huérfano | 🔴 Pendiente | 2 h | Bajo |
 | 4 | [04-modern-tooling.md](./04-modern-tooling.md) | ruff + uv + pre-commit framework + pyproject | 🔴 Pendiente | 3-4 h | Bajo |
 | 5 | [05-api-docs-modernization.md](./05-api-docs-modernization.md) | `drf-yasg` → `drf-spectacular` | 🔴 Pendiente | 4-6 h | Medio |

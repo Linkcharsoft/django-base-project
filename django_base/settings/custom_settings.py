@@ -18,18 +18,14 @@ from django_base.settings.configurations import (
 )
 
 
-THIRD_APPS = [
-    # "django_crontab",
-]
+THIRD_APPS = []
 
 if USE_WEB_SOCKET:
     THIRD_APPS = ["daphne", "channels"] + THIRD_APPS
 
 MY_APPS = [
     "users",
-    "django_global_places",
     "platform_configurations",
-    "notifications",
 ]
 
 INSTALLED_APPS = THIRD_APPS + MY_APPS + BASE_APPS
@@ -107,7 +103,6 @@ else:
 
 # <---------------------- Cors configurations ---------------------->
 CORS_ALLOWED_ORIGINS = CORS_ALLOWED_URLS
-CORS_ORIGIN_WHITELIST = CORS_ALLOWED_URLS
 
 # <---------------------- django-debug-toolbar configurations ---------------------->
 # INTERNAL_IPS = [
@@ -164,7 +159,6 @@ REST_FRAMEWORK = {
         "dj_rest_auth.jwt_auth.JWTAuthentication",
     ),
     "DEFAULT_PAGINATION_CLASS": "django_base.base_utils.base_pagination.CustomPagination",
-    "DEFAULT_SCHEMA_CLASS": "rest_framework.schemas.coreapi.AutoSchema",
     "PAGE_SIZE": 10,
     "DEFAULT_RENDERER_CLASSES": ("rest_framework.renderers.JSONRenderer",),
     "DEFAULT_THROTTLE_CLASSES": [

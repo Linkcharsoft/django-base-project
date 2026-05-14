@@ -33,10 +33,6 @@ And the next libraries (plus the ones that the frameworks include):
 
 - drf-writable-nested
 
-- django-global-places 
-
-- django-notifications-pro
-
 
 ## For AWS-Logs
 
@@ -380,76 +376,6 @@ Finally, you need to run the following command:
 python  manage.py  compilemessages
 ```
 Now if the client sends the "Accept-Language" header with the desired language, the system will automatically return the translated strings.
-
-
-## Notifications
-
-We use [**django-notifications-pro**](https://pypi.org/project/django-notifications-pro/) which is a forked version of [**django-notifications-hq**](https://pypi.org/project/django-notifications-hq/) to manage notifications.
-
-This custom library has new 3 endpoints, one for listing notifications, one for details, and an extra one to mark all notifications as read.
-
-If you want to create notifications at any point in the system, you can do it with the following lines:
-
-```python
-from notifications.signals import notify
-notify.send(actor, recipient, verb, action_object, target, level, description, public, timestamp, **kwargs)
-```
-
-
-On the other hand, if you want to send push notifications through ExpoGO you will need to turn on some config in the django_base/settings/configurations.py file:
-
-```python
-DJANGO_NOTIFICATIONS_CONFIG = {
-    'USE_EXPO_NOTIFICATIONS': True,
-    'EXPO_APP_ID': 'YOUR_EXPO_APP_ID', 
-}
-```
-And run the following command on console to run migrations:
-
-```bash
-python manage.py makemigrations
-python manage.py migrate
-```
-
-After this, an ExpoToken model will be created, and two new endpoints will be enabled:
-
-1. The first one is for registering Expo tokens for the registered user. This should be used every time the user logs in or registers from the frontend.
-2. The second one is for deleting the mentioned token, and it should be used when the user logs out of the system.
-
-
-Lastly, youu can set up a cron job to delete old notifications automatically. 
-
-Add the following to your settings.py :
-
-```python
-DJANGO_NOTIFICATIONS_CONFIG = {
-    'AUTO_DELETE_NOTIFICATIONS': True,
-    'NOTIFICATIONS_DELETE_DAYS': 30, # Number of days to keep notifications (default is 30)
-}
-
-CRONJOBS = [
-    ('0 0 * * *', 'notifications.cron.delete_old_notifications'), # Delete old notifications every day at midnight
-]
-```
-
-In your MY_APPS settings, add the following:
-```python
-MY_APPS = [
-    'notifications',   # Library for notifications
-    'django_crontab',  # Library for cron jobs
-]
-```
-
-Finally, this commands are needed to enable the cron job.
-```bash
-pip install django-notifications-pro[cron]
-service cron start
-python manage.py crontab add
-
-```
-
-
-More info [here](https://pypi.org/project/django-notifications-views/)
 
 
 ## Redis
