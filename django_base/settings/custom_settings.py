@@ -179,12 +179,3 @@ if IS_PRODUCTION:
             traces_sample_rate=1.0,
             profiles_sample_rate=1.0,
         )
-
-
-# <-------------- Google settings -------------->
-SOCIALACCOUNT_PROVIDERS = {
-    "google": {
-        "SCOPE": ["profile", "email", "openid"],
-        "AUTH_PARAMS": {"access_type": "offline"},  # refresh_token
-    }
-}

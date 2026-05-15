@@ -22,7 +22,7 @@ High-level map of the codebase. Read [quickstart.md](./quickstart.md) first if y
 │   ├── middlewares.py          # HealthCheckMiddleware
 │   ├── storage_backends.py     # S3 public media backend (gated by USE_S3)
 │   └── urls.py wsgi.py asgi.py
-├── auth_api/                   # Custom auth endpoints (password recovery, Google login, password change)
+├── auth_api/                   # Custom auth endpoints (password recovery, password change)
 ├── users/                      # User + Profile + TokenRecovery models, viewset, filters, permissions
 ├── platform_configurations/    # SystemStatus (global maintenance flag) + IsSystemUpMiddleware
 ├── templates/                  # HTML email templates (allauth + password recovery)
@@ -81,7 +81,7 @@ Mounted in `django_base/urls.py`:
 | `/admin/` | `django.contrib.admin` | Django admin |
 | `/__debug__/` | `debug_toolbar` | Only when `USE_DEBUG_TOOLBAR=True` |
 | `/api/schema/` | `drf_spectacular.views` | OpenAPI schema + Swagger UI + Redoc |
-| `/api/auth/` | `auth_api.urls` | Login, logout, JWT, password change/recovery, Google OAuth |
+| `/api/auth/` | `auth_api.urls` | Login, logout, JWT, password change/recovery |
 | `/api/users/` | `users.urls` router | User CRUD + custom actions |
 | `/api/system-status/` | `platform_configurations.urls` router | Global maintenance health check |
 | `/healthcheck/`, `/` | `HealthCheckMiddleware` | Plain `ok` text (for load balancers) |
@@ -104,9 +104,9 @@ There is **no** app called `auth/` — that was the original name and was rename
 - **S3 media** (`USE_S3=True` env var): switches `STORAGES["default"]` to `PublicMediaStorage` from `storage_backends.py`.
 - **Sentry** (`SENTRY_DSN` env var + `IS_PRODUCTION=True`): initialized at the bottom of `custom_settings.py`. If `IS_PRODUCTION=True` but `SENTRY_DSN` is empty, the project logs a warning and continues (does not crash).
 
-## Extending (Celery / WebSockets)
+## Extending (opt-in features)
 
-The base intentionally does **not** ship Celery or Channels code/dependencies — they were removed because the placeholders couldn't actually be activated without installing libs and editing several files. Activation guides with full snippets live in [`extending/celery.md`](./extending/celery.md) and [`extending/websockets.md`](./extending/websockets.md).
+The base intentionally does **not** ship Celery, Channels, Google OAuth, or `django-global-places` — they were removed because the placeholders couldn't actually be activated without installing libs and editing several files. Activation guides with full snippets live in [`extending/`](./extending/).
 
 ## Critical files (do not break)
 

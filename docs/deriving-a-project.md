@@ -81,7 +81,7 @@ If the project needs background jobs or realtime, follow [`extending/celery.md`]
 - **Default**: `PASSWORD_CHANGE_BY_EMAIL=True`. Users always go through the recovery flow to change passwords. Most secure, slightly more friction.
 - **Alternative**: set `PASSWORD_CHANGE_BY_EMAIL=False` if the product needs an in-app password change form. See [auth.md → password change](./auth.md#password-change-authenticated).
 
-If you don't need Google OAuth, you can remove `allauth.socialaccount.providers.google` from `INSTALLED_APPS` and delete `auth_api/views.py:GoogleLogin` + the corresponding URL.
+If the project needs Google OAuth, follow [extending/google-oauth.md](./extending/google-oauth.md). It's not shipped by default.
 
 ## 5. Wipe what you don't need
 
@@ -127,7 +127,6 @@ Keep `docs/conventions.md`, `docs/toolchain.md`, `docs/development-guide.md`, `d
 - [ ] Updated APP_NAME, DEFAULT_FROM_EMAIL, FRONT_URL defaults
 - [ ] Picked feature flags (USE_DEBUG_TOOLBAR; added Celery/Channels if needed via docs/extending/)
 - [ ] Decided PASSWORD_CHANGE_BY_EMAIL posture
-- [ ] Removed unused providers (e.g. Google OAuth)
 - [ ] Replaced email templates with brand assets
 - [ ] Configured CI (lint + test + schema-validate)
 - [ ] Updated docs/architecture.md and docs/api-contract.md

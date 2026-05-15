@@ -1,8 +1,5 @@
 import logging
 
-from allauth.socialaccount.providers.google.views import GoogleOAuth2Adapter
-from allauth.socialaccount.providers.oauth2.client import OAuth2Client
-from dj_rest_auth.registration.views import SocialLoginView
 from dj_rest_auth.views import PasswordChangeView
 from django.conf import settings
 from django.contrib.auth.password_validation import validate_password
@@ -30,13 +27,6 @@ from django_base.base_utils.utils import (
 from users.models import TokenRecovery, User
 
 logger = logging.getLogger(__name__)
-
-
-class TemporalOAuth2Client(OAuth2Client):
-    def __init__(self, request, *args, **kwargs):
-        tmp_args = list(args)
-        (tmp_args.pop() if tmp_args else None)  # TMP: remove scope field until dj-rest-auth updates
-        super().__init__(request, *tmp_args, **kwargs)
 
 
 class PasswordRecoveryViewSet(BaseGenericViewSet):
@@ -204,9 +194,3 @@ class PasswordChangeViewModify(PasswordChangeView):
         # request.user.save()
 
         return Response(_("New password has been saved."), status=status.HTTP_200_OK)
-
-
-class GoogleLogin(SocialLoginView):
-    adapter_class = GoogleOAuth2Adapter
-    callback_url = settings.GOOGLE_REDIRECT_URI
-    client_class = TemporalOAuth2Client

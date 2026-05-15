@@ -63,6 +63,6 @@ To stop the stack: `just down`. To wipe the database: `docker compose down -v` (
 
 - **What lives where:** [architecture.md](./architecture.md)
 - **What endpoints exist and what the frontend expects:** [api-contract.md](./api-contract.md)
-- **Auth flows (login, password recovery, Google OAuth):** [auth.md](./auth.md)
+- **Auth flows (login, password recovery):** [auth.md](./auth.md)
 - **Code patterns (BaseModel, viewset permission dict, etc.):** [conventions.md](./conventions.md)
 - **Production deployment:** [deployment.md](./deployment.md)

@@ -15,8 +15,6 @@ BASE_APPS = [
     "dj_rest_auth.registration",
     "allauth",
     "allauth.account",
-    "allauth.socialaccount",
-    "allauth.socialaccount.providers.google",
     "drf_spectacular",
     "drf_spectacular_sidecar",
     "corsheaders",

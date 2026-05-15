@@ -27,8 +27,7 @@ Defined in `auth_api/urls.py`.
 | POST | `password/recovery/check-token/` | `PasswordRecoveryViewSet.recovery_check_token` | Body: `email`, `token` |
 | POST | `password/recovery/confirm/` | `PasswordRecoveryViewSet.recovery_confirm` | Body: `email`, `token`, `password` |
 | * | `registration/...` | `dj_rest_auth.registration.urls` | Signup, email verify, resend |
-| * | `allauth/...` | `allauth.urls` | Social provider callbacks |
-| POST | `dj-rest-auth/google/` | `GoogleLogin` | Body: `access_token` from Google. Returns JWT |
+| * | `allauth/...` | `allauth.urls` | Allauth views (account confirm, password reset HTML, etc.) |
 
 Recovery flow detail: [auth.md → password recovery](./auth.md#password-recovery).
 

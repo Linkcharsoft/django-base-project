@@ -95,10 +95,6 @@ Same root cause — registration triggers email verification. With `EMAIL_PROVID
 
 By design. `PASSWORD_CHANGE_BY_EMAIL=True` (default) forces the recovery flow. See [auth.md → password change](./auth.md#password-change-authenticated). To enable in-app password change, set `PASSWORD_CHANGE_BY_EMAIL=False` in `configurations.py`.
 
-### Google OAuth returns "Social application not found"
-
-You haven't created the `SocialApp` in admin. See [auth.md → Google OAuth](./auth.md#google-oauth) steps 1-3.
-
 ### JWT expired but `/api/auth/token/refresh/` returns 401
 
 Refresh tokens last 5 days. After that, the user must log in again. (Rotation is **not** enabled — see audit backlog 6.11.)

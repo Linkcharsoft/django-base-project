@@ -49,7 +49,8 @@ docs/
 └── extending/               ← Opt-in features removed from the base
     ├── celery.md            ← Add Celery + Redis for background jobs
     ├── websockets.md        ← Add Channels for realtime/WebSockets
-    └── global-places.md     ← Add country/state/city data via django-global-places
+    ├── global-places.md     ← Add country/state/city data via django-global-places
+    └── google-oauth.md      ← Add Google social login (allauth + dj-rest-auth)
 ```
 
 ## Conventions for these docs

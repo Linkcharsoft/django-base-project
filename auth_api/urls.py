@@ -3,7 +3,7 @@ from dj_rest_auth.views import LoginView, LogoutView, UserDetailsView
 from django.urls import include, path
 from rest_framework_simplejwt.views import TokenVerifyView
 
-from auth_api.views import GoogleLogin, PasswordChangeViewModify, PasswordRecoveryViewSet
+from auth_api.views import PasswordChangeViewModify, PasswordRecoveryViewSet
 
 recovery_send_mail = PasswordRecoveryViewSet.as_view({"post": "recovery_send_mail"})
 recovery_check_token = PasswordRecoveryViewSet.as_view({"post": "recovery_check_token"})
@@ -31,7 +31,5 @@ urlpatterns = [
     path("registration/", include("dj_rest_auth.registration.urls")),
 
     path("allauth/", include("allauth.urls")),
-
-    path("dj-rest-auth/google/", GoogleLogin.as_view(), name="google_login"),
 ]
 # fmt: on

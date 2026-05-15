@@ -30,7 +30,6 @@ All vars are parsed in [`django_base/settings/environment_variables.py`](../djan
 | `AWS_SECRET_ACCESS_KEY` | `''` | (S3 + SES) | |
 | `AWS_STORAGE_BUCKET_NAME` | `''` | (S3 only) | |
 | `SENTRY_DSN` | `''` | Sentry error reporting | Used only when `IS_PRODUCTION=True`. Missing DSN logs a warning, does **not** crash. |
-| `GOOGLE_REDIRECT_URI` | `http://localhost:3000/auth/google/callback` | Google OAuth callback | Google `CLIENT_ID` / `CLIENT_SECRET` are **not** env vars — stored in admin (`SocialApp` model). See [auth.md → Google OAuth](./auth.md#google-oauth). |
 
 ## Compile-time flags (not env vars)
 

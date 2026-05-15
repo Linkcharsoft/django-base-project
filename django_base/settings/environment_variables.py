@@ -52,7 +52,3 @@ AWS_STORAGE_BUCKET_NAME = env("AWS_STORAGE_BUCKET_NAME", default="")
 
 # <-------------- Sentry settings -------------->
 SENTRY_DSN = env("SENTRY_DSN", default="")
-
-
-# <-------------- Google settings -------------->
-GOOGLE_REDIRECT_URI = env("GOOGLE_REDIRECT_URI", default="")

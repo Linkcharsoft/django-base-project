@@ -25,6 +25,7 @@ If your question isn't here, add a row in your PR.
 | celery, background jobs, redis, broker | [extending/celery.md](./extending/celery.md) |
 | websocket, channels, asgi, daphne, realtime | [extending/websockets.md](./extending/websockets.md) |
 | country, state, city, places, location, region | [extending/global-places.md](./extending/global-places.md) |
+| google oauth, social login, socialaccount, SocialApp, CLIENT_ID, CLIENT_SECRET | [extending/google-oauth.md](./extending/google-oauth.md) |
 | just, justfile, task runner, recipe, command | [toolchain.md → justfile](./toolchain.md#justfile) |
 | uv, pip, requirements, dependencies | [toolchain.md → uv](./toolchain.md#uv) |
 | ruff, lint, format, style | [toolchain.md → ruff](./toolchain.md#ruff) |
@@ -68,7 +69,7 @@ If your question isn't here, add a row in your PR.
 | password recovery, forgot password, reset password | [auth.md → password recovery](./auth.md#password-recovery) |
 | password change, change password | [auth.md → password change](./auth.md#password-change-authenticated) |
 | `PASSWORD_CHANGE_BY_EMAIL`, gate password change | [auth.md → password change](./auth.md#password-change-authenticated) |
-| google oauth, social login, socialapp | [auth.md → Google OAuth](./auth.md#google-oauth) |
+| google oauth, social login, socialapp | [extending/google-oauth.md](./extending/google-oauth.md) |
 | permission, `IsAdminUser`, `HasRegisterCompletePermission` | [auth.md → permissions](./auth.md#permissions) |
 | maintenance flag, kill switch, `SystemStatus`, 503 | [auth.md → maintenance flag](./auth.md#global-maintenance-flag) |
 | test user, `is_test_user`, e2e teardown, delete test users | [api-contract.md → /api/users/](./api-contract.md#apiusers) |
@@ -152,7 +153,7 @@ If your question isn't here, add a row in your PR.
 | no changes detected (migrations) | [troubleshooting.md → no changes detected](./troubleshooting.md#no-changes-detected-but-you-edited-a-model) |
 | inconsistent migration history | [troubleshooting.md → InconsistentMigrationHistory](./troubleshooting.md#inconsistentmigrationhistory) |
 | email not verified, login 400 | [troubleshooting.md → email not verified](./troubleshooting.md#login-returns-400-e-mail-address-is-not-verified) |
-| social app not found, google oauth setup | [troubleshooting.md → social application not found](./troubleshooting.md#google-oauth-returns-social-application-not-found) |
+| social app not found, google oauth setup | [extending/google-oauth.md](./extending/google-oauth.md) |
 | 503 every endpoint | [troubleshooting.md → every endpoint 503](./troubleshooting.md#every-endpoint-suddenly-returns-503) |
 | schema validate fails | [troubleshooting.md → schema-validate fails](./troubleshooting.md#just-schema-validate-fails) |
 | 405 on PUT | [troubleshooting.md → PUT 405](./troubleshooting.md#put-apiusers1-returns-405) |

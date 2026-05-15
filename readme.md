@@ -1,6 +1,6 @@
 # django-base-project
 
-Corporate Django 5.2 + DRF template used as a starting point for Linkchar projects. Batteries: JWT auth, allauth + Google OAuth, drf-spectacular (OpenAPI 3.1), Postgres 16, Docker, ruff + pre-commit, justfile.
+Corporate Django 5.2 + DRF template used as a starting point for Linkchar projects. Batteries: JWT auth, allauth (email + password), drf-spectacular (OpenAPI 3.1), Postgres 16, Docker, ruff + pre-commit, justfile. Opt-in extensions (Celery, WebSockets, Google OAuth, country/state/city data) live in [`docs/extending/`](./docs/extending/).
 
 ## Quickstart
 
@@ -23,7 +23,7 @@ Project documentation lives in [`docs/`](./docs/). Start at [`docs/README.md`](.
 
 - [`docs/architecture.md`](./docs/architecture.md) — what lives where
 - [`docs/api-contract.md`](./docs/api-contract.md) — endpoints + frontend contract
-- [`docs/auth.md`](./docs/auth.md) — login / JWT / password recovery / Google OAuth
+- [`docs/auth.md`](./docs/auth.md) — login / JWT / password recovery
 - [`docs/conventions.md`](./docs/conventions.md) — code patterns (BaseModel, viewset mixins, …)
 - [`docs/toolchain.md`](./docs/toolchain.md) — build/dev tools (just, uv, ruff, pre-commit)
 - [`docs/development-guide.md`](./docs/development-guide.md) — step-by-step recipes for adding things

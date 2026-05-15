@@ -4,7 +4,7 @@ How auth works in this template: who you are, how the server knows it, and which
 
 ## Stack
 
-- **`django-allauth`** — account model + email verification + social providers (Google here).
+- **`django-allauth`** — account model + email verification. Social providers are opt-in (see [extending/](./extending/)).
 - **`dj-rest-auth`** — REST wrappers around allauth (login, logout, password reset, registration).
 - **`djangorestframework-simplejwt`** — JWT issuance and validation.
 
@@ -104,17 +104,9 @@ Token lifetime: **30 minutes** (`PASSWORD_RECOVERY_TOKEN_EXPIRE_AT`).
 
 See `auth_api/views.py:PasswordChangeViewModify`.
 
-## Google OAuth
+## Social login (Google OAuth)
 
-`POST /api/auth/dj-rest-auth/google/` with `{"access_token": "<from-google>", ...}` triggers `auth_api.views.GoogleLogin` (a `SocialLoginView`). The callback URL is `settings.GOOGLE_REDIRECT_URI` (env var).
-
-Credentials (`CLIENT_ID`, `CLIENT_SECRET`) are **not** env vars — they're stored in Django admin via the `SocialApp` model (allauth's standard). On a fresh project:
-
-1. Go to `/admin/socialaccount/socialapp/`.
-2. Add a `SocialApp` with provider=Google, client id + secret from Google Cloud Console.
-3. Attach `Site (example.com)` to it (or create a new Site matching your domain).
-
-`SOCIALACCOUNT_PROVIDERS["google"]` in `custom_settings.py` requests scopes `profile`, `email`, `openid` and `access_type=offline` (refresh tokens).
+Not shipped with the base. To add Google OAuth, follow [extending/google-oauth.md](./extending/google-oauth.md) — it covers `allauth.socialaccount`, the `GoogleLogin` view, the `SocialApp` setup in admin, and the `GOOGLE_REDIRECT_URI` env var.
 
 ## Permissions
 
