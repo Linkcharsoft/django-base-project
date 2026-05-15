@@ -19,13 +19,18 @@ Need more detail? See [`docs/quickstart.md`](./docs/quickstart.md).
 
 ## Docs
 
-Project documentation lives in [`docs/`](./docs/). Highlights:
+Project documentation lives in [`docs/`](./docs/). Start at [`docs/README.md`](./docs/README.md) for the full index. Highlights:
 
 - [`docs/architecture.md`](./docs/architecture.md) — what lives where
 - [`docs/api-contract.md`](./docs/api-contract.md) — endpoints + frontend contract
 - [`docs/auth.md`](./docs/auth.md) — login / JWT / password recovery / Google OAuth
-- [`docs/conventions.md`](./docs/conventions.md) — code patterns + toolchain (justfile, uv, ruff)
+- [`docs/conventions.md`](./docs/conventions.md) — code patterns (BaseModel, viewset mixins, …)
+- [`docs/toolchain.md`](./docs/toolchain.md) — build/dev tools (just, uv, ruff, pre-commit)
+- [`docs/development-guide.md`](./docs/development-guide.md) — step-by-step recipes for adding things
+- [`docs/deriving-a-project.md`](./docs/deriving-a-project.md) — kickoff guide for new projects from this base
 - [`docs/deployment.md`](./docs/deployment.md) — production setup
+
+> Working with an AI agent? Point it at [`docs/_agent-index.md`](./docs/_agent-index.md) — a keyword → file:anchor lookup table.
 
 ## Common tasks
 
@@ -38,7 +43,7 @@ just schema-validate
 just manage <cmd>   # any manage.py command
 ```
 
-Full list: `just --list`. See [`docs/conventions.md#justfile`](./docs/conventions.md#justfile) for the why.
+Full list: `just --list`. See [`docs/toolchain.md#justfile`](./docs/toolchain.md#justfile) for the why.
 
 ## License
 

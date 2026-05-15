@@ -5,7 +5,7 @@ High-level map of the codebase. Read [quickstart.md](./quickstart.md) first if y
 ## Stack
 
 - **Python 3.13** (Dockerfile pinned to `python:3.13-slim`).
-- **Django 5.2** + **Django REST Framework 3.16**.
+- **Django 6.0** + **Django REST Framework 3.17**.
 - **PostgreSQL 16** in dev (docker-compose), `psycopg[binary]` driver.
 - **Auth**: `dj-rest-auth` + `django-allauth` + `djangorestframework-simplejwt`.
 - **OpenAPI docs**: `drf-spectacular` (OpenAPI 3.1), sidecar assets — no CDN.

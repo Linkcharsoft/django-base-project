@@ -44,7 +44,7 @@ Defined in `users/urls.py` (router) and mounted into `base_router` in `django_ba
 | DELETE | `users/{id}/` | `destroy` | `IsAdminUser` | Cannot self-delete (raises 404 if id == self or `me`) |
 | PATCH | `users/complete-register/` | `complete_register` | `IsAuthenticated` | Sets `profile.is_register_complete=True`. Returns 400 if already complete |
 | PATCH | `users/{id}/toggle-block/` | `toggle_block` | `IsAdminUser` | Body: `is_active` (bool or `"true"`/`"false"`). Cannot self-block |
-| DELETE | `users/delete-test-users/` | `delete_test_users` | `AllowAny` ⚠ | **Open endpoint** — deletes every user with `is_test_user=True`. Kept open intentionally for the frontend E2E suite |
+| DELETE | `users/delete-test-users/` | `delete_test_users` | `AllowAny` ⚠ | Returns `204 No Content`. **Open endpoint** — deletes every user with `is_test_user=True`. Kept open intentionally for the frontend E2E suite |
 
 `PUT` is blocked across all viewsets (returns 405) — see `NoPutViewSetMixin` in [conventions.md](./conventions.md#viewset-mixins).
 

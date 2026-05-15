@@ -22,7 +22,7 @@ The dev entrypoint (`entrypoint-dev.sh`) is **not** used in production.
 
 `IS_PRODUCTION=True` activates the Sentry block in `custom_settings.py`. If `SENTRY_DSN` is also set, `sentry_sdk.init` runs with `traces_sample_rate=1.0` and `profiles_sample_rate=1.0`. If `SENTRY_DSN` is missing, the project logs a warning and continues (does not crash) — added in Phase 1 of the audit.
 
-`DEBUG` must be `False`. The `entrypoint-dev.sh` auto-creates an `admin@admin.com` user only when `DEBUG=True`, so in production that account never exists.
+`DEBUG` must be `False`. Migration `users/0002_auto_20230504_1107` seeds `admin@admin.com` only when `DEBUG=True` at migrate time, so in production that account never exists.
 
 ## Static and media
 

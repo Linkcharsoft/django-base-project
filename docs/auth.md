@@ -29,7 +29,9 @@ JWT lifetimes (`SIMPLE_JWT` in `custom_settings.py`):
 
 - `is_test_user: bool` — flag used by the open `DELETE /api/users/delete-test-users/` endpoint to wipe E2E fixtures.
 
-On `User.post_save` with `created=True`, a `Profile` is auto-created (signal in `users/models.py`). For superusers, an `allauth.EmailAddress` row is also created with `verified=True, primary=True` so the admin user can log in immediately without email verification.
+On `User.post_save` with `created=True`, a `Profile` is auto-created (signal in `users/models.py`).
+
+The data migration `users/migrations/0002_auto_20230504_1107.py` seeds an `admin@admin.com / admin123123` superuser **only when `DEBUG=True`** at migrate time, and creates the matching `allauth.EmailAddress` row with `verified=True, primary=True` so the admin user can log in immediately without email verification.
 
 Account model behaviors (`custom_settings.py`):
 

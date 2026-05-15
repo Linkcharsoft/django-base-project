@@ -5,7 +5,7 @@ Local dev setup, end to end. Takes ~5 minutes on a machine with Docker and `just
 ## Prerequisites
 
 - **Docker** + **Docker Compose v2** (`docker compose ...`, not the legacy `docker-compose`).
-- **just** task runner: `winget install Casey.Just` on Windows, `brew install just` on macOS, `cargo install just` elsewhere. See [conventions.md](./conventions.md#justfile) for why we use it.
+- **just** task runner: `winget install Casey.Just` on Windows, `brew install just` on macOS, `cargo install just` elsewhere. See [toolchain.md](./toolchain.md#justfile) for why we use it.
 
 ## 1. Clone and configure env
 
@@ -33,7 +33,7 @@ just migrate
 just manage createsuperuser
 ```
 
-If `DEBUG=True`, the migrate step automatically creates `admin@admin.com / admin123123` for convenience — skip the `createsuperuser` step in that case.
+If `DEBUG=True`, migration `users/0002_auto_20230504_1107` automatically creates `admin@admin.com / admin123123` (with a verified `EmailAddress`) for convenience — skip the `createsuperuser` step in that case.
 
 ## 4. Verify
 

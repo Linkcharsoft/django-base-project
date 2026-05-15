@@ -1,6 +1,6 @@
 # Conventions
 
-Patterns, helpers, and tools used in this codebase. New code should follow these unless there's a specific reason not to.
+**Scope.** Code-level patterns and helpers used across the project. New code should follow these unless there's a specific reason not to. Not covered: build/dev tools (see [toolchain.md](./toolchain.md)), testing (see [testing.md](./testing.md)).
 
 ## BaseModel
 
@@ -74,7 +74,7 @@ class MyViewSet(BaseModelViewSet):
 
 ## Pagination
 
-Default page size is **10** with `max_page_size=100`. Configured by `CustomPagination` in `django_base/base_utils/base_pagination.py`. Clients can pass `?page=...&page_size=...`.
+`CustomPagination` (`django_base/base_utils/base_pagination.py`) is a thin `PageNumberPagination` subclass that adds `page_size_query_param="page_size"` and `max_page_size=100`. The **default page size of 10** comes from `REST_FRAMEWORK["PAGE_SIZE"]` in `django_base/settings/custom_settings.py`, not the class. Clients can pass `?page=...&page_size=...` (capped at 100).
 
 ## File uploads
 
@@ -112,14 +112,14 @@ Plus `FileSizeValidator` (above).
 
 ## Random tokens / strings
 
-`django_base/base_utils/utils.unicode_random_string` is **not** what you want for security. The project uses `get_random_string` from the same module for password recovery tokens. If you need cryptographically random strings, prefer `secrets.token_urlsafe(...)` from the stdlib.
+`django_base/base_utils/utils.py:get_random_string(length)` is what the project uses for password recovery tokens. It's built on `random.choices` over `string.ascii_letters + string.digits` — fine for that use, but **not cryptographically secure**. If you need security-grade randomness (CSRF nonces, session-like tokens), prefer `secrets.token_urlsafe(...)` from the stdlib.
 
 ## Email helpers
 
 In `django_base/base_utils/utils.py`:
 
 - `get_default_for_email_template()` → dict with `APP_NAME`, banner URL, etc. Spread into your template context.
-- `email_template_sender(subject, template_path, context, to_email)` → renders the template (using the Django template engine with the project `templates/` dir) and sends via the configured `EMAIL_BACKEND`.
+- `email_template_sender(subject, template_name, context, to_email, from_email=DEFAULT_FROM_EMAIL, attachments=None)` → renders `template_name` via the Django template engine (project `templates/` dir is on the loader path) and sends via the configured `EMAIL_BACKEND`. Note: `email_template_sender` *also* calls `get_default_for_email_template()` internally, so you don't need to merge it into context manually — but it doesn't hurt.
 
 Templates live in `templates/registration/` and `templates/account/` (allauth defaults). Override the allauth ones by copying the same file path with your changes.
 
@@ -130,81 +130,8 @@ Templates live in `templates/registration/` and `templates/account/` (allauth de
 - `.po` files in `locale/<lang>/LC_MESSAGES/`.
 - `just messages` extracts new strings; `just compilemessages` builds `.mo`.
 
-## Toolchain
+## Where this leaves off
 
-The project ships with a fixed, opinionated toolchain — described below.
-
-### justfile
-
-Task runner — replaces the ad-hoc shell scripts and the old `runcommands.py`. Install on Windows with `winget install Casey.Just`, macOS `brew install just`, elsewhere `cargo install just`.
-
-```bash
-just              # lists every recipe
-just up           # docker compose up -d
-just test         # pytest
-just manage <x>   # python manage.py <x>
-```
-
-Special directives at the top of `justfile`:
-
-- `set dotenv-load := true` — auto-loads `.env` so recipes can reference `$DB_USER` etc.
-- `set windows-shell := ["powershell.exe", "-NoLogo", "-NoProfile", "-Command"]` — required on Windows because `just` defaults to `sh`, which isn't on Windows PATH.
-
-### uv
-
-Used inside the Dockerfile for dependency installation:
-
-```dockerfile
-COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /usr/local/bin/
-COPY requirements.txt ./
-RUN uv pip sync --system requirements.txt
-```
-
-To regenerate `requirements.txt` locally (or inside the container):
-
-```bash
-uv pip compile pyproject.toml -o requirements.txt
-```
-
-### ruff
-
-Lint + format. Configured in `pyproject.toml`. Run via:
-
-- `just lint` — formats and auto-fixes.
-- Pre-commit hook (`ruff` + `ruff-format`) runs automatically on `git commit`.
-- Manually inside container: `docker compose exec web ruff check .`.
-
-A blame-skip commit hash for the initial mass-format pass is recorded in `.git-blame-ignore-revs`.
-
-### pre-commit
-
-Hooks defined in `.pre-commit-config.yaml`. Install once after cloning:
-
-```bash
-pre-commit install
-```
-
-Active hooks:
-
-- `pre-commit-hooks v5.0.0` — trailing whitespace, end-of-file, YAML/TOML checks, merge conflict markers, large file guard, debug-statement guard.
-- `ruff-pre-commit v0.8.0` — `ruff` + `ruff-format`.
-- `django-upgrade 1.30.0` — auto-upgrades Django patterns to `--target-version 5.2`.
-
-Bump versions with `pre-commit autoupdate` (review the diff before committing; new ruff versions can introduce new lint rules).
-
-### Spectacular schema
-
-OpenAPI 3.1 schema is generated at runtime. Validate it before releases:
-
-```bash
-just schema-validate          # fails on warnings
-```
-
-Annotate non-trivial actions with `@extend_schema(request=..., responses=...)` to keep the schema accurate. Every viewset MUST set `serializer_class` or override `get_serializer_class`; otherwise spectacular ignores it.
-
-## Testing
-
-- `pytest` + `pytest-django` (configured in `pyproject.toml`).
-- Tests live next to the app: `<app>/tests.py`.
-- Run with `just test`; HTML coverage with `just coverage`.
-- **Status (as of 2026-05-14)**: test files are scaffolded but mostly empty. Backlog item 6.4 covers writing the real suite.
+- **Tools** (just, uv, ruff, pre-commit, drf-spectacular) → [toolchain.md](./toolchain.md).
+- **Testing** (pytest setup, fixtures, conventions) → [testing.md](./testing.md).
+- **Adding a new endpoint / app / model** → [development-guide.md](./development-guide.md).
