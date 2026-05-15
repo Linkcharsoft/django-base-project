@@ -21,7 +21,9 @@ If your question isn't here, add a row in your PR.
 | install, clone, first time, setup, prerequisites | [quickstart.md](./quickstart.md) |
 | env var, environment variable, `.env`, secret, configuration | [environment.md](./environment.md) |
 | add new env var, register env var | [environment.md → checklist](./environment.md#adding-a-new-env-var-checklist) |
-| feature flag, `USE_CELERY`, `USE_WEB_SOCKET`, `USE_DEBUG_TOOLBAR`, `USE_S3` | [environment.md → compile-time flags](./environment.md#compile-time-flags-not-env-vars) |
+| feature flag, `USE_DEBUG_TOOLBAR`, `USE_S3` | [environment.md → compile-time flags](./environment.md#compile-time-flags-not-env-vars) |
+| celery, background jobs, redis, broker | [extending/celery.md](./extending/celery.md) |
+| websocket, channels, asgi, daphne, realtime | [extending/websockets.md](./extending/websockets.md) |
 | just, justfile, task runner, recipe, command | [toolchain.md → justfile](./toolchain.md#justfile) |
 | uv, pip, requirements, dependencies | [toolchain.md → uv](./toolchain.md#uv) |
 | ruff, lint, format, style | [toolchain.md → ruff](./toolchain.md#ruff) |
@@ -37,7 +39,7 @@ If your question isn't here, add a row in your PR.
 | middleware, middleware order, request order | [architecture.md → middleware stack](./architecture.md#middleware-stack) |
 | url, route, urlconf, mounted apps | [architecture.md → URL layout](./architecture.md#url-layout) |
 | apps, installed apps, inventory | [architecture.md → apps inventory](./architecture.md#apps-inventory) |
-| optional feature, channels, celery, s3, sentry | [architecture.md → optional features](./architecture.md#optional-features-off-by-default) |
+| optional feature, s3, sentry, debug toolbar | [architecture.md → optional features](./architecture.md#optional-features-off-by-default) |
 | critical, do not break, fragile | [architecture.md → critical files](./architecture.md#critical-files-do-not-break) |
 | request flow, lifecycle, middleware chain, how a request gets handled | [request-lifecycle.md](./request-lifecycle.md) |
 | where to hook in, custom middleware, custom auth | [request-lifecycle.md → where to hook in](./request-lifecycle.md#where-to-hook-in) |

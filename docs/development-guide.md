@@ -179,9 +179,9 @@ Template files live in `templates/registration/` (or `templates/account/` for al
 
    ```python
    # custom_settings.py
-   if USE_CELERY:
-       INSTALLED_APPS += ["django_celery_beat"]
-       CELERY_BROKER_URL = f"redis://{BROKER_SERVER}:{BROKER_SERVER_PORT}/0"
+   if USE_DEBUG_TOOLBAR:
+       INSTALLED_APPS += ["debug_toolbar"]
+       MIDDLEWARE += ["debug_toolbar.middleware.DebugToolbarMiddleware"]
    ```
 
    Request-time `if settings.USE_X` is fine for view logic but **not** for `INSTALLED_APPS` or middleware registration.

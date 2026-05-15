@@ -29,8 +29,6 @@ All vars are parsed in [`django_base/settings/environment_variables.py`](../djan
 | `AWS_ACCESS_KEY_ID` | `''` | (S3 + SES) | |
 | `AWS_SECRET_ACCESS_KEY` | `''` | (S3 + SES) | |
 | `AWS_STORAGE_BUCKET_NAME` | `''` | (S3 only) | |
-| `BROKER_SERVER` | `redis` | Celery + Channels broker host | Consumed only when the corresponding `USE_*` flag is set in [`configurations.py`](../django_base/settings/configurations.py). |
-| `BROKER_SERVER_PORT` | `6379` | (same as above) | |
 | `SENTRY_DSN` | `''` | Sentry error reporting | Used only when `IS_PRODUCTION=True`. Missing DSN logs a warning, does **not** crash. |
 | `GOOGLE_REDIRECT_URI` | `http://localhost:3000/auth/google/callback` | Google OAuth callback | Google `CLIENT_ID` / `CLIENT_SECRET` are **not** env vars — stored in admin (`SocialApp` model). See [auth.md → Google OAuth](./auth.md#google-oauth). |
 
@@ -44,9 +42,9 @@ Defined in [`django_base/settings/configurations.py`](../django_base/settings/co
 | `PASSWORD_CHANGE_BY_EMAIL` | `True` | If `True`, `/api/auth/password/change/` is disabled — users must use the recovery flow. See [auth.md](./auth.md#password-change-authenticated). |
 | `PASSWORD_RECOVERY_TOKEN_TYPE` | `"link"` | `"link"` (25-char URL token) or `"code"` (6-digit OTP). |
 | `PASSWORD_RECOVERY_TOKEN_EXPIRE_AT` | `30` (minutes) | Token TTL. |
-| `USE_CELERY` | `False` | Wires `django_base/celery.py`. Requires `BROKER_SERVER`. |
-| `USE_WEB_SOCKET` | `False` | Wires Channels + `JWTAuthMiddleware*`. Switches the runtime to ASGI. |
 | `USE_DEBUG_TOOLBAR` | `False` | Adds `debug_toolbar` middleware + `/__debug__/`. |
+
+Celery and Channels are **not** shipped with the base. To add them, follow [`extending/celery.md`](./extending/celery.md) or [`extending/websockets.md`](./extending/websockets.md).
 
 ## How resolution works
 

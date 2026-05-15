@@ -30,8 +30,3 @@ GLOBAL_PLACES = {
     "LOCATION_SCOPE": "state",
     "INCLUDE_EXPANDED_COUNTRY": False,
 }
-
-
-# <-------------- Async settings -------------->
-USE_CELERY = False
-USE_WEB_SOCKET = False

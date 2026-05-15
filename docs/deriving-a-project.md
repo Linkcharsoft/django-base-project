@@ -67,14 +67,14 @@ Edit [`django_base/settings/configurations.py`](../django_base/settings/configur
 
 | Flag | Turn ON when… |
 |---|---|
-| `USE_CELERY` | You need background jobs. Provision Redis + ensure `BROKER_SERVER` env var is set. |
-| `USE_WEB_SOCKET` | You need realtime (chat, live updates). Switches to ASGI; review `routing.py` + `consumers.py`. |
 | `USE_DEBUG_TOOLBAR` | Dev convenience. Leave OFF in any deployed environment. |
 
 Env-driven flags:
 
 - `USE_S3=True` — only when you have an S3 bucket and AWS credentials.
 - `IS_PRODUCTION=True` — only on actual production environments. Activates Sentry init.
+
+If the project needs background jobs or realtime, follow [`extending/celery.md`](./extending/celery.md) or [`extending/websockets.md`](./extending/websockets.md) — they're not shipped by default.
 
 ## 4. Decide auth posture
 
@@ -87,9 +87,7 @@ If you don't need Google OAuth, you can remove `allauth.socialaccount.providers.
 
 | Path | Delete when… |
 |---|---|
-| [`audit/`](../audit/) | Always — it's the cleanup history of the base, not of your project. |
 | `users/migrations/0002_*` and onward | Keep `0001_initial` only if you'll modify the User model significantly. Otherwise keep all. |
-| `data/db/` | Always (gitignored anyway). |
 | `templates/registration/password_recovery_email.html` | Replace with your branding. |
 | `templates/account/email/*` (allauth) | Replace with your branding. |
 | `locale/<langs you don't ship>/` | If you only ship English, delete the others. |
@@ -127,10 +125,10 @@ Keep `docs/conventions.md`, `docs/toolchain.md`, `docs/development-guide.md`, `d
 - [ ] Renamed django_base/ → <project_slug>/
 - [ ] Swept the codebase for `django_base` references
 - [ ] Updated APP_NAME, DEFAULT_FROM_EMAIL, FRONT_URL defaults
-- [ ] Picked feature flags (USE_CELERY/USE_WEB_SOCKET/USE_DEBUG_TOOLBAR)
+- [ ] Picked feature flags (USE_DEBUG_TOOLBAR; added Celery/Channels if needed via docs/extending/)
 - [ ] Decided PASSWORD_CHANGE_BY_EMAIL posture
 - [ ] Removed unused providers (e.g. Google OAuth)
-- [ ] Deleted audit/, replaced email templates with brand assets
+- [ ] Replaced email templates with brand assets
 - [ ] Configured CI (lint + test + schema-validate)
 - [ ] Updated docs/architecture.md and docs/api-contract.md
 - [ ] Recorded base commit SHA in initial commit message

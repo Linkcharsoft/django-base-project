@@ -50,11 +50,6 @@ USE_S3 = env.bool("USE_S3", default=False)
 AWS_STORAGE_BUCKET_NAME = env("AWS_STORAGE_BUCKET_NAME", default="")
 
 
-# <-------------- Broker settings -------------->
-BROKER_SERVER = env("BROKER_SERVER", default="redis")
-BROKER_SERVER_PORT = env("BROKER_SERVER_PORT", default=6379)
-
-
 # <-------------- Sentry settings -------------->
 SENTRY_DSN = env("SENTRY_DSN", default="")
 

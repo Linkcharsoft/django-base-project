@@ -20,6 +20,7 @@ Reference documentation for `django-base-project`. Every file is single-concern 
 | Write or run tests | [testing.md](./testing.md) |
 | Start a new project from this base | [deriving-a-project.md](./deriving-a-project.md) |
 | Deploy to production | [deployment.md](./deployment.md) |
+| Add Celery or WebSockets to the project | [extending/](./extending/) |
 | Fix a common error | [troubleshooting.md](./troubleshooting.md) |
 
 ## By topic
@@ -43,7 +44,11 @@ docs/
 ├── testing.md               ← Test setup + conventions
 │
 ├── deriving-a-project.md    ← Kickoff guide for new projects forking this base
-└── deployment.md            ← Production setup
+├── deployment.md            ← Production setup
+│
+└── extending/               ← Opt-in features removed from the base
+    ├── celery.md            ← Add Celery + Redis for background jobs
+    └── websockets.md        ← Add Channels for realtime/WebSockets
 ```
 
 ## Conventions for these docs
@@ -54,7 +59,7 @@ docs/
 - **Filename ≈ concern.** One concern per file. When a file grows past ~250 lines, split rather than nest sections.
 - **Use the `_` prefix for agent-only files.** Currently only `_agent-index.md`. Keeps them visually grouped at the top.
 
-For broader audit history (Phase 1–6 cleanup of this template), see [`../audit/`](../audit/).
+Past audit history (Phase 1–6 cleanup) lives in git — `git log --all --oneline -- audit/` to browse the deleted plan files.
 
 ## Updating these docs
 

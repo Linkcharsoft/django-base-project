@@ -3,16 +3,12 @@ from datetime import timedelta
 from django.core.exceptions import ImproperlyConfigured
 
 from django_base.settings.configurations import (
-    USE_CELERY,
     USE_DEBUG_TOOLBAR,
-    USE_WEB_SOCKET,
 )
 from django_base.settings.django_settings import AUTH_PASSWORD_VALIDATORS, BASE_APPS, MIDDLEWARE
 from django_base.settings.environment_variables import (
     AWS_STORAGE_BUCKET_NAME,
     BASE_DIR,
-    BROKER_SERVER,
-    BROKER_SERVER_PORT,
     CORS_ALLOWED_URLS,
     EMAIL_PROVIDER,
     IS_PRODUCTION,
@@ -21,9 +17,6 @@ from django_base.settings.environment_variables import (
 )
 
 THIRD_APPS = []
-
-if USE_WEB_SOCKET:
-    THIRD_APPS = ["daphne", "channels"] + THIRD_APPS
 
 MY_APPS = [
     "users",
@@ -115,24 +108,6 @@ if USE_DEBUG_TOOLBAR:
 
     hostname, _, ips = socket.gethostbyname_ex(socket.gethostname())
     INTERNAL_IPS = [ip[: ip.rfind(".")] + ".1" for ip in ips] + ["127.0.0.1", "0.0.0.0"]
-
-
-# <-------------- Celery configurations -------------->
-if USE_CELERY:
-    CELERY_BROKER = f"redis://:@{BROKER_SERVER}:{BROKER_SERVER_PORT}/0"
-    CELERY_BROKER_URL = CELERY_BROKER
-    CELERY_RESULT_BACKEND = CELERY_BROKER
-
-# <-------------- Socket configurations -------------->
-if USE_WEB_SOCKET:
-    CHANNEL_LAYERS = {
-        "default": {
-            "BACKEND": "channels_redis.core.RedisChannelLayer",
-            "CONFIG": {
-                "hosts": [(BROKER_SERVER, BROKER_SERVER_PORT)],
-            },
-        },
-    }
 
 
 CUSTOM_AUTH_PASSWORD_VALIDATORS = [

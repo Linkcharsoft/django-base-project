@@ -15,7 +15,7 @@ cd django-base-project
 cp .env.example .env
 ```
 
-Open `.env` and fill in at least `SECRET_KEY`, `DB_*`, and `DEFAULT_FROM_EMAIL`. Everything in the `Required` section of `.env.example` must have a value; the `Optional` section can stay empty unless you enable S3, Celery, or Sentry.
+Open `.env` and fill in at least `SECRET_KEY`, `DB_*`, and `DEFAULT_FROM_EMAIL`. Everything in the `Required` section of `.env.example` must have a value; the `Optional` section can stay empty unless you enable S3 or Sentry.
 
 ## 2. Build and start
 

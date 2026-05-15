@@ -19,9 +19,8 @@ High-level map of the codebase. Read [quickstart.md](./quickstart.md) first if y
 ├── django_base/                # Django project (settings, urls, asgi, wsgi)
 │   ├── settings/               # split-settings (5 files, see below)
 │   ├── base_utils/             # cross-app utilities (see conventions.md)
-│   ├── middlewares.py          # HealthCheckMiddleware + JWTAuth* for channels (gated by USE_WEB_SOCKET)
+│   ├── middlewares.py          # HealthCheckMiddleware
 │   ├── storage_backends.py     # S3 public media backend (gated by USE_S3)
-│   ├── celery.py routing.py    # Celery + Channels scaffolding (gated by USE_CELERY/USE_WEB_SOCKET)
 │   └── urls.py wsgi.py asgi.py
 ├── auth_api/                   # Custom auth endpoints (password recovery, Google login, password change)
 ├── users/                      # User + Profile + TokenRecovery models, viewset, filters, permissions
@@ -29,8 +28,6 @@ High-level map of the codebase. Read [quickstart.md](./quickstart.md) first if y
 ├── templates/                  # HTML email templates (allauth + password recovery)
 ├── locale/                     # i18n .po/.mo files
 ├── docs/                       # ← this folder
-├── audit/                      # cleanup audit plan (Phase 1–6)
-├── data/db/                    # postgres volume (gitignored)
 ├── Dockerfile docker-compose.yml docker-compose-production.yml
 ├── entrypoint.sh entrypoint-dev.sh
 ├── justfile                    # task runner (see conventions.md)
@@ -47,9 +44,9 @@ High-level map of the codebase. Read [quickstart.md](./quickstart.md) first if y
 |---|---|
 | `environment_variables.py` | `django-environ` `.env` parsing — only the raw env vars |
 | `django_settings.py` | `BASE_APPS`, `MIDDLEWARE`, `TEMPLATES`, `AUTH_PASSWORD_VALIDATORS`, `LANGUAGE_CODE`, `TIME_ZONE` |
-| `custom_settings.py` | `INSTALLED_APPS` assembly, REST/JWT/allauth/CORS/Celery/Channels, drf-spectacular, Sentry, S3 |
+| `custom_settings.py` | `INSTALLED_APPS` assembly, REST/JWT/allauth/CORS, drf-spectacular, Sentry, S3 |
 | `db_settings.py` | `DATABASES` dict (engine selected by `DB_ENGINE` env var) |
-| `configurations.py` | Project-level constants (`APP_NAME`, `PASSWORD_CHANGE_BY_EMAIL`, `PASSWORD_RECOVERY_*`, `USE_CELERY`, `USE_WEB_SOCKET`, `USE_DEBUG_TOOLBAR`) |
+| `configurations.py` | Project-level constants (`APP_NAME`, `PASSWORD_CHANGE_BY_EMAIL`, `PASSWORD_RECOVERY_*`, `USE_DEBUG_TOOLBAR`) |
 
 To override a constant per environment, set the corresponding env var (if exposed) or fork `configurations.py` in the derived project.
 
@@ -103,11 +100,13 @@ There is **no** app called `auth/` — that was the original name and was rename
 
 ## Optional features (off by default)
 
-- **Celery** (`USE_CELERY=True` in `configurations.py`): `django_base/celery.py` is wired but inert without the flag. Requires a Redis broker (`BROKER_SERVER`).
-- **Channels / WebSockets** (`USE_WEB_SOCKET=True`): `django_base/routing.py` + `consumers.py` + `JWTAuthMiddleware*` get activated. ASGI app is `django_base.asgi.application`.
 - **Debug Toolbar** (`USE_DEBUG_TOOLBAR=True`): adds `/__debug__/` and the toolbar middleware. Off by default to avoid leaking diagnostic info.
 - **S3 media** (`USE_S3=True` env var): switches `STORAGES["default"]` to `PublicMediaStorage` from `storage_backends.py`.
 - **Sentry** (`SENTRY_DSN` env var + `IS_PRODUCTION=True`): initialized at the bottom of `custom_settings.py`. If `IS_PRODUCTION=True` but `SENTRY_DSN` is empty, the project logs a warning and continues (does not crash).
+
+## Extending (Celery / WebSockets)
+
+The base intentionally does **not** ship Celery or Channels code/dependencies — they were removed because the placeholders couldn't actually be activated without installing libs and editing several files. Activation guides with full snippets live in [`extending/celery.md`](./extending/celery.md) and [`extending/websockets.md`](./extending/websockets.md).
 
 ## Critical files (do not break)
 
