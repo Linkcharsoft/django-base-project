@@ -24,6 +24,7 @@ If your question isn't here, add a row in your PR.
 | feature flag, `USE_DEBUG_TOOLBAR`, `USE_S3` | [environment.md → compile-time flags](./environment.md#compile-time-flags-not-env-vars) |
 | celery, background jobs, redis, broker | [extending/celery.md](./extending/celery.md) |
 | websocket, channels, asgi, daphne, realtime | [extending/websockets.md](./extending/websockets.md) |
+| country, state, city, places, location, region | [extending/global-places.md](./extending/global-places.md) |
 | just, justfile, task runner, recipe, command | [toolchain.md → justfile](./toolchain.md#justfile) |
 | uv, pip, requirements, dependencies | [toolchain.md → uv](./toolchain.md#uv) |
 | ruff, lint, format, style | [toolchain.md → ruff](./toolchain.md#ruff) |

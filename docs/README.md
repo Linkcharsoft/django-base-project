@@ -48,7 +48,8 @@ docs/
 │
 └── extending/               ← Opt-in features removed from the base
     ├── celery.md            ← Add Celery + Redis for background jobs
-    └── websockets.md        ← Add Channels for realtime/WebSockets
+    ├── websockets.md        ← Add Channels for realtime/WebSockets
+    └── global-places.md     ← Add country/state/city data via django-global-places
 ```
 
 ## Conventions for these docs

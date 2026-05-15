@@ -22,11 +22,3 @@ LOCALE_PATHS = [
 LANGUAGES = [
     ("en", "English"),
 ]
-
-
-# <-------------- Global places env settings -------------->
-GLOBAL_PLACES = {
-    "INCLUDE_LOCATION": False,
-    "LOCATION_SCOPE": "state",
-    "INCLUDE_EXPANDED_COUNTRY": False,
-}

@@ -10,6 +10,7 @@ djangorestframework
 djangorestframework-simplejwt
 drf-writable-nested
 drf-spectacular[sidecar]
+django-storages[s3]
 gunicorn
 psycopg[binary]>=3.1.8
 pytest-cov
