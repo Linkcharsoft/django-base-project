@@ -57,7 +57,7 @@ class UserViewSet(
         "retrieve": [IsAuthenticated],
         "partial_update": [HasRegisterCompletePermission],
         "complete_register": [IsAuthenticated],
-        "toggle-block": [IsAdminUser],
+        "toggle_block": [IsAdminUser],
         "destroy": [IsAdminUser],
         "list": [IsAdminUser],
         "delete_test_users": [AllowAny],
