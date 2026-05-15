@@ -6,7 +6,7 @@
 |---|---|---|
 | **Docker + Compose v2** | dev + prod containers | `Dockerfile`, `docker-compose.yml`, `docker-compose-production.yml` |
 | **just** | task runner | `justfile` |
-| **uv** | Python package installer (inside Docker) | (none — invoked from Dockerfile) |
+| **uv** | Python package manager (lock + sync, host and container) | `pyproject.toml`, `uv.lock` |
 | **ruff** | linter + formatter | `pyproject.toml` `[tool.ruff]` |
 | **pre-commit** | git hooks | `.pre-commit-config.yaml` |
 | **pytest + pytest-django** | tests | `pyproject.toml` `[tool.pytest.ini_options]` |
@@ -41,6 +41,9 @@ just compilemessages  # build .mo
 just psql             # psql against the dockerized DB
 just db-bash          # bash inside the postgres container
 just db-restore <dump.sql>  # drop schema + restore from SQL dump
+just lock             # uv lock (re-resolve uv.lock from pyproject.toml)
+just sync             # uv sync inside the container (apply uv.lock to venv)
+just add <pkg>        # uv add (use --dev for dev-only deps)
 ```
 
 Two directives at the top of [`justfile`](../justfile) matter:
@@ -52,21 +55,51 @@ Two directives at the top of [`justfile`](../justfile) matter:
 
 ## uv
 
-Used inside the Dockerfile to install Python dependencies — ~10× faster than `pip install`.
+Python package manager. `pyproject.toml` is the source of truth for declared dependencies; `uv.lock` is the resolved, hash-pinned dependency tree. **Both are committed.**
+
+### Layout
+
+- `[project.dependencies]` in `pyproject.toml` → runtime deps (installed in prod).
+- `[dependency-groups].dev` in `pyproject.toml` → dev-only deps (`ruff`, `pytest-cov`, `pytest-django`). Not installed in prod.
+- `uv.lock` → resolved tree (do not edit by hand).
+
+### Dockerfile
 
 ```dockerfile
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /usr/local/bin/
-COPY requirements.txt ./
-RUN uv pip sync --system requirements.txt
+
+COPY pyproject.toml uv.lock ./
+RUN if [ "$INSTALL_DEV" = "true" ]; then \
+        uv sync --frozen --no-install-project; \
+    else \
+        uv sync --frozen --no-dev --no-install-project; \
+    fi
 ```
 
-Locally you don't need uv installed; everything runs in the container. To regenerate `requirements.txt` from `requirements.in`:
+The venv lands at `/opt/venv` (outside `/code`) so the dev bind mount (`.:/code`) doesn't shadow it. `ENV PATH="/opt/venv/bin:$PATH"` makes `python`, `gunicorn`, `pytest`, `ruff` resolve to the venv.
 
-```bash
-docker compose exec web uv pip compile requirements.in -o requirements.txt
-```
+The `INSTALL_DEV` build arg is set to `"true"` in `docker-compose.yml` (dev) and left at its default `"false"` in `docker-compose-production.yml`.
 
-`requirements.in` is the source of truth (top-level deps). `requirements.txt` is the locked output (full pinned tree). Commit both.
+### Workflow
+
+| Action | Command |
+|---|---|
+| Add a runtime dep | `just add <pkg>` (or `uv add <pkg>` on host) |
+| Add a dev dep | `just add --dev <pkg>` |
+| Re-resolve after editing `pyproject.toml` by hand | `just lock` |
+| Apply lock to the running container venv | `just sync` |
+| Rebuild image with new deps | `just build && just up` |
+
+`uv lock` runs on the host (no Docker needed). The lockfile is platform-independent — commit it and CI/prod will install the exact same tree.
+
+### Why not `requirements.txt`?
+
+Old setup used `requirements.in` + `requirements.txt` driven by `uv pip compile` / `uv pip sync`. Migrated to uv-native (`pyproject.toml` + `uv.lock`) because:
+
+- Single source of truth (PEP 621), no parallel files.
+- Real lockfile with hashes and cross-platform resolution markers.
+- Built-in dev/prod separation via dependency groups — prod image no longer ships `pytest`/`ruff`.
+- `uv sync` is faster than `uv pip sync` because it doesn't re-resolve.
 
 ## ruff
 
@@ -127,4 +160,4 @@ Browse interactively: `/api/schema/swagger-ui/` or `/api/schema/redoc/`.
 
 > `django-upgrade` `--target-version` is pinned at `5.2` in `.pre-commit-config.yaml`. Bump it deliberately when you want the hook to rewrite to 6.x patterns.
 
-Pinned in `Dockerfile`, `requirements.txt`, `docker-compose.yml`.
+Pinned in `Dockerfile`, `pyproject.toml` / `uv.lock`, `docker-compose.yml`.

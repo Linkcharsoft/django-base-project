@@ -7,7 +7,7 @@ Production deployment notes. The template ships a `docker-compose-production.yml
 Built from the same `Dockerfile` as dev (single-stage, `python:3.13-slim`). Notable steps:
 
 1. Installs `postgresql-client-16` for `dumps`/`psql` access from inside the container.
-2. Copies `uv` from the official Astral image and runs `uv pip sync --system requirements.txt`.
+2. Copies `uv` from the official Astral image and runs `uv sync --frozen --no-dev --no-install-project` against `pyproject.toml` + `uv.lock`. The venv lands at `/opt/venv` and is on `PATH`. Dev deps (`ruff`, `pytest*`) are **not** installed in prod images. To opt them in, pass `--build-arg INSTALL_DEV=true`.
 3. Copies the project and `chmod +x` both entrypoints.
 
 Production command (in `docker-compose-production.yml`):

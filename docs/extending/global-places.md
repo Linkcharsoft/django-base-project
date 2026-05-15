@@ -21,16 +21,8 @@ If you only need a country dropdown, `django-countries` is lighter. `django-glob
 
 ### 1. Add the dependency
 
-In `requirements.in`:
-
-```
-django-global-places
-```
-
-Then:
-
 ```bash
-uv pip compile requirements.in -o requirements.txt
+uv add django-global-places
 just build
 ```
 

@@ -1,9 +1,13 @@
 FROM python:3.13-slim
 
+ARG INSTALL_DEV=false
+
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
-ENV PIP_NO_CACHE_DIR=1
-ENV PIP_DISABLE_PIP_VERSION_CHECK=1
+ENV UV_LINK_MODE=copy
+ENV UV_COMPILE_BYTECODE=1
+ENV UV_PROJECT_ENVIRONMENT=/opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
 
 WORKDIR /code
 
@@ -23,8 +27,12 @@ RUN apt-get update && \
 
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /usr/local/bin/
 
-COPY requirements.txt ./
-RUN uv pip sync --system requirements.txt
+COPY pyproject.toml uv.lock ./
+RUN if [ "$INSTALL_DEV" = "true" ]; then \
+        uv sync --frozen --no-install-project; \
+    else \
+        uv sync --frozen --no-dev --no-install-project; \
+    fi
 
 COPY . .
 

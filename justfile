@@ -82,3 +82,15 @@ lint:
 # Validar el schema OpenAPI (drf-spectacular)
 schema-validate:
     docker compose exec {{web}} python manage.py spectacular --validate --fail-on-warn
+
+# Resolver dependencias y actualizar uv.lock (correr en host, fuera del container)
+lock:
+    uv lock
+
+# Aplicar uv.lock al venv del container (dev: con grupo dev)
+sync:
+    docker compose exec {{web}} uv sync --frozen
+
+# Agregar una dependencia (uso: just add django-redis  /  just add --dev pytest-mock)
+add *args:
+    uv add {{args}}

@@ -3,6 +3,32 @@ name = "django-base-project"
 version = "0.1.0"
 description = "Linkchar Django base template"
 requires-python = ">=3.13"
+dependencies = [
+    "dj-rest-auth[with_social]",
+    "Django",
+    "django-cors-headers",
+    "django-debug-toolbar",
+    "django-environ",
+    "django-extensions",
+    "django-filter",
+    "django-storages[s3]",
+    "djangorestframework",
+    "djangorestframework-simplejwt",
+    "drf-spectacular[sidecar]",
+    "drf-writable-nested",
+    "gunicorn",
+    "psycopg[binary]>=3.1.8",
+    "sentry-sdk",
+    "split-settings",
+    "whitenoise",
+]
+
+[dependency-groups]
+dev = [
+    "ruff",
+    "pytest-cov",
+    "pytest-django",
+]
 
 # ---------- Ruff ----------
 [tool.ruff]

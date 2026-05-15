@@ -33,7 +33,7 @@ High-level map of the codebase. Read [quickstart.md](./quickstart.md) first if y
 ├── justfile                    # task runner (see conventions.md)
 ├── .pre-commit-config.yaml     # ruff + django-upgrade hooks (see conventions.md)
 ├── pyproject.toml              # ruff, pytest, coverage config
-└── requirements.txt
+└── pyproject.toml uv.lock
 ```
 
 ## Settings split

@@ -3,7 +3,7 @@
 **Scope.** How to add real-time bidirectional connections (WebSockets) to the project using Django Channels.
 **Not covered.** Server-Sent Events (HTTP streaming), background jobs (see [celery.md](./celery.md)).
 
-The base intentionally ships **without** Channels: `consumers.py`, `routing.py`, the `USE_WEB_SOCKET` flag, and the channels-dependent imports in `asgi.py` were removed because they didn't compile without the `channels` lib (which wasn't in `requirements.in`). Follow this guide to add WebSockets when needed.
+The base intentionally ships **without** Channels: `consumers.py`, `routing.py`, the `USE_WEB_SOCKET` flag, and the channels-dependent imports in `asgi.py` were removed because they didn't compile without the `channels` lib (which wasn't declared). Follow this guide to add WebSockets when needed.
 
 ---
 
@@ -26,18 +26,8 @@ In the `base-infra` stack, reuse the same Redis as Celery but **separate the DB 
 
 ### 1. Add the dependencies
 
-In `requirements.in`:
-
-```
-channels
-channels-redis
-daphne
-```
-
-Then:
-
 ```bash
-uv pip compile requirements.in -o requirements.txt
+uv add channels channels-redis daphne
 just build
 ```
 
@@ -256,7 +246,7 @@ daphne -b 0.0.0.0 -p 8000 django_base.asgi:application
 gunicorn -w 4 -k uvicorn.workers.UvicornWorker django_base.asgi:application -b 0.0.0.0:8000
 ```
 
-Add `uvicorn[standard]` to `requirements.in` for option B.
+For option B, also run `uv add 'uvicorn[standard]'`.
 
 In `docker-compose.yml` (dev), update the `web` service `entrypoint-dev.sh`:
 

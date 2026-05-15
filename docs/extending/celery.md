@@ -3,7 +3,7 @@
 **Scope.** How to add Celery + Redis to the project for asynchronous task execution.
 **Not covered.** Channels / WebSockets (see [websockets.md](./websockets.md)) — they happen to also use Redis but the config is independent.
 
-The base intentionally ships **without** Celery: the old `django_base/celery.py` + `USE_CELERY` flag + `BROKER_*` envs were removed because they couldn't actually run (the `celery` lib was not in `requirements.in`). Follow this guide to wire it back in two minutes when the project actually needs it.
+The base intentionally ships **without** Celery: the old `django_base/celery.py` + `USE_CELERY` flag + `BROKER_*` envs were removed because they couldn't actually run (the `celery` lib was not declared). Follow this guide to wire it back in two minutes when the project actually needs it.
 
 ---
 
@@ -36,20 +36,12 @@ And add `redis` to the `depends_on` list of the `web` service.
 
 ### 1. Add the dependencies
 
-In `requirements.in`:
-
-```
-celery
-redis
-```
-
-Then regenerate the lockfile:
-
 ```bash
-just manage shell  # or any container shell
-uv pip compile requirements.in -o requirements.txt
+uv add celery redis
 just build
 ```
+
+`uv add` updates `pyproject.toml` (`[project.dependencies]`) and `uv.lock` in one step. Commit both.
 
 ### 2. Create `django_base/celery.py`
 
@@ -133,10 +125,8 @@ For production (`docker-compose-production.yml`), drop the bind mount and use th
 
 ### 6. Optional — scheduled tasks (`django-celery-beat`)
 
-Add to `requirements.in`:
-
-```
-django-celery-beat
+```bash
+uv add django-celery-beat
 ```
 
 Then in `custom_settings.py`:
