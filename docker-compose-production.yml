@@ -1,22 +1,17 @@
-version: "3"
-
 services:
   web:
     build:
       context: .
-    # image:
-    command: gunicorn --bind 0.0.0.0:8000 --pythonpath code django_base.wsgi:application --workers=4
+    entrypoint: ./entrypoint.sh
+    env_file:
+      - .env
+    ports:
+      - "8000:8000"
     volumes:
       - static_volume:/code/static
       - media_volume:/code/media
-    ports:
-      - "8000:8000"
-    networks:
-      - django-network
+    restart: unless-stopped
 
-networks:
-  django-network:
 volumes:
-  media_volume:
   static_volume:
-
+  media_volume:

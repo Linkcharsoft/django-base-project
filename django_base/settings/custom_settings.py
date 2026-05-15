@@ -1,5 +1,7 @@
 from datetime import timedelta
 
+from django.core.exceptions import ImproperlyConfigured
+
 from django_base.settings.configurations import (
     USE_CELERY,
     USE_DEBUG_TOOLBAR,
@@ -99,18 +101,12 @@ elif EMAIL_PROVIDER == "aws":
 elif EMAIL_PROVIDER == "smtp":
     EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 else:
-    raise Exception("EMAIL_PROVIDER not allowed")
+    raise ImproperlyConfigured(f"EMAIL_PROVIDER '{EMAIL_PROVIDER}' not allowed")
 
 # <---------------------- Cors configurations ---------------------->
 CORS_ALLOWED_ORIGINS = CORS_ALLOWED_URLS
 
 # <---------------------- django-debug-toolbar configurations ---------------------->
-# INTERNAL_IPS = [
-#     "127.0.0.1",
-#     "0.0.0.0"
-# ]
-
-
 if USE_DEBUG_TOOLBAR:
     import socket
 

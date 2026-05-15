@@ -1,3 +1,5 @@
+from django.core.exceptions import ImproperlyConfigured
+
 from django_base.settings.django_settings import BASE_DIR
 from django_base.settings.environment_variables import (
     DB_ENGINE,
@@ -17,7 +19,9 @@ ALLOWED_DB_ENGINES = {
 }
 
 if DB_ENGINE not in ALLOWED_DB_ENGINES:
-    raise Exception("DB_ENGINE not allowed")
+    raise ImproperlyConfigured(
+        f"DB_ENGINE '{DB_ENGINE}' not allowed. Choose one of: {list(ALLOWED_DB_ENGINES)}"
+    )
 
 if DB_ENGINE == "sqlite3":
     DATABASES = {

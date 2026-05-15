@@ -9,9 +9,11 @@ environ.Env.read_env(os.path.join(BASE_DIR, ".env"))
 
 
 # <--------------- General configurations -------------->
-SECRET_KEY = env("SECRET_KEY", default="-----------")
 DEBUG = env.bool("DEBUG", default=True)
 IS_PRODUCTION = env.bool("IS_PRODUCTION", default=False)
+SECRET_KEY = (
+    env("SECRET_KEY") if IS_PRODUCTION else env("SECRET_KEY", default="dev-insecure-secret-key")
+)
 AWS_ACCESS_KEY_ID = env("AWS_ACCESS_KEY_ID", default="")
 AWS_SECRET_ACCESS_KEY = env("AWS_SECRET_ACCESS_KEY", default="")
 
@@ -38,8 +40,8 @@ EMAIL_PROVIDER = env("EMAIL_PROVIDER", default="console")
 EMAIL_HOST = env("EMAIL_HOST", default="")
 EMAIL_HOST_USER = env("EMAIL_HOST_USER", default="")
 EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD", default="")
-EMAIL_USE_TLS = env("EMAIL_USE_TLS", default=True)
-EMAIL_PORT = env("EMAIL_PORT", default=587)
+EMAIL_USE_TLS = env.bool("EMAIL_USE_TLS", default=True)
+EMAIL_PORT = env.int("EMAIL_PORT", default=587)
 DEFAULT_FROM_EMAIL = env("DEFAULT_FROM_EMAIL", default="project@linkchar.com")
 
 
