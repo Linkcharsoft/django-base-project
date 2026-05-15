@@ -64,10 +64,55 @@ Past audit history (Phase 1–6 cleanup) lives in git — `git log --all --oneli
 
 ## Updating these docs
 
-Treat them like code: when you change behavior, update the doc in the same PR. If you add a doc, add a row to:
+Treat docs like code: when you change behavior, update the doc in the **same PR**. Stale docs are worse than missing docs — an agent that trusts a wrong table will produce wrong code.
 
-1. The "By task" table above.
-2. The tree under "By topic".
-3. The relevant section of [`_agent-index.md`](./_agent-index.md).
+### What changed → what to touch
 
-If you rename an anchor, `grep -r "#old-anchor" docs/` to find references.
+| If you changed… | Update |
+|---|---|
+| An endpoint (added / removed / changed method or payload) | [api-contract.md](./api-contract.md) + [_agent-index.md](./_agent-index.md) (API contract section) |
+| An env var (added / renamed / removed / changed default) | [environment.md](./environment.md) — follow its [adding-a-new-env-var checklist](./environment.md#adding-a-new-env-var-checklist) — + [_agent-index.md](./_agent-index.md) |
+| A new Django app | [architecture.md](./architecture.md) (folder layout + apps inventory) + [_agent-index.md](./_agent-index.md) |
+| Middleware (added / reordered) | [architecture.md → middleware stack](./architecture.md#middleware-stack) + [request-lifecycle.md](./request-lifecycle.md) |
+| A URL mount under `/` | [architecture.md → URL layout](./architecture.md#url-layout) + [api-contract.md](./api-contract.md) if under `/api/` |
+| Auth flow (login / JWT / recovery / OAuth) | [auth.md](./auth.md) + [api-contract.md](./api-contract.md) if endpoints changed |
+| A code convention (BaseModel, mixin, validator) | [conventions.md](./conventions.md) |
+| A new just recipe / tool config | [toolchain.md](./toolchain.md) + [_agent-index.md](./_agent-index.md) |
+| Deployment surface (Dockerfile, entrypoint, gunicorn config) | [deployment.md](./deployment.md) |
+| An opt-in feature (Celery, Channels, places, …) | the relevant file under [extending/](./extending/) — do **not** add it to the base docs |
+
+### Adding a new doc file
+
+1. Filename ≈ concern. One concern per file. If it grows past ~250 lines, split rather than nest.
+2. Start with a scope statement so a reader (or agent) can decide in <5s if they're in the right file:
+   ```markdown
+   # Title
+
+   **Scope.** What this file covers in one sentence. Not covered: X (see [other-file.md](./other-file.md)).
+   ```
+3. Wire it into navigation — **all three** are required, otherwise the doc is unreachable for agents:
+   - A row in the "By task" table at the top of this README.
+   - A line in the "By topic" tree.
+   - Rows in the relevant section(s) of [`_agent-index.md`](./_agent-index.md) — see rules below.
+4. Opt-in / off-by-default features go in [extending/](./extending/), not the root. The base must boot without them.
+
+### Writing rows for `_agent-index.md`
+
+The index is keyword → `file#anchor`. An agent finds the right doc by grepping this file with whatever word came to mind, so:
+
+- **List synonyms** in the `Keywords` column, comma-separated. Include the exact symbol (`USE_S3`, `/api/users/`), the generic concept (`feature flag`, `user endpoint`), and likely typos / casual phrasings (`env var`, `environment variable`, `.env`).
+- **Always link to a specific anchor**, not just the file, when the file has sections: `file.md#anchor` beats `file.md`.
+- **Anchor format** is GitHub-Markdown's auto-slug: lowercase, spaces → `-`, punctuation dropped. A heading `## Adding a new env var (checklist)` becomes `#adding-a-new-env-var-checklist`.
+- Put the row under the section it conceptually belongs to (Setup, Architecture, API contract, …). Add a new section if none fits.
+
+### Renaming / removing
+
+- Renaming an anchor: `grep -rn "#old-anchor" docs/` and update every hit, including `_agent-index.md`.
+- Removing a doc: also remove its row from this README's "By task" table, the "By topic" tree, and every row in `_agent-index.md` that points at it.
+- Renaming a file: same as above, plus update cross-references with `grep -rn "old-name.md" docs/`.
+
+### Tone
+
+- Tables over prose. Endpoint inventories, env vars, middleware order — all tables.
+- Short scope statement, no marketing language, no "this document describes…" preamble.
+- Cross-link liberally with anchors. If a concern lives elsewhere, point there instead of duplicating.
