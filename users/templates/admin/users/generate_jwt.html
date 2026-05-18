@@ -1,0 +1,24 @@
+{% extends "admin/base_site.html" %}
+
+{% block title %}JWT para {{ target_user }}{% endblock %}
+
+{% block content %}
+<h1>JWT generado para {{ target_user }} (id={{ target_user.id }})</h1>
+
+<p style="color:#a00;">
+  <strong>Atención:</strong> estos tokens permiten iniciar sesión como este usuario.
+  No los compartas ni los pegues en logs.
+</p>
+
+<h2>Access token</h2>
+<textarea readonly rows="6" style="width:100%; font-family:monospace;"
+          onclick="this.select();">{{ access }}</textarea>
+
+<h2>Refresh token</h2>
+<textarea readonly rows="6" style="width:100%; font-family:monospace;"
+          onclick="this.select();">{{ refresh }}</textarea>
+
+<p style="margin-top:1em;">
+  <a href="{% url 'admin:users_user_changelist' %}">&larr; Volver al listado</a>
+</p>
+{% endblock %}
