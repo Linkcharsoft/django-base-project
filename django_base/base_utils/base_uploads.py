@@ -1,10 +1,16 @@
 import uuid
 from pathlib import Path
 
+from django.utils.deconstruct import deconstructible
 
-def unique_upload_to(subdir):
+
+@deconstructible
+class unique_upload_to:
     """Callable para ``upload_to`` que renombra el archivo a
     ``<subdir>/<uuid4>.<ext>`` preservando la extensión original.
+
+    Implementado como clase ``@deconstructible`` para que sea serializable
+    por el migration writer de Django.
 
     Combinar con ``FileSizeValidator`` y ``FileExtensionValidator``::
 
@@ -20,8 +26,9 @@ def unique_upload_to(subdir):
         )
     """
 
-    def _wrapper(instance, filename):
-        ext = Path(filename).suffix.lower()
-        return f"{subdir}/{uuid.uuid4().hex}{ext}"
+    def __init__(self, subdir):
+        self.subdir = subdir
 
-    return _wrapper
+    def __call__(self, instance, filename):
+        ext = Path(filename).suffix.lower()
+        return f"{self.subdir}/{uuid.uuid4().hex}{ext}"
