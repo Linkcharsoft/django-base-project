@@ -60,7 +60,6 @@ STATIC_ROOT = BASE_DIR / "static"
 # Allauth configurations
 ACCOUNT_SIGNUP_FIELDS = ("email*", "password1*", "is_test_user")
 ACCOUNT_ADAPTER = "users.adapter.CustomAccountAdapter"
-ACCOUNT_SIGNUP_PASSWORD_ENTER_TWICE = False
 ACCOUNT_EMAIL_SUBJECT_PREFIX = "\u200b"
 ACCOUNT_LOGIN_METHODS = {"email"}
 ACCOUNT_UNIQUE_EMAIL = True
