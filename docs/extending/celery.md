@@ -38,7 +38,7 @@ And add `redis` to the `depends_on` list of the `web` service.
 
 ```bash
 uv add celery redis
-just build
+docker compose build
 ```
 
 `uv add` updates `pyproject.toml` (`[project.dependencies]`) and `uv.lock` in one step. Commit both.
@@ -189,7 +189,7 @@ worker-shell:
 
 ## Validation
 
-1. `just build && just up` — `worker` service comes up healthy in `docker compose logs worker`.
+1. `docker compose up -d --build` — `worker` service comes up healthy in `docker compose logs worker`.
 2. From the Django shell: `from users.tasks import some_task; some_task.delay()` — should return an `AsyncResult` with an ID and the worker logs should show the task executing.
 3. If `result.get(timeout=5)` hangs → check broker connectivity (`docker compose exec web python -c "import redis; redis.Redis(host='redis').ping()"`).
 

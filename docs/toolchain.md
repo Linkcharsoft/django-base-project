@@ -24,8 +24,6 @@ Install:
 
 ```bash
 just              # list every recipe (this is also `just --list`)
-just up           # docker compose up -d
-just down         # docker compose down
 just logs         # tail web container logs
 just shell        # Django shell_plus (auto-imports models)
 just bash         # bash inside the web container
@@ -41,10 +39,9 @@ just compilemessages  # build .mo
 just psql             # psql against the dockerized DB
 just db-bash          # bash inside the postgres container
 just db-restore <dump.sql>  # drop schema + restore from SQL dump
-just lock             # uv lock (re-resolve uv.lock from pyproject.toml)
-just sync             # uv sync inside the container (apply uv.lock to venv)
-just add <pkg>        # uv add (use --dev for dev-only deps)
 ```
+
+Docker and uv aren't wrapped — call them directly: `docker compose up -d`, `docker compose down`, `docker compose build`, `uv add <pkg>`, `uv lock`, `docker compose exec web uv sync --frozen`.
 
 Two directives at the top of [`justfile`](../justfile) matter:
 
@@ -84,11 +81,11 @@ The `INSTALL_DEV` build arg is set to `"true"` in `docker-compose.yml` (dev) and
 
 | Action | Command |
 |---|---|
-| Add a runtime dep | `just add <pkg>` (or `uv add <pkg>` on host) |
-| Add a dev dep | `just add --dev <pkg>` |
-| Re-resolve after editing `pyproject.toml` by hand | `just lock` |
-| Apply lock to the running container venv | `just sync` |
-| Rebuild image with new deps | `just build && just up` |
+| Add a runtime dep | `uv add <pkg>` (on host) |
+| Add a dev dep | `uv add --dev <pkg>` |
+| Re-resolve after editing `pyproject.toml` by hand | `uv lock` |
+| Apply lock to the running container venv | `docker compose exec web uv sync --frozen` |
+| Rebuild image with new deps | `docker compose up -d --build` |
 
 `uv lock` runs on the host (no Docker needed). The lockfile is platform-independent — commit it and CI/prod will install the exact same tree.
 

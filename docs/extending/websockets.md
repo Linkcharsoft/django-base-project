@@ -28,7 +28,7 @@ In the `base-infra` stack, reuse the same Redis as Celery but **separate the DB 
 
 ```bash
 uv add channels channels-redis daphne
-just build
+docker compose build
 ```
 
 ### 2. Update `django_base/asgi.py`
@@ -223,7 +223,7 @@ CHANNEL_LAYERS = {
 }
 ```
 
-> `daphne` in `INSTALLED_APPS` overrides Django's `runserver` to serve ASGI. Don't forget this — without it, `just up` still runs WSGI and WebSockets 404.
+> `daphne` in `INSTALLED_APPS` overrides Django's `runserver` to serve ASGI. Don't forget this — without it, `docker compose up` still runs WSGI and WebSockets 404.
 
 In `.env.example`:
 
@@ -267,7 +267,7 @@ daphne -b 0.0.0.0 -p 8000 django_base.asgi:application
 
 ## Validation
 
-1. `just build && just up`
+1. `docker compose up -d --build`
 2. Open a Django shell: `from channels.layers import get_channel_layer; layer = get_channel_layer(); await layer.send("test", {"type": "hi"})` — should not error.
 3. From the browser dev console:
    ```js

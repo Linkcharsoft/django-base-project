@@ -167,7 +167,7 @@ If the email matches an existing user, the social account links to it. If not, a
 
 ## Validation
 
-1. `just up && just migrate`.
+1. `docker compose up -d && just migrate`.
 2. Open `/admin/socialaccount/socialapp/` — your Google app is listed and attached to a Site.
 3. From the frontend (or `curl` with a real Google token):
    ```bash

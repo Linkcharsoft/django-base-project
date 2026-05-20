@@ -20,8 +20,7 @@ Open `.env` and fill in at least `SECRET_KEY`, `DB_*`, and `DEFAULT_FROM_EMAIL`.
 ## 2. Build and start
 
 ```bash
-just build
-just up
+docker compose up -d --build
 ```
 
 This builds the `web` and `db` services and launches them in the background. The `db` service is `postgres:16`. The `web` service runs gunicorn-less dev mode (`entrypoint-dev.sh`), which auto-runs `migrate` and `runserver` on port `8000`.
@@ -57,7 +56,7 @@ just manage <cmd>    # any manage.py command, e.g. `just manage shell`
 just --list          # see every recipe with its description
 ```
 
-To stop the stack: `just down`. To wipe the database: `docker compose down -v` (destroys the named volume `data/db`).
+To stop the stack: `docker compose down`. To wipe the database: `docker compose down -v` (destroys the named volume `data/db`).
 
 ## Where to go next
 

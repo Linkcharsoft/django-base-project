@@ -24,7 +24,7 @@ Django 6.0 + DRF base template used as the starting point for Linkchar projects.
 ## Common commands
 
 ```bash
-just up              # start dev stack (docker compose)
+docker compose up -d # start dev stack
 just migrate         # run migrations
 just shell           # Django shell_plus
 just test            # pytest

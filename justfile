@@ -8,18 +8,6 @@ db := "db"
 default:
     @just --list
 
-# Build de la imagen Docker
-build:
-    docker compose build
-
-# Levantar los servicios en background
-up:
-    docker compose up -d
-
-# Bajar los servicios
-down:
-    docker compose down
-
 # Tail de los logs del web
 logs:
     docker compose logs -f {{web}}
@@ -83,14 +71,22 @@ lint:
 schema-validate:
     docker compose exec {{web}} python manage.py spectacular --validate --fail-on-warn
 
-# Resolver dependencias y actualizar uv.lock (correr en host, fuera del container)
-lock:
-    uv lock
+# --- Orquestación de subagentes (Claude Code) ---
+# Requiere `claude` CLI instalado en el host. Los subagentes viven en .claude/agents/.
 
-# Aplicar uv.lock al venv del container (dev: con grupo dev)
-sync:
-    docker compose exec {{web}} uv sync --frozen
+# Implementar una sola tarea con el builder (uso: just task tasks/01-foo.md)
+# --verbose: stream de lo que hace el agente. --dangerously-skip-permissions: necesario en headless
+# para que Write/Edit/Bash no se traben (en .claude/ estás en tu repo, en una rama dedicada — OK).
+# Si preferís controlarlo, sacalo y allowlistá en .claude/settings.json.
+task spec:
+    if (-not (Test-Path logs)) { New-Item -ItemType Directory logs | Out-Null }
+    claude -p --verbose --dangerously-skip-permissions "Use the Task tool with subagent_type=django-task-runner. The task spec to implement is at {{spec}}. Read it, follow the agent's instructions exactly, and report back per its 'Cómo reportar al terminar' section." 2>&1 | Tee-Object -FilePath ("logs/task-" + (Split-Path -Leaf "{{spec}}") + ".log")
 
-# Agregar una dependencia (uso: just add django-redis  /  just add --dev pytest-mock)
-add *args:
-    uv add {{args}}
+# Implementar todas las tareas de una carpeta en orden alfabético (uso: just task-all tasks/)
+task-all dir:
+    Get-ChildItem "{{dir}}" -Filter *.md | Sort-Object Name | ForEach-Object { Write-Host "==> $($_.Name)"; just task $_.FullName }
+
+# Revisar el diff de la rama actual contra main con el reviewer
+review:
+    if (-not (Test-Path logs)) { New-Item -ItemType Directory logs | Out-Null }
+    claude -p --verbose --dangerously-skip-permissions "Use the Task tool with subagent_type=django-task-reviewer. Review the current branch diff against main and produce the report per its 'Formato del reporte' section." 2>&1 | Tee-Object -FilePath "logs/review.log"

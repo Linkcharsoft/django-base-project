@@ -23,7 +23,7 @@ If you only need a country dropdown, `django-countries` is lighter. `django-glob
 
 ```bash
 uv add django-global-places
-just build
+docker compose build
 ```
 
 ### 2. Register the app

@@ -6,7 +6,7 @@ Corporate Django 5.2 + DRF template used as a starting point for Linkchar projec
 
 ```bash
 cp .env.example .env       # fill in SECRET_KEY, DB_*, DEFAULT_FROM_EMAIL
-just build && just up
+docker compose up -d --build
 just migrate
 ```
 

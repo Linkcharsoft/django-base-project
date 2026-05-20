@@ -12,7 +12,7 @@
 - macOS: `brew install just`.
 - Linux: `cargo install just`.
 
-### `just up` errors with `no such file or directory: sh`
+### `just` recipes error with `no such file or directory: sh`
 
 You're on Windows and `set windows-shell` is missing or wrong in `justfile`. Confirm the top of [`justfile`](../justfile) contains:
 
@@ -31,7 +31,7 @@ The `db` service hasn't finished starting yet, or `.env` `DB_HOST` is wrong.
 - For the dockerized DB: `DB_HOST=db` (not `localhost`).
 - For a host DB from inside the container: `DB_HOST=host.docker.internal`.
 
-Wait a few seconds after `just up`, or `just logs` to confirm Postgres is ready.
+Wait a few seconds after `docker compose up -d`, or `just logs` to confirm Postgres is ready.
 
 ### Port 8000 already in use
 
