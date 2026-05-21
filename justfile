@@ -71,22 +71,19 @@ lint:
 schema-validate:
     docker compose exec {{web}} python manage.py spectacular --validate --fail-on-warn
 
-# --- Orquestación de subagentes (Claude Code) ---
-# Requiere `claude` CLI instalado en el host. Los subagentes viven en .claude/agents/.
+# --- Subagent orchestration (Claude Code) ---
+# Requires the `claude` CLI on the host. Subagents live under .claude/agents/.
+# Permissions are defined in .claude/settings.json (tool + bash allowlist).
 
-# Implementar una sola tarea con el builder (uso: just task tasks/01-foo.md)
-# --verbose: stream de lo que hace el agente. --dangerously-skip-permissions: necesario en headless
-# para que Write/Edit/Bash no se traben (en .claude/ estás en tu repo, en una rama dedicada — OK).
-# Si preferís controlarlo, sacalo y allowlistá en .claude/settings.json.
-task spec:
-    if (-not (Test-Path logs)) { New-Item -ItemType Directory logs | Out-Null }
-    claude -p --verbose --dangerously-skip-permissions "Use the Task tool with subagent_type=django-task-runner. The task spec to implement is at {{spec}}. Read it, follow the agent's instructions exactly, and report back per its 'Cómo reportar al terminar' section." 2>&1 | Tee-Object -FilePath ("logs/task-" + (Split-Path -Leaf "{{spec}}") + ".log")
+# Run the builder loop over tasks.md until empty or stalled (logs/run-tasks-*.log)
+task-run:
+    pwsh -NoProfile -File scripts/run-tasks.ps1
 
-# Implementar todas las tareas de una carpeta en orden alfabético (uso: just task-all tasks/)
-task-all dir:
-    Get-ChildItem "{{dir}}" -Filter *.md | Sort-Object Name | ForEach-Object { Write-Host "==> $($_.Name)"; just task $_.FullName }
+# Pretty-print a saved stream-json log (usage: just task-log logs/run-tasks-XXXXXX.log)
+task-log path:
+    pwsh -NoProfile -File scripts/pretty-log.ps1 -Path "{{path}}"
 
-# Revisar el diff de la rama actual contra main con el reviewer
+# Run reviewer against current branch diff vs main (output to logs/review.log)
 review:
     if (-not (Test-Path logs)) { New-Item -ItemType Directory logs | Out-Null }
-    claude -p --verbose --dangerously-skip-permissions "Use the Task tool with subagent_type=django-task-reviewer. Review the current branch diff against main and produce the report per its 'Formato del reporte' section." 2>&1 | Tee-Object -FilePath "logs/review.log"
+    pwsh -NoProfile -Command "& claude -p --verbose --output-format stream-json --verbose --include-partial-messages 'Use the Task tool with subagent_type=django-task-reviewer. Review the current branch diff against main and produce the report per its Report format section.' *> logs/review.log"

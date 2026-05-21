@@ -1,0 +1,49 @@
+# Tasks
+
+Copy this file to `tasks.md` in your project root and fill it in. The `django-task-runner`
+subagent reads it on every iteration of `just task-run`, picks the first `**Status**: pending`
+entry, implements it, marks it `done`, and writes a note under `progress/`.
+
+The script counts `**Status**: pending` lines and stops when none remain or after
+3 iterations without progress.
+
+---
+
+## T001 — Short title for the task
+
+**Status**: pending
+
+**Description**: Self-contained, one-paragraph statement of what needs to be done.
+Assume the agent has no memory of prior conversations. Be specific about the *what*,
+not the *how* — the agent decides the implementation.
+
+**Context**: Point at concrete files and patterns. Examples:
+- "Mirror the structure of `users/views.py` and `users/serializers.py`."
+- "The new model lives in a new app `applications/`. Create it with `python manage.py startapp applications`."
+- "The endpoint must use the `BaseModelViewSet` permissions/serializers dicts pattern (see docs/conventions.md)."
+
+If this task depends on a previous one, say so: "T002 created the `Applicant` model; reuse it here."
+
+**Acceptance criteria**:
+- [ ] Endpoint `POST /api/applications/` exists and returns 201 with `{ id, name }` for valid input.
+- [ ] Anonymous requests get 401.
+- [ ] Invalid payload returns 400 with field errors.
+- [ ] Migration generated and runs clean (`just migrate`).
+- [ ] Tests in `applications/tests.py` cover the three cases above.
+- [ ] `just lint`, `just test`, `just schema-validate` all pass.
+
+---
+
+## T002 — Next task title
+
+**Status**: pending
+
+**Description**: ...
+
+**Context**: ...
+
+**Acceptance criteria**:
+- [ ] ...
+- [ ] ...
+
+---
