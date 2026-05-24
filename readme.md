@@ -1,6 +1,6 @@
 # django-base-project
 
-Corporate Django 5.2 + DRF template used as a starting point for Linkchar projects. Batteries: JWT auth, allauth (email + password), drf-spectacular (OpenAPI 3.1), Postgres 16, Docker, ruff + pre-commit, justfile. Opt-in extensions (Celery, WebSockets, Google OAuth, country/state/city data) live in [`docs/extending/`](./docs/extending/).
+Corporate Django 5.2 + DRF template used as a starting point for Inferencia projects. Batteries: JWT auth, allauth (email + password), drf-spectacular (OpenAPI 3.1), Postgres 16, Docker, ruff + pre-commit, justfile. Opt-in extensions (Celery, WebSockets, Google OAuth, country/state/city data) live in [`docs/extending/`](./docs/extending/).
 
 ## Quickstart
 
@@ -47,4 +47,4 @@ Full list: `just --list`. See [`docs/toolchain.md#justfile`](./docs/toolchain.md
 
 ## License
 
-Internal. Linkchar.
+Internal. Inferencia.

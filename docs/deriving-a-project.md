@@ -1,8 +1,8 @@
 # Deriving a project from this base
 
-**Scope.** Kickoff steps when starting a new Linkchar project from `django-base-project`. What to rename, what to keep, what to delete. Not covered: ongoing development (see [development-guide.md](./development-guide.md)).
+**Scope.** Kickoff steps when starting a new Inferencia project from `django-base-project`. What to rename, what to keep, what to delete. Not covered: ongoing development (see [development-guide.md](./development-guide.md)).
 
-This base is the starting point for ~every Django project at Linkchar. Treat it like a snapshot: fork once, then diverge.
+This base is the starting point for ~every Django project at Inferencia. Treat it like a snapshot: fork once, then diverge.
 
 ## 1. Clone, don't fork
 

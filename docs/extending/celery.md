@@ -17,7 +17,7 @@ If you only need *fire-and-forget* without retries or scheduling, consider `asyn
 
 ## Infrastructure prerequisite
 
-A Redis (or RabbitMQ) broker reachable from the web container. In Linkchar, the `base-infra` stack already provides one — point `BROKER_URL` at it.
+A Redis (or RabbitMQ) broker reachable from the web container. In Inferencia, the `base-infra` stack already provides one — point `BROKER_URL` at it.
 
 Locally, add a Redis service to `docker-compose.yml`:
 

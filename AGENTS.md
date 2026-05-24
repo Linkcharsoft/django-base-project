@@ -10,7 +10,7 @@ The human-oriented index is [`docs/README.md`](./docs/README.md).
 
 ## What this project is
 
-Django 6.0 + DRF base template used as the starting point for Linkchar projects. Postgres 16, JWT + allauth (email/password only — Google OAuth lives in `docs/extending/google-oauth.md`), drf-spectacular, Docker, `just` task runner.
+Django 6.0 + DRF base template used as the starting point for Inferencia projects. Postgres 16, JWT + allauth (email/password only — Google OAuth lives in `docs/extending/google-oauth.md`), drf-spectacular, Docker, `just` task runner.
 
 ## Ground rules
 
