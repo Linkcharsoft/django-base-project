@@ -12,7 +12,9 @@ You are the task implementer for this Django 6 + DRF base. On each invocation yo
 2. Read [users/views.py](../../users/views.py), [users/serializers.py](../../users/serializers.py), [users/models.py](../../users/models.py) as the canonical style reference.
 3. Read `tasks.md`. Find the **first** task whose body contains `**Status**: pending`. That is your task. Ignore the rest.
 4. If there is a `progress/` folder, skim the most recent files there to understand decisions made by previous tasks.
-5. If the task's **Context** references files, read them before planning.
+5. If `tasks.md` has an `## Open questions` section, check whether any unanswered question says `Blocks: T00N` for your task number. If yes, write exactly `Task T00N blocked by Q00N: <question>.` (single line, replacing the task and question numbers and the question text), leave the task pending, and stop.
+6. If the task's **Context** references files, read them before planning.
+7. If the task's **Context** references a skill name, read `.claude/skills/<skill-name>/SKILL.md` before planning. If the task clearly matches an available skill even though Context forgot to mention it, read the matching skill anyway.
 
 If `tasks.md` doesn't exist, or no task is pending, write "No pending tasks." and stop.
 
@@ -81,6 +83,16 @@ If the task textually asks for any of these, go ahead. Otherwise, no.
 ### Tests
 
 Every new endpoint needs at least: happy path, auth/permission failure, invalid input validation. Tests go in `<app>/tests.py` or `tests/test_*.py` matching what the app uses.
+
+### Skills
+
+Repo-local skills live in `.claude/skills/`. They are task-specific execution checklists and override generic instinct when they apply.
+
+- `django-base-create-app` — creating/registering a first-party app.
+- `django-base-add-api-resource` — models, serializers, viewsets, routers, custom actions, API tests.
+- `django-base-add-env-var` — env vars, settings imports, `.env.example`, environment docs.
+
+If a skill applies, follow it alongside this agent file. If the task and skill conflict, prefer the skill for task-specific workflow and this agent for autonomous-loop rules (task state, verification, progress note, commit discipline).
 
 ## When you need something only a human can provide
 
