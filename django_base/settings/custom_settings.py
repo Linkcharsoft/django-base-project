@@ -3,6 +3,7 @@ from datetime import timedelta
 from django.core.exceptions import ImproperlyConfigured
 
 from django_base.settings.configurations import (
+    APP_NAME,
     USE_DEBUG_TOOLBAR,
 )
 from django_base.settings.django_settings import AUTH_PASSWORD_VALIDATORS, BASE_APPS, MIDDLEWARE
@@ -148,8 +149,8 @@ SITE_ID = 1
 
 # <-------------- drf-spectacular configurations -------------->
 SPECTACULAR_SETTINGS = {
-    "TITLE": "Base project API",
-    "DESCRIPTION": "Base project documentation",
+    "TITLE": f"{APP_NAME} API",
+    "DESCRIPTION": f"{APP_NAME} documentation",
     "VERSION": "1.0.0",
     "CONTACT": {"email": "contact@linkchar.com"},
     "SERVE_INCLUDE_SCHEMA": False,
