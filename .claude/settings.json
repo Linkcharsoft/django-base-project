@@ -13,7 +13,9 @@
       "Bash(mkdir:*)",
       "Bash(ls:*)",
       "Bash(cat:*)",
-      "Bash(rm:*)"
+      "Bash(rm:*)",
+      "Bash(mv inferencia-add-env-var *)",
+      "Bash(mv inferencia-create-django-app *)"
     ]
   }
 }
