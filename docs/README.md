@@ -18,7 +18,6 @@ Reference documentation for `django-base-project`. Every file is single-concern 
 | Look up an env var | [environment.md](./environment.md) |
 | Add an endpoint / app / model | [development-guide.md](./development-guide.md) |
 | Write or run tests | [testing.md](./testing.md) |
-| Start a new project from this base | [deriving-a-project.md](./deriving-a-project.md) |
 | Deploy to production | [deployment.md](./deployment.md) |
 | Add Celery or WebSockets to the project | [extending/](./extending/) |
 | Fix a common error | [troubleshooting.md](./troubleshooting.md) |
@@ -43,7 +42,6 @@ docs/
 ├── development-guide.md     ← Step-by-step recipes (add endpoint/app/model/…)
 ├── testing.md               ← Test setup + conventions
 │
-├── deriving-a-project.md    ← Kickoff guide for new projects forking this base
 ├── deployment.md            ← Production setup
 │
 └── extending/               ← Opt-in features removed from the base

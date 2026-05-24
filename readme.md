@@ -27,7 +27,6 @@ Project documentation lives in [`docs/`](./docs/). Start at [`docs/README.md`](.
 - [`docs/conventions.md`](./docs/conventions.md) — code patterns (BaseModel, viewset mixins, …)
 - [`docs/toolchain.md`](./docs/toolchain.md) — build/dev tools (just, uv, ruff, pre-commit)
 - [`docs/development-guide.md`](./docs/development-guide.md) — step-by-step recipes for adding things
-- [`docs/deriving-a-project.md`](./docs/deriving-a-project.md) — kickoff guide for new projects from this base
 - [`docs/deployment.md`](./docs/deployment.md) — production setup
 
 > Working with an AI agent? Point it at [`docs/_agent-index.md`](./docs/_agent-index.md) — a keyword → file:anchor lookup table.

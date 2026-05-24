@@ -130,16 +130,6 @@ If your question isn't here, add a row in your PR.
 | sentry, error tracking, monitoring | [deployment.md → environment](./deployment.md#environment) |
 | migration deploy, production migration order | [deployment.md → migration deploy flow](./deployment.md#migration-deploy-flow) |
 
-### Deriving a new project
-
-| Keywords | Where |
-|---|---|
-| new project, kickoff, fork base, rename project | [deriving-a-project.md](./deriving-a-project.md) |
-| rename `django_base`, change project name | [deriving-a-project.md → rename the project](./deriving-a-project.md#2-rename-the-project) |
-| feature flags initial decision, what to turn on | [deriving-a-project.md → which optional features](./deriving-a-project.md#3-decide-which-optional-features-you-need) |
-| what to delete, wipe audit | [deriving-a-project.md → wipe what you don't need](./deriving-a-project.md#5-wipe-what-you-dont-need) |
-| kickoff checklist | [deriving-a-project.md → checklist](./deriving-a-project.md#checklist-copy-into-your-kickoff-pr) |
-
 ### Troubleshooting
 
 | Keywords | Where |
