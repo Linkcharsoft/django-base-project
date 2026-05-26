@@ -130,6 +130,22 @@ If your question isn't here, add a row in your PR.
 | sentry, error tracking, monitoring | [deployment.md → environment](./deployment.md#environment) |
 | migration deploy, production migration order | [deployment.md → migration deploy flow](./deployment.md#migration-deploy-flow) |
 
+### Task workflow (autonomous subagents)
+
+| Keywords | Where |
+|---|---|
+| task workflow, autonomous loop, subagent loop, planner, runner, reviewer | [task-workflow.md](./task-workflow.md) |
+| tasks.md, backlog, T001, pending, status pending | [task-workflow.md → state files](./task-workflow.md#state-files) |
+| django-task-planner, plan tasks, requirements to tasks | [.claude/agents/django-task-planner.md](../.claude/agents/django-task-planner.md) |
+| django-task-runner, implement task, autonomous builder | [.claude/agents/django-task-runner.md](../.claude/agents/django-task-runner.md) |
+| django-task-reviewer, review diff, convention check | [.claude/agents/django-task-reviewer.md](../.claude/agents/django-task-reviewer.md) |
+| just task-run, run-tasks.ps1, task loop, claude-tasks branch | [task-workflow.md → running it](./task-workflow.md#running-it) |
+| just review, review.log | [task-workflow.md → running it](./task-workflow.md#running-it) |
+| just task-log, pretty-print log, stream-json log | [task-workflow.md → state files](./task-workflow.md#state-files) |
+| progress/, T00N-done.md, progress note | [task-workflow.md → state files](./task-workflow.md#state-files) |
+| SETUP_REQUIRED.md, human-blocked, mock, manual config | [task-workflow.md → state files](./task-workflow.md#state-files) |
+| loop stalled, agent not advancing, MaxStalled | [task-workflow.md → when the loop stops](./task-workflow.md#when-the-loop-stops) |
+
 ### Troubleshooting
 
 | Keywords | Where |

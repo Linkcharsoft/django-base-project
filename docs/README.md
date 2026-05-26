@@ -19,6 +19,7 @@ Reference documentation for `django-base-project`. Every file is single-concern 
 | Add an endpoint / app / model | [development-guide.md](./development-guide.md) |
 | Write or run tests | [testing.md](./testing.md) |
 | Deploy to production | [deployment.md](./deployment.md) |
+| Run the planner / runner / reviewer subagent loop | [task-workflow.md](./task-workflow.md) |
 | Add Celery or WebSockets to the project | [extending/](./extending/) |
 | Fix a common error | [troubleshooting.md](./troubleshooting.md) |
 
@@ -43,6 +44,8 @@ docs/
 ├── testing.md               ← Test setup + conventions
 │
 ├── deployment.md            ← Production setup
+│
+├── task-workflow.md         ← Planner / runner / reviewer subagent loop (tasks.md, just task-run)
 │
 └── extending/               ← Opt-in features removed from the base
     ├── celery.md            ← Add Celery + Redis for background jobs
