@@ -40,14 +40,17 @@ RESET=$'\033[0m'
 
 count_pending() {
     [[ -f "$TASKS_FILE" ]] || { echo 0; return; }
-    grep -c '^\*\*Status\*\*: pending' "$TASKS_FILE" || echo 0
+    # grep -c prints "0" AND exits 1 when there are no matches; swallow the
+    # exit so we keep the count without doubling it via `|| echo 0`.
+    grep -c '^\*\*Status\*\*: pending' "$TASKS_FILE" || true
 }
 
 report_setup() {
     [[ -f SETUP_REQUIRED.md ]] || return 0
     local count
     count=$(grep -c '^- \[ \]' SETUP_REQUIRED.md || true)
-    if [[ "${count:-0}" -gt 0 ]]; then
+    count=${count:-0}
+    if [[ "$count" -gt 0 ]]; then
         echo ""
         echo "${YELLOW}[!] ${count} item(s) in SETUP_REQUIRED.md still need manual configuration.${RESET}"
     fi
