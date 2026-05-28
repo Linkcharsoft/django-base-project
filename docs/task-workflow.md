@@ -4,14 +4,15 @@
 
 ## What this is
 
-Three Claude Code subagents and a PowerShell loop that turn a requirements doc into committed backend code without supervision.
+Three Claude Code subagents and a bash loop that turn a requirements doc into committed backend code without supervision. The loop runs on Linux, macOS and Windows (via git-bash, which ships with Git for Windows).
 
 | Piece | File | Role |
 |---|---|---|
 | `django-task-planner` | [.claude/agents/django-task-planner.md](../.claude/agents/django-task-planner.md) | Reads a requirements doc, writes `tasks.md` (numbered, small, ordered). Does **not** implement. |
 | `django-task-runner` | [.claude/agents/django-task-runner.md](../.claude/agents/django-task-runner.md) | Picks the first `**Status**: pending` task, implements it end-to-end, verifies, commits, marks it done, stops. |
 | `django-task-reviewer` | [.claude/agents/django-task-reviewer.md](../.claude/agents/django-task-reviewer.md) | Reads `git diff main...HEAD` + `tasks.md` + `progress/` and reports convention violations. Read-only. |
-| `scripts/run-tasks.ps1` | [scripts/run-tasks.ps1](../scripts/run-tasks.ps1) | Loops the runner one task at a time until `tasks.md` has no pending entries or the agent stalls `-MaxStalled` times. |
+| `scripts/run-tasks.sh` | [scripts/run-tasks.sh](../scripts/run-tasks.sh) | Loops the runner one task at a time until `tasks.md` has no pending entries or the agent stalls `--max-stalled` times. |
+| `scripts/format-stream.py` | [scripts/format-stream.py](../scripts/format-stream.py) | Reads `stream-json` events on stdin and prints a colored, human-readable transcript. Used live by `run-tasks.sh` and by `pretty-log.sh`. |
 
 ## State files
 
@@ -51,13 +52,13 @@ claude  # then: "Use the django-task-planner subagent to turn REQUIREMENTS.md in
 git checkout -b claude-tasks
 
 # 3. Run the loop.
-just task-run            # equivalent to: pwsh -NoProfile -File scripts/run-tasks.ps1
+just task-run            # equivalent to: bash scripts/run-tasks.sh
 
 # 4. Review when the loop finishes (or stalls).
 just review              # writes logs/review.log
 ```
 
-The loop refuses to run on `main` / `master`. It also requires the `claude` CLI on `PATH` (or at `~/.local/bin/claude.exe`).
+The loop refuses to run on `main` / `master`. Requirements: `bash`, `git`, `python3`, and the `claude` CLI on `PATH` (or at `~/.local/bin/claude` — `claude.exe` is also accepted, for the git-bash setup on Windows). On Windows, install Git for Windows so `git-bash` is available; `just` picks it up via the shebang in the recipes.
 
 ## Conventions the runner enforces
 
@@ -76,12 +77,12 @@ See the agent file for the full list.
 | Exit | Meaning | Action |
 |---|---|---|
 | `=== All tasks completed ===` | No `**Status**: pending` left in `tasks.md`. | Run `just review`. Address any `SETUP_REQUIRED.md` items. |
-| `[x] Agent is not advancing tasks` | `-MaxStalled` (default 3) iterations in a row produced no progress. | Inspect `tasks.md` and the latest `logs/run-tasks-*.log`. Likely causes: an `## Open questions` entry blocks the next task, a verification failed (`just lint` / `just test` / `just schema-validate`), or the task description is too vague. |
+| `[x] Agent is not advancing tasks` | `--max-stalled` (default 3) iterations in a row produced no progress. | Inspect `tasks.md` and the latest `logs/run-tasks-*.log`. Likely causes: an `## Open questions` entry blocks the next task, a verification failed (`just lint` / `just test` / `just schema-validate`), or the task description is too vague. |
 | Refuses to start on `main` | Safety guard. | `git checkout -b claude-tasks` and retry. |
-| `claude CLI not found` | CLI not installed. | Install Claude Code, or symlink to `~/.local/bin/claude.exe`. |
+| `claude CLI not found` | CLI not installed. | Install Claude Code, or symlink it under `~/.local/bin/`. |
 
 ## Extending the workflow
 
 - **Adding an agent**: drop it in `.claude/agents/`, add a recipe to `justfile`, and add a row to the table above.
-- **Changing the loop**: edit [scripts/run-tasks.ps1](../scripts/run-tasks.ps1). The `-MaxStalled` and `-MaxTurns` knobs are the usual ones to tune.
+- **Changing the loop**: edit [scripts/run-tasks.sh](../scripts/run-tasks.sh). The `--max-stalled` and `--max-turns` flags are the usual ones to tune.
 - **Changing what "done" means**: edit the *Verification (Definition of Done)* section in [django-task-runner.md](../.claude/agents/django-task-runner.md). The reviewer checklist in [django-task-reviewer.md](../.claude/agents/django-task-reviewer.md) should change in lockstep.

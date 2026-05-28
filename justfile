@@ -77,13 +77,18 @@ schema-validate:
 
 # Run the builder loop over tasks.md until empty or stalled (logs/run-tasks-*.log)
 task-run:
-    pwsh -NoProfile -File scripts/run-tasks.ps1
+    #!/usr/bin/env bash
+    bash scripts/run-tasks.sh
 
 # Pretty-print a saved stream-json log (usage: just task-log logs/run-tasks-XXXXXX.log)
 task-log path:
-    pwsh -NoProfile -File scripts/pretty-log.ps1 -Path "{{path}}"
+    #!/usr/bin/env bash
+    bash scripts/pretty-log.sh "{{path}}"
 
 # Run reviewer against current branch diff vs main (output to logs/review.log)
 review:
-    if (-not (Test-Path logs)) { New-Item -ItemType Directory logs | Out-Null }
-    pwsh -NoProfile -Command "& claude -p --verbose --output-format stream-json --verbose --include-partial-messages 'Use the Task tool with subagent_type=django-task-reviewer. Review the current branch diff against main and produce the report per its Report format section.' *> logs/review.log"
+    #!/usr/bin/env bash
+    mkdir -p logs
+    claude -p --verbose --output-format stream-json --include-partial-messages \
+        'Use the Task tool with subagent_type=django-task-reviewer. Review the current branch diff against main and produce the report per its Report format section.' \
+        > logs/review.log 2>&1

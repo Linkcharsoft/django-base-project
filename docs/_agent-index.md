@@ -139,7 +139,7 @@ If your question isn't here, add a row in your PR.
 | django-task-planner, plan tasks, requirements to tasks | [.claude/agents/django-task-planner.md](../.claude/agents/django-task-planner.md) |
 | django-task-runner, implement task, autonomous builder | [.claude/agents/django-task-runner.md](../.claude/agents/django-task-runner.md) |
 | django-task-reviewer, review diff, convention check | [.claude/agents/django-task-reviewer.md](../.claude/agents/django-task-reviewer.md) |
-| just task-run, run-tasks.ps1, task loop, claude-tasks branch | [task-workflow.md → running it](./task-workflow.md#running-it) |
+| just task-run, run-tasks.sh, task loop, claude-tasks branch | [task-workflow.md → running it](./task-workflow.md#running-it) |
 | just review, review.log | [task-workflow.md → running it](./task-workflow.md#running-it) |
 | just task-log, pretty-print log, stream-json log | [task-workflow.md → state files](./task-workflow.md#state-files) |
 | progress/, T00N-done.md, progress note | [task-workflow.md → state files](./task-workflow.md#state-files) |
