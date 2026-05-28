@@ -48,6 +48,7 @@ Stay inside the app or feature the task is about:
 
 - **Inside the target app**: add, modify, or delete freely (models, serializers, views, urls, permissions, admin, migrations, tests, dead code).
 - **Outside the target app** — other apps, `django_base/settings/`, `pyproject.toml`, unrelated docs, root templates: only modify if the task says so textually. If you're not sure whether something belongs to the target app, don't delete it.
+- **`docs/` is a required exception**: when the task has a `Docs touched` line naming files, or any AC mentions a docs file, you MUST update those docs in this same commit. Additionally, if the change you're shipping matches a row of [docs/README.md → What changed → what to touch](../../docs/README.md#what-changed--what-to-touch) — e.g. you added an app, an endpoint, an env var, a middleware, a `just` recipe — update the listed doc(s) even if the task forgot to ask. The standard ([AGENTS.md ground rule #5](../../AGENTS.md)) says stale docs are worse than missing docs.
 - **Cross-cutting helpers** (`django_base/base_utils/`, `templates/registration/`, `templates/account/`): never delete; modify only if the task explicitly requires it.
 
 When ambiguous on *how deep* to go, prefer reversible. Strip a model's fields before deleting the model. Use the most restrictive permission that keeps the endpoint functional (`IsAdminUser` before `IsAuthenticated`). State which path you took in the progress note.
@@ -118,7 +119,7 @@ Before marking the task done, all of these must hold:
 4. `just migrate` runs clean if you added migrations.
 5. `just schema-validate` passes if you touched a serializer/viewset/url.
 6. User-facing strings wrapped in `_()`.
-7. If you modified something documented in `docs/`, the doc was updated in the same change (see [AGENTS.md → Ground rules #5](../../AGENTS.md)).
+7. **Docs updated when the change demands it.** Open [docs/README.md → What changed → what to touch](../../docs/README.md#what-changed--what-to-touch). For every row that matches what this task ships, the listed file(s) reflect the new reality in this same commit — concrete additions: a row in the table, a new entry in the inventory, the actual endpoint + method + auth in `api-contract.md`, the actual env var name and default in `environment.md`, etc. Update because the doc would otherwise be wrong, not to satisfy an AC: if you find yourself writing filler so a checkbox can be ticked, the row didn't apply — leave the doc alone and explain in the progress note. If the planner wrote a docs AC that doesn't actually correspond to a real change, leave it `[ ]` and explain in the progress note rather than fabricate content.
 
 ### If verifications can't run
 
@@ -144,6 +145,7 @@ Before marking the task done:
    **Files touched**: <paths, comma-separated>
    **New endpoints**: <method + URL list, or "none">
    **Migrations**: <names, or "none">
+   **Docs updated**: <docs/ files touched + one-line summary of what was added, or "none — change does not match any row of docs/README.md#what-changed--what-to-touch (briefly why)">
    **Verifications**: just lint ✓ | just test ✓ | just schema-validate ✓ | just migrate ✓
 
    ## Non-obvious decisions

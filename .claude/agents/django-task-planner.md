@@ -34,8 +34,9 @@ If no requirements source is provided, ask for it. Do not invent tasks from a va
 2. Read `.claude/agents/django-task-runner.md` completely. Your `tasks.md` must match what the runner can execute.
 3. Read existing `tasks.md` if present — to learn the next free `T00N` number and avoid duplicating work already done or pending. If `progress/` exists, skim its most recent files for decisions that should constrain new tasks.
 4. Read `docs/_agent-index.md`, then open the docs relevant to the requirement. The relevant skill READMEs (`django-base-create-app`, `django-base-add-api-resource`, `django-base-add-env-var`) carry the canonical patterns — reference them from `Context` instead of duplicating their content.
-5. Read the requirements source.
-6. Inspect existing code only enough to write accurate `Context` fields.
+5. Read the **"What changed → what to touch"** table in `docs/README.md#updating-these-docs`. For every change type a task will produce that appears in that table, the task MUST carry an explicit doc-update AC naming the target files. This is not optional and not a checklist box — the doc updates ship in the same commit as the code.
+6. Read the requirements source.
+7. Inspect existing code only enough to write accurate `Context` fields.
 
 ## Output Contract
 
@@ -53,6 +54,8 @@ Use exactly this task shape:
 **Description**: What needs to be done.
 
 **Context**: Where the relevant files live, what already exists, what patterns to follow.
+
+**Docs touched**: List the docs files this task must update (per `docs/README.md#updating-these-docs`), or `none — change type not in the docs table` with a one-line reason. Never leave blank.
 
 **Acceptance criteria**:
 - [ ] Verifiable criterion 1
@@ -129,8 +132,21 @@ Every acceptance criterion must be checkable by code review, tests, schema valid
 - Error cases.
 - Migration exists.
 - Test coverage exists.
-- Relevant docs updated.
 - `just schema-validate` needed when API shape changes.
+
+### Docs ACs (mandatory when the change appears in the docs table)
+
+Cross-reference each task's change type against `docs/README.md#updating-these-docs`. If a row matches, add a verifiable AC that names the file(s) and *what* must appear in them. The point is the doc must reflect reality — not a checkbox to tick.
+
+Examples:
+
+- New Django app → `[ ] docs/architecture.md apps inventory lists <app> with a one-line purpose; docs/_agent-index.md has a row pointing to the app.`
+- New endpoint → `[ ] docs/api-contract.md table includes <METHOD> <path> with auth + payload summary; docs/_agent-index.md has a keyword row.`
+- New env var → `[ ] docs/environment.md table includes <VAR> with type/default/purpose; docs/_agent-index.md has a row.`
+- New middleware → `[ ] docs/architecture.md middleware stack and docs/request-lifecycle.md reflect the new entry in order.`
+- New `just` recipe or tool config → `[ ] docs/toolchain.md describes it.`
+
+Do not add a docs AC when the change does NOT appear in the table (internal refactor, test-only change, bugfix that doesn't alter behavior). A spurious docs AC produces noise commits — `Docs touched: none — …` is the correct answer in that case.
 
 Avoid vague criteria:
 
@@ -180,6 +196,7 @@ Before finishing, reread `tasks.md` and check:
 - No task depends on an unstated product decision.
 - Context points to the right files/docs.
 - Acceptance criteria are verifiable.
+- Every task has a `Docs touched` line. Every task whose change type appears in `docs/README.md#updating-these-docs` has at least one docs AC that names a concrete file and what content must land there.
 - The runner can execute tasks in order without reading your mind.
 
 Then report:

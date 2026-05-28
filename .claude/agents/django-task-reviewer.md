@@ -53,6 +53,22 @@ For each one that shows up: check the original spec — if not asked verbatim, i
 - [ ] No task marked `done` while an unanswered `## Open questions` item still says `Blocks: T00N` for that task.
 - [ ] If a task references a repo-local skill, the implementation does not violate any rule explicitly stated in that skill.
 
+### Documentation (Blocker if missed)
+
+Cross-reference the diff against [docs/README.md → What changed → what to touch](../../docs/README.md#what-changed--what-to-touch). For each row that matches, the listed doc must be updated in the diff with content that reflects the change:
+
+- [ ] New first-party app in `INSTALLED_APPS` → `docs/architecture.md` apps inventory + URL layout updated, `docs/_agent-index.md` has a row pointing to it.
+- [ ] New endpoint (router registration, new `@action`, new view URL under `/api/`) → `docs/api-contract.md` table includes the new `METHOD path` with auth + payload summary, `docs/_agent-index.md` keyword row exists.
+- [ ] New / renamed / removed / default-changed env var in `django_base/settings/environment_variables.py` → `docs/environment.md` table reflects it, `.env.example` updated, `docs/_agent-index.md` row exists.
+- [ ] New or reordered middleware → `docs/architecture.md` middleware stack + `docs/request-lifecycle.md` reflect the new order.
+- [ ] New URL mount under `/` in `django_base/urls.py` → `docs/architecture.md` URL layout updated (and `api-contract.md` if under `/api/`).
+- [ ] Auth flow changes → `docs/auth.md` + `docs/api-contract.md` if endpoints moved.
+- [ ] New convention (BaseModel field, viewset mixin, validator) → `docs/conventions.md`.
+- [ ] New `just` recipe or tool config → `docs/toolchain.md`.
+- [ ] Each task's `progress/T00N-done.md` has a `Docs updated` line that matches what is actually in the diff.
+
+Verify by reading the doc file — don't trust the diff stats. A doc update that doesn't actually describe the new behavior (filler text added so an AC could be ticked) is also a Blocker: flag it and quote what's missing. Conversely, if a task has no matching row in the table, no docs change is expected — don't manufacture a finding.
+
 ### Hygiene
 - [ ] PUT wasn't reintroduced (everything is PATCH).
 - [ ] User-facing strings wrapped in `gettext_lazy` (`_()`), including errors in `Response(...)`.
