@@ -3,6 +3,7 @@ from django.db.models import CharField, F, Value
 from django.db.models.functions import Concat
 from django.utils.translation import gettext_lazy as _
 from django_filters import rest_framework as filters
+from drf_spectacular.utils import extend_schema
 from rest_framework import filters as rest_filters
 from rest_framework import status
 from rest_framework.decorators import action
@@ -20,6 +21,8 @@ from django_base.base_utils.base_viewsets import BaseGenericViewSet
 from users.filters import UserFilter
 from users.permissions import HasRegisterCompletePermission
 from users.serializers import (
+    DetailMessageSerializer,
+    ToggleBlockSerializer,
     UserListSerializer,
     UserRegisterSerializer,
     UserSerializer,
@@ -103,12 +106,26 @@ class UserViewSet(
             return self.request.user
         return super().get_object()
 
+    @extend_schema(
+        request=UserRegisterSerializer,
+        responses={
+            200: DetailMessageSerializer,
+            400: DetailMessageSerializer,
+        },
+        description=(
+            "Marks the authenticated user's profile as register-complete. "
+            "Returns a `detail` message and never the user object."
+        ),
+    )
     @action(detail=False, methods=["PATCH"], url_path="complete-register")
     def complete_register(self, request):
         user = request.user
 
         if user.profile.is_register_complete:
-            return Response(_("Register already completed"), status=400)
+            return Response(
+                {"detail": _("Register already completed")},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
         serializer = self.get_serializer(user, data=request.data, partial=True)
         if not serializer.is_valid():
@@ -118,8 +135,22 @@ class UserViewSet(
 
         user.profile.complete_register()
 
-        return Response(_("Register completed"), status=status.HTTP_200_OK)
+        return Response(
+            {"detail": _("Register completed")},
+            status=status.HTTP_200_OK,
+        )
 
+    @extend_schema(
+        request=ToggleBlockSerializer,
+        responses={
+            200: DetailMessageSerializer,
+            400: DetailMessageSerializer,
+        },
+        description=(
+            "Admin-only: toggle `is_active` on the target user. The response "
+            "is a `detail` message, not the user object."
+        ),
+    )
     @action(detail=True, methods=["PATCH"], url_path="toggle-block")
     def toggle_block(self, request, pk=None):
         user = self.get_object()
@@ -152,11 +183,22 @@ class UserViewSet(
         user.save(update_fields=["is_active"])
 
         return Response(
-            _("User is unblocked") if is_active else _("User is blocked"),
+            {"detail": _("User is unblocked") if is_active else _("User is blocked")},
             status=status.HTTP_200_OK,
         )
 
+    @extend_schema(
+        request=None,
+        responses={204: DetailMessageSerializer},
+        description=(
+            "Bulk-delete every user flagged `is_test_user=True`. Returns 204 "
+            "with a `detail` message. Intended for e2e teardown."
+        ),
+    )
     @action(detail=False, methods=["DELETE"], url_path="delete-test-users")
     def delete_test_users(self, request):
         get_user_model().objects.filter(is_test_user=True).delete()
-        return Response(_("Test users deleted"), status=status.HTTP_204_NO_CONTENT)
+        return Response(
+            {"detail": _("Test users deleted")},
+            status=status.HTTP_204_NO_CONTENT,
+        )

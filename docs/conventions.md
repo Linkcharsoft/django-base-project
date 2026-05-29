@@ -123,6 +123,15 @@ In `django_base/base_utils/utils.py`:
 
 Templates live in `templates/registration/` and `templates/account/` (allauth defaults). Override the allauth ones by copying the same file path with your changes.
 
+## OpenAPI schema
+
+`drf-spectacular` introspects every viewset and generates the OpenAPI 3.1 schema served at `/api/schema/`. The frontend and the Postman/Swagger consumers depend on this schema being accurate.
+
+- **Every `@action` must declare `@extend_schema(request=..., responses=...)`** — both for built-in actions (`@action(detail=False, methods=["get"])`) and detail actions. Spectacular cannot infer the response envelope when the action returns anything other than the viewset's default serializer (e.g. `{"detail": "..."}`, a custom paginated envelope, a `{"items": [...], "total": N}` shape). Without `@extend_schema`, spectacular emits a *silently wrong* schema that compiles fine but lies about the real response.
+- This is enforced by `python scripts/check_api_schema.py`, which is wired ahead of `manage.py spectacular --validate --fail-on-warn` inside `just schema-validate`. The check fails the build when an `@action` is missing the decorator.
+- For viewsets, set the per-action serializer via `serializers = {"action_name": Serializer}` — that's also what spectacular reads for `list`/`retrieve`/`create`/`update`/`partial_update`/`destroy`. Do **not** also set `serializer_class`.
+- Canonical example: [users/views.py](../users/views.py) `complete_register`, `toggle_block`, `delete_test_users`. Copy that shape.
+
 ## i18n
 
 - `LANGUAGES = [("en", "English")]` in `configurations.py`.

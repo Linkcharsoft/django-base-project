@@ -53,6 +53,18 @@ class UserRegisterSerializer(WritableNestedModelSerializer, BaseSerializer):
         fields = ("first_name", "last_name", "profile")
 
 
+class ToggleBlockSerializer(serializers.Serializer):
+    """Request body for `PATCH /users/{id}/toggle-block/`."""
+
+    is_active = serializers.BooleanField()
+
+
+class DetailMessageSerializer(serializers.Serializer):
+    """Plain-text response envelope used by a few actions that return only a message."""
+
+    detail = serializers.CharField()
+
+
 class CustomRegisterSerializer(RegisterSerializer):
     """Custom Register Serializer
     This serializer extends the default registration serializer to include additional fields

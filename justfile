@@ -67,9 +67,12 @@ lint:
     docker compose exec {{web}} ruff format .
     docker compose exec {{web}} ruff check --fix .
 
-# Validar el schema OpenAPI (drf-spectacular)
+# Validar el schema OpenAPI (drf-spectacular) + chequeo estático de @extend_schema
 schema-validate:
-    docker compose exec {{web}} python manage.py spectacular --validate --fail-on-warn
+    #!/usr/bin/env bash
+    set -euo pipefail
+    python scripts/check_api_schema.py
+    docker compose exec {{web}} bash -c "python manage.py spectacular --validate --fail-on-warn > /dev/null"
 
 # --- Subagent orchestration (Claude Code) ---
 # Requires the `claude` CLI on the host. Subagents live under .claude/agents/.

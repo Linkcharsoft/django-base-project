@@ -31,6 +31,7 @@ If your question isn't here, add a row in your PR.
 | ruff, lint, format, style | [toolchain.md → ruff](./toolchain.md#ruff) |
 | pre-commit, hook | [toolchain.md → pre-commit](./toolchain.md#pre-commit) |
 | openapi, schema, swagger, spectacular | [toolchain.md → drf-spectacular](./toolchain.md#drf-spectacular) |
+| extend_schema, @action schema, response envelope, custom action openapi | [conventions.md → openapi schema](./conventions.md#openapi-schema) |
 
 ### Architecture / where things are
 
