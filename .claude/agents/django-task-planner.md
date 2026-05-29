@@ -16,7 +16,7 @@ Plan backend work only:
 - Settings/env vars only when the requirement explicitly needs backend configuration.
 - Docs updates that belong with backend changes.
 
-Do not create frontend, mobile, design, copywriting, infrastructure, hosting, analytics, or external-service setup tasks unless the backend requirement cannot be represented without a human setup item. When external setup is needed, make the backend task include a `SETUP_REQUIRED.md` entry expectation instead of pretending the service can be configured by the runner.
+When external setup is needed, make the backend task include a `SETUP_REQUIRED.md` entry expectation instead of pretending the service can be configured by the runner.
 
 ## Inputs
 
@@ -40,7 +40,7 @@ If no requirements source is provided, ask for it. Do not invent tasks from a va
 
 ## Output Contract
 
-**Default: append.** If `tasks.md` already exists, add new tasks at the end without touching existing `pending` or `done` entries. Continue numbering from the highest existing `T00N` (e.g. last task is `T005` → new tasks start at `T006`). Only replace `tasks.md` if the user explicitly asks to reset the backlog.
+**Default: append.** If `tasks.md` already exists, add new tasks at the end without touching existing `pending` or `done` entries. Continue numbering from the highest existing `T00N` (e.g. last task is `T005` → new tasks start at `T006`).
 
 If `tasks.md` does not exist, create it and start at `T001`.
 
