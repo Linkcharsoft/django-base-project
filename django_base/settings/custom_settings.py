@@ -160,6 +160,8 @@ SPECTACULAR_SETTINGS = {
     "SWAGGER_UI_SETTINGS": {
         "persistAuthorization": True,
     },
+    # Filter the public surface — see django_base/openapi.py for the policy.
+    "PREPROCESSING_HOOKS": ["django_base.openapi.filter_public_endpoints"],
 }
 
 

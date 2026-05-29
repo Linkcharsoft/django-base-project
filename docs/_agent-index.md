@@ -32,6 +32,7 @@ If your question isn't here, add a row in your PR.
 | pre-commit, hook | [toolchain.md → pre-commit](./toolchain.md#pre-commit) |
 | openapi, schema, swagger, spectacular | [toolchain.md → drf-spectacular](./toolchain.md#drf-spectacular) |
 | extend_schema, @action schema, response envelope, custom action openapi | [conventions.md → openapi schema](./conventions.md#openapi-schema) |
+| schema filter, hide endpoint, preprocessing hook, exclude path from openapi, dj-rest-auth filter | [django_base/openapi.py](../django_base/openapi.py) + [api-contract.md → /api/auth/](./api-contract.md#apiauth) |
 
 ### Architecture / where things are
 

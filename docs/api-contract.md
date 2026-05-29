@@ -15,6 +15,8 @@ All API paths are mounted under `/api/`. Two exceptions: `/admin/` and `/healthc
 
 Defined in `auth_api/urls.py`.
 
+> **Schema visibility.** Only the auth paths the frontend actually consumes are published in the OpenAPI schema; the rest of the dj-rest-auth surface (`user/`, `token/verify/`, `password/change/`, `allauth/...`) is mounted and still functional, but filtered out by [`django_base/openapi.py`](../django_base/openapi.py). The endpoints in the table below stay listed for repo-internal reference. Edit the whitelist in `django_base/openapi.py` when a route needs to become public.
+
 | Method | Path | View | Notes |
 |---|---|---|---|
 | POST | `login/` | `dj_rest_auth.LoginView` | Returns JWT (`access`, `refresh`) |
@@ -45,7 +47,7 @@ Defined in `users/urls.py` (router) and mounted into `base_router` in `django_ba
 | PATCH | `users/{id}/toggle-block/` | `toggle_block` | `IsAdminUser` | Body: `is_active` (bool or `"true"`/`"false"`). Cannot self-block |
 | DELETE | `users/delete-test-users/` | `delete_test_users` | `AllowAny` ⚠ | Returns `204 No Content`. **Open endpoint** — deletes every user with `is_test_user=True`. Kept open intentionally for the frontend E2E suite |
 
-`PUT` is blocked across all viewsets (returns 405) — see `NoPutViewSetMixin` in [conventions.md](./conventions.md#viewset-mixins).
+`PUT` is blocked across all viewsets (returns 405) — see `NoPutViewSetMixin` in [conventions.md](./conventions.md#viewset-mixins). The verb is also stripped from the OpenAPI schema by the preprocessing hook in [`django_base/openapi.py`](../django_base/openapi.py) so consumers cannot accidentally bind to it.
 
 ### Response shapes
 

@@ -131,6 +131,7 @@ Templates live in `templates/registration/` and `templates/account/` (allauth de
 - This is enforced by `python scripts/check_api_schema.py`, which is wired ahead of `manage.py spectacular --validate --fail-on-warn` inside `just schema-validate`. The check fails the build when an `@action` is missing the decorator.
 - For viewsets, set the per-action serializer via `serializers = {"action_name": Serializer}` — that's also what spectacular reads for `list`/`retrieve`/`create`/`update`/`partial_update`/`destroy`. Do **not** also set `serializer_class`.
 - Canonical example: [users/views.py](../users/views.py) `complete_register`, `toggle_block`, `delete_test_users`. Copy that shape.
+- The **public surface** is filtered by [`django_base/openapi.py`](../django_base/openapi.py), registered as a `PREPROCESSING_HOOKS` entry in `SPECTACULAR_SETTINGS`. It strips every `PUT` (the project answers 405 anyway) and limits `/api/auth/...` to a whitelist of routes the frontend actually consumes. When a new dj-rest-auth route needs to become public, edit the whitelist there — not via per-view decorators.
 
 ## i18n
 
