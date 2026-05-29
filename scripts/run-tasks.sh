@@ -7,21 +7,32 @@
 #   bash scripts/run-tasks.sh
 #   bash scripts/run-tasks.sh --max-stalled 5
 #   bash scripts/run-tasks.sh --tasks-file other.md --max-turns 120
+#   bash scripts/run-tasks.sh --max-quota-wait 28800   # cap quota sleeps at 8h
 #
 # Wired through justfile as `just task-run`. Cross-platform (Linux, macOS,
 # Windows via git-bash). Requires: bash, git, python3, claude CLI.
+#
+# Quota handling: when the Claude 5-hour session window is exhausted mid-loop
+# (Pro/Max plans), the script sleeps until reset and continues — designed
+# for overnight runs that pick up across multiple sessions. A weekly cap hit
+# aborts the loop since there is nothing to wait for.
 
 set -euo pipefail
 
 TASKS_FILE="tasks.md"
 MAX_STALLED=3
 MAX_TURNS=80
+# Hard ceiling on a single quota-wait. If Claude says reset is further than
+# this, abort instead of sleeping. 12h covers an overnight run that lands on
+# two consecutive 5-hour windows with a long gap.
+MAX_QUOTA_WAIT=43200
 
 while [[ $# -gt 0 ]]; do
     case "$1" in
         --tasks-file) TASKS_FILE="$2"; shift 2 ;;
         --max-stalled) MAX_STALLED="$2"; shift 2 ;;
         --max-turns) MAX_TURNS="$2"; shift 2 ;;
+        --max-quota-wait) MAX_QUOTA_WAIT="$2"; shift 2 ;;
         -h|--help)
             sed -n '2,11p' "$0" | sed 's/^# \{0,1\}//'
             exit 0
@@ -43,6 +54,54 @@ count_pending() {
     # grep -c prints "0" AND exits 1 when there are no matches; swallow the
     # exit so we keep the count without doubling it via `|| echo 0`.
     grep -c '^\*\*Status\*\*: pending' "$TASKS_FILE" || true
+}
+
+format_epoch() {
+    # Print an epoch as "YYYY-MM-DD HH:MM" in local time, cross-platform.
+    python3 -c "import datetime, sys; print(datetime.datetime.fromtimestamp(int(sys.argv[1])).strftime('%Y-%m-%d %H:%M'))" "$1"
+}
+
+# Handle a quota event detected on the just-finished iteration. Reads stdin:
+# either "SESSION <epoch>", "SESSION", or "WEEKLY".
+# Returns:
+#   0  — handled; caller should `continue` the loop without counting a stall.
+#   1  — weekly cap; caller should exit the loop.
+#   2  — reset is further than --max-quota-wait; caller should exit.
+handle_quota() {
+    local verdict="$1"
+    if [[ "$verdict" == WEEKLY ]]; then
+        echo "${RED}[x] Weekly usage cap reached. Nothing to wait for — aborting the loop.${RESET}" >&2
+        return 1
+    fi
+
+    local reset_epoch=""
+    if [[ "$verdict" == "SESSION "* ]]; then
+        reset_epoch="${verdict#SESSION }"
+    fi
+
+    local wait_seconds
+    if [[ -n "$reset_epoch" ]]; then
+        local now
+        now=$(date +%s)
+        wait_seconds=$((reset_epoch - now + 60))  # +60s buffer for clock skew
+        if (( wait_seconds < 60 )); then
+            wait_seconds=60
+        fi
+        if (( wait_seconds > MAX_QUOTA_WAIT )); then
+            echo "${RED}[x] Session resets in ${wait_seconds}s, exceeds --max-quota-wait (${MAX_QUOTA_WAIT}). Aborting.${RESET}" >&2
+            return 2
+        fi
+        local human
+        human=$(format_epoch "$reset_epoch")
+        echo "${YELLOW}[~] Session window exhausted. Waiting until $human (${wait_seconds}s) for the next session. Ctrl-C to abort.${RESET}"
+    else
+        # No reset time parseable — fall back to a conservative 15-minute poll.
+        wait_seconds=900
+        echo "${YELLOW}[~] Session window exhausted (reset time not parseable from log). Sleeping ${wait_seconds}s before retry. Ctrl-C to abort.${RESET}"
+    fi
+
+    sleep "$wait_seconds"
+    return 0
 }
 
 report_setup() {
@@ -119,13 +178,29 @@ while [[ "$(count_pending)" -gt 0 ]]; do
     } >> "$run_log"
 
     # Stream raw JSONL to the log (audit trail) AND pretty-print live to the host.
-    # `tee` duplicates each line; the python formatter consumes the tee output.
+    # The per-iteration copy under iter_log is what the quota detector reads.
+    iter_log="logs/iter-$$-$iteration.log"
     set +e
     claude -p --output-format stream-json --verbose --include-partial-messages \
         --max-turns "$MAX_TURNS" "$prompt" 2>&1 \
         | tee -a "$run_log" \
+        | tee "$iter_log" \
         | python3 "$SCRIPT_DIR/format-stream.py"
     set -e
+
+    # Check for a Claude quota event before evaluating progress. A session
+    # window exhaustion looks like "no progress" but shouldn't count as a
+    # stall — we just wait and retry the same task.
+    quota_verdict=$(python3 "$SCRIPT_DIR/detect_quota.py" "$iter_log")
+    rm -f "$iter_log"
+    if [[ -n "$quota_verdict" ]]; then
+        if handle_quota "$quota_verdict"; then
+            continue
+        else
+            report_setup
+            exit 1
+        fi
+    fi
 
     pending_after=$(count_pending)
 

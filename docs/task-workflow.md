@@ -13,6 +13,7 @@ Three Claude Code subagents and a bash loop that turn a requirements doc into co
 | `django-task-reviewer` | [.claude/agents/django-task-reviewer.md](../.claude/agents/django-task-reviewer.md) | Reads `git diff main...HEAD` + `tasks.md` + `progress/` and reports convention violations. Read-only. |
 | `scripts/run-tasks.sh` | [scripts/run-tasks.sh](../scripts/run-tasks.sh) | Loops the runner one task at a time until `tasks.md` has no pending entries or the agent stalls `--max-stalled` times. |
 | `scripts/format-stream.py` | [scripts/format-stream.py](../scripts/format-stream.py) | Reads `stream-json` events on stdin and prints a colored, human-readable transcript. Used live by `run-tasks.sh` and by `pretty-log.sh`. |
+| `scripts/detect_quota.py` | [scripts/detect_quota.py](../scripts/detect_quota.py) | Scans an iteration's log chunk for Claude quota-exhaustion markers; tells `run-tasks.sh` whether the next iteration should sleep until reset (session) or abort (weekly). |
 
 ## State files
 
@@ -80,9 +81,20 @@ See the agent file for the full list.
 | `[x] Agent is not advancing tasks` | `--max-stalled` (default 3) iterations in a row produced no progress. | Inspect `tasks.md` and the latest `logs/run-tasks-*.log`. Likely causes: an `## Open questions` entry blocks the next task, a verification failed (`just lint` / `just test` / `just schema-validate`), or the task description is too vague. |
 | Refuses to start on `main` | Safety guard. | `git checkout -b claude-tasks` and retry. |
 | `claude CLI not found` | CLI not installed. | Install Claude Code, or symlink it under `~/.local/bin/`. |
+| `[x] Weekly usage cap reached` | The Pro/Max weekly cap was hit. Nothing to wait for — the loop exits. | Resume in the next billing window. |
+| `[x] Session resets in <s>s, exceeds --max-quota-wait` | A 5-hour reset would require waiting longer than the configured ceiling. | Re-run with a larger `--max-quota-wait` or kick off a fresh session manually. |
+
+## Quota handling
+
+The loop is designed to run overnight across multiple Pro/Max session windows.
+
+- When Claude reports the **5-hour session window** as exhausted, the iteration is treated as a non-stall: the loop parses the reset timestamp from the log (`reset_at` epoch or `resets at <ISO>`) and sleeps until that moment plus a 60-second buffer. If no reset time can be parsed, it falls back to a 15-minute poll. The stall counter is not incremented.
+- When Claude reports the **weekly cap** as reached, the loop exits with a clear message — there is no point in waiting.
+- The maximum wait per quota event is capped by `--max-quota-wait` (default `43200` seconds = 12h). If the reset is further than that, the loop aborts instead of sleeping indefinitely.
+- Detection lives in [scripts/detect_quota.py](../scripts/detect_quota.py). It matches case-insensitively on `usage limit reached`, `5-hour limit`, `weekly limit`, `claude_ai_usage_limit_reached`, `usage_limit_exceeded`. Tighten the regexes there when the CLI changes wording.
 
 ## Extending the workflow
 
 - **Adding an agent**: drop it in `.claude/agents/`, add a recipe to `justfile`, and add a row to the table above.
-- **Changing the loop**: edit [scripts/run-tasks.sh](../scripts/run-tasks.sh). The `--max-stalled` and `--max-turns` flags are the usual ones to tune.
+- **Changing the loop**: edit [scripts/run-tasks.sh](../scripts/run-tasks.sh). The `--max-stalled`, `--max-turns`, and `--max-quota-wait` flags are the usual ones to tune.
 - **Changing what "done" means**: edit the *Verification (Definition of Done)* section in [django-task-runner.md](../.claude/agents/django-task-runner.md). The reviewer checklist in [django-task-reviewer.md](../.claude/agents/django-task-reviewer.md) should change in lockstep.
