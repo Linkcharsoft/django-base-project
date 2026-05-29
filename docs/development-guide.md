@@ -124,7 +124,7 @@ Annotate with `@extend_schema(request=ArchiveSerializer, responses=...)` so the 
 
 1. `just manage startapp <name>`.
 2. Move the new folder to the repo root (it'll be created under `django_base/` by Django; not what we want).
-3. Register in `BASE_APPS` (`django_base/settings/django_settings.py`) or `INSTALLED_APPS` extension in `custom_settings.py`. Keep first-party apps in `BASE_APPS`.
+3. Register the app in `MY_APPS` in `django_base/settings/custom_settings.py`. `BASE_APPS` (in `django_settings.py`) is reserved for Django/DRF built-ins; `THIRD_APPS` for third-party packages.
 4. Create `<app>/urls.py` with a `DefaultRouter` named `router` (the project convention — `base_router.registry.extend(...)` expects it).
 5. Mount in `django_base/urls.py` (see the CRUD recipe step 4).
 

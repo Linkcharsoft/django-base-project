@@ -30,42 +30,14 @@ Start with the repo's docs, then inspect existing app code before editing:
    - Inspect `django_base/settings/custom_settings.py` for the current first-party app list.
    - Inspect `django_base/urls.py` for router mounting style.
 
-2. Create the app:
-   - Use `just manage startapp <name>`.
-   - Confirm the app folder is at the repo root, matching existing first-party apps.
-   - Register first-party apps in the existing local app list, currently `MY_APPS` in `django_base/settings/custom_settings.py`.
+2. Execute the recipe in `docs/development-guide.md#recipe-add-an-app`. That is the source of truth for the mechanical steps (startapp, folder location, registering in `MY_APPS`, app-level `urls.py` with a module-level `router`, mounting in `django_base/urls.py`). Do not improvise alternatives.
 
-3. App URL shell:
-   - If the app will expose API resources now or soon, create `<app>/urls.py` with a DRF `DefaultRouter` exposed as a module-level `router` (the name is load-bearing because `django_base/urls.py` imports app routers by that name).
-   - Keep this file minimal when there is no resource yet:
-
-     ```python
-     # <app>/urls.py
-     from rest_framework.routers import DefaultRouter
-
-     router = DefaultRouter()
-     ```
-
-   - Mount the app router in `django_base/urls.py` only when it has registered routes, unless the project already keeps empty app routers mounted.
-   - Do not add a separate `path("api/...", include(...))` entry for the app; API resources should flow through `base_router`.
-
-4. Documentation:
+3. Documentation:
    - If the app changes project structure or behavior, update the relevant docs in the same change.
    - Update `docs/architecture.md` when the app should appear in folder layout or apps inventory.
    - Add or adjust `docs/_agent-index.md` rows when a new concept should be discoverable by agents.
 
-5. Verification:
+4. Verification:
    - Run focused tests while developing when possible.
    - Run `just lint` and `just test` before declaring work done.
    - Run `just schema-validate` only if this app creation also adds API-visible routes.
-
-## Useful Skeletons
-
-Use the existing codebase first; these are only memory aids.
-
-```python
-# <app>/urls.py
-from rest_framework.routers import DefaultRouter
-
-router = DefaultRouter()
-```
