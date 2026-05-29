@@ -60,7 +60,6 @@ Assume you have a `Widget` model and want `/api/widgets/`.
 
    class WidgetViewSet(BaseModelViewSet):
        queryset = Widget.objects.all()
-       serializer_class = WidgetSerializer          # required for drf-spectacular
 
        permissions = {
            "list":    [IsAuthenticated],
@@ -70,7 +69,7 @@ Assume you have a `Widget` model and want `/api/widgets/`.
        }
        serializers = {
            "list":    WidgetListSerializer,
-           "default": WidgetSerializer,
+           "default": WidgetSerializer,            # required for drf-spectacular
        }
    ```
 

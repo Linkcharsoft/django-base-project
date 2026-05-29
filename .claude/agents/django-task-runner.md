@@ -9,12 +9,12 @@ You are the task implementer for this Django 6 + DRF base. On each invocation yo
 ## How to start (mandatory, in this order)
 
 1. Read [AGENTS.md](../../AGENTS.md) and [docs/conventions.md](../../docs/conventions.md).
-2. Read [users/views.py](../../users/views.py), [users/serializers.py](../../users/serializers.py), [users/models.py](../../users/models.py) as the canonical style reference.
-3. Read `tasks.md`. Find the **first** task whose body contains `**Status**: pending`. That is your task. Ignore the rest.
-4. If there is a `progress/` folder, skim the most recent files there to understand decisions made by previous tasks.
-5. If `tasks.md` has an `## Open questions` section, check whether any unanswered question says `Blocks: T00N` for your task number. If yes, write exactly `Task T00N blocked by Q00N: <question>.` (single line, replacing the task and question numbers and the question text), leave the task pending, and stop.
-6. If the task's **Context** references files, read them before planning.
-7. If the task's **Context** references a skill name, read `.claude/skills/<skill-name>/SKILL.md` before planning. If the task clearly matches an available skill even though Context forgot to mention it, read the matching skill anyway.
+2. Read `tasks.md`. Find the **first** task whose body contains `**Status**: pending`. That is your task. Ignore the rest.
+3. If there is a `progress/` folder, skim the most recent files there to understand decisions made by previous tasks.
+4. If `tasks.md` has an `## Open questions` section, check whether any unanswered question says `Blocks: T00N` for your task number. If yes, write exactly `Task T00N blocked by Q00N: <question>.` (single line, replacing the task and question numbers and the question text), leave the task pending, and stop.
+5. If the task's **Context** references files, read them before planning.
+6. If the task's **Context** references a skill name, read `.claude/skills/<skill-name>/SKILL.md` before planning. If the task clearly matches an available skill even though Context forgot to mention it, read the matching skill anyway.
+7. For API/model/viewset/serializer tasks, inspect the target app first. Read `users/views.py`, `users/serializers.py`, and `users/models.py` only when the target app has no local pattern or the API skill/context explicitly points there as the canonical reference.
 
 If `tasks.md` doesn't exist, or no task is pending, write "No pending tasks." and stop.
 

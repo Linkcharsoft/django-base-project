@@ -115,7 +115,7 @@ That endpoint is exempt from the gate — if it 503s, something else (DB down, a
 
 ### `just schema-validate` fails
 
-Most common cause: a viewset is missing `serializer_class` or `get_serializer_class`. drf-spectacular silently ignores such viewsets; `--fail-on-warn` surfaces it.
+Most common cause: a project base viewset is missing `serializers["default"]`, or a non-standard viewset is missing a valid serializer source such as `get_serializer_class`. drf-spectacular silently ignores such viewsets; `--fail-on-warn` surfaces it.
 
 Second most common: an `@action` without `@extend_schema` and ambiguous response type. Annotate:
 

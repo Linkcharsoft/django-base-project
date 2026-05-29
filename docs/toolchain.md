@@ -140,7 +140,7 @@ just schema-validate     # fails on warnings — run before releases
 docker compose exec web python manage.py spectacular --file schema.yaml
 ```
 
-Annotate non-trivial actions with `@extend_schema(request=..., responses=...)`. Every viewset **must** set `serializer_class` or override `get_serializer_class`; otherwise spectacular silently ignores it.
+Annotate non-trivial actions with `@extend_schema(request=..., responses=...)`. Project base viewsets expose serializers through the `serializers = {"default": Serializer, ...}` dict; every viewset must define a non-`None` `"default"` entry, plus per-action entries when the API shape differs. Do **not** also set `serializer_class` on those viewsets.
 
 Browse interactively: `/api/schema/swagger-ui/` or `/api/schema/redoc/`.
 
