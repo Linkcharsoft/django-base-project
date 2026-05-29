@@ -151,6 +151,18 @@ if ! command -v python3 >/dev/null 2>&1; then
     exit 1
 fi
 
+# Docker must be reachable: every task verifies via `just lint`/`just test`/
+# `just schema-validate`, which all run inside the web container. Failing here
+# is cheaper than letting the first task burn turns on a broken environment.
+if ! command -v docker >/dev/null 2>&1; then
+    echo "${RED}ERROR: docker CLI not found on PATH. Install Docker Desktop and retry.${RESET}" >&2
+    exit 1
+fi
+if ! docker info >/dev/null 2>&1; then
+    echo "${RED}ERROR: Docker daemon is not reachable. Start Docker Desktop (or the docker service) and retry.${RESET}" >&2
+    exit 1
+fi
+
 mkdir -p logs
 run_log="logs/run-tasks-$(date +%Y%m%d-%H%M%S).log"
 
