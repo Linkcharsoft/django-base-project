@@ -96,6 +96,16 @@ class UserViewSet(
         return queryset
 
     def get_object(self):
+        """Resolve the target user with ownership + safety guards.
+
+        Three policies baked in here, all surprising to a cold reader:
+        - `me` is a sentinel for the current user's pk (frontends call
+            `GET /users/me/` instead of looking up their own id first).
+        - Non-staff requests always resolve to `request.user` regardless
+            of the pk in the URL — they cannot read or write other users.
+        - Admins cannot target themselves with `destroy` or `toggle_block`
+            (404), to prevent accidental self-lockout.
+        """
         lookup_url_kwarg = self.lookup_url_kwarg or self.lookup_field
         lookup_parameter = {self.lookup_field: self.kwargs[lookup_url_kwarg]}.get("pk")
         if self.action in ["destroy", "toggle_block"] and (

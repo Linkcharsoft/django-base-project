@@ -77,7 +77,7 @@ When ambiguous on *how deep* to go, prefer reversible. Strip a model's fields be
 - New helpers/utils in `base_utils/` if a similar one exists — grep first
 - Celery / Channels / S3 / Sentry / debug toolbar — opt-in via `docs/extending/`
 - Speculative abstractions (factories, registries, generic mixins) "for the future"
-- Long docstrings, comments that explain what the code does
+- Long docstrings or comments that explain *what* the code does (a well-named identifier already does that). **Do** write a short docstring or one-line comment when the *why* is non-obvious — hidden constraints, surprising policy, invariants a reader couldn't infer from the code itself. Canonical shape: see `UserViewSet.get_object` in [users/views.py](../../users/views.py). If you'd remove the docstring without losing information, don't write it.
 
 If the task textually asks for any of these, go ahead. Otherwise, no.
 
