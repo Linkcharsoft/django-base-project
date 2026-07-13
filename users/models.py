@@ -1,10 +1,8 @@
 from allauth.account.models import EmailAddress
-
-from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.models import AbstractUser
+from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from django.db import models
 
 from django_base.base_utils.base_models import (
     BaseModel,
@@ -32,6 +30,9 @@ class TokenRecovery(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     token = models.CharField(max_length=25, default="")
     created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"TokenRecovery({self.user})"
 
 
 @receiver(post_save, sender=User)

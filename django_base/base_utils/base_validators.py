@@ -5,19 +5,6 @@ from django.utils.deconstruct import deconstructible
 from django.utils.translation import gettext_lazy as _
 
 
-class NumberRequiredValidator:
-    """
-    Validate that the password contains at least one number.
-    """
-
-    def validate(self, password, user=None):
-        if not any(char.isdigit() for char in password):
-            raise ValidationError(self.get_help_text(), code="password_no_number")
-
-    def get_help_text(self):
-        return _("Password must contain at least one number.")
-
-
 class SymbolValidator:
     """
     Validate that the password contains at least one ascii punctuation character.
@@ -47,7 +34,7 @@ class UpperValidator:
 
 
 @deconstructible
-class FileSizeValidator(object):
+class FileSizeValidator:
     def __init__(self, mb_limit=5):
         self.mb_limit = mb_limit
 

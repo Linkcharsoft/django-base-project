@@ -1,4 +1,5 @@
 from django.contrib import admin
+
 from platform_configurations.models import SystemStatus
 
 

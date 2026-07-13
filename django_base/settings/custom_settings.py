@@ -1,36 +1,27 @@
 from datetime import timedelta
-from django_base.settings.django_settings import BASE_APPS, AUTH_PASSWORD_VALIDATORS
+
+from django.core.exceptions import ImproperlyConfigured
+
+from django_base.settings.configurations import (
+    APP_NAME,
+    USE_DEBUG_TOOLBAR,
+)
+from django_base.settings.django_settings import AUTH_PASSWORD_VALIDATORS, BASE_APPS, MIDDLEWARE
 from django_base.settings.environment_variables import (
-    BROKER_SERVER,
-    BROKER_SERVER_PORT,
-    EMAIL_PROVIDER,
-    CORS_ALLOWED_URLS,
-    BASE_DIR,
-    USE_S3,
     AWS_STORAGE_BUCKET_NAME,
+    BASE_DIR,
+    CORS_ALLOWED_URLS,
+    EMAIL_PROVIDER,
     IS_PRODUCTION,
     SENTRY_DSN,
-)
-from django_base.settings.configurations import (
-    USE_DEBUG_TOOLBAR,
-    USE_CELERY,
-    USE_WEB_SOCKET,
+    USE_S3,
 )
 
-
-THIRD_APPS = [
-    # "django_crontab",
-]
-
-if USE_WEB_SOCKET:
-    # Load daphne and channels first
-    THIRD_APPS = ["daphne", "channels"] + THIRD_APPS
+THIRD_APPS = []
 
 MY_APPS = [
     "users",
-    "django_global_places",
     "platform_configurations",
-    "notifications",
 ]
 
 INSTALLED_APPS = THIRD_APPS + MY_APPS + BASE_APPS
@@ -70,8 +61,7 @@ STATIC_ROOT = BASE_DIR / "static"
 # Allauth configurations
 ACCOUNT_SIGNUP_FIELDS = ("email*", "password1*", "is_test_user")
 ACCOUNT_ADAPTER = "users.adapter.CustomAccountAdapter"
-ACCOUNT_SIGNUP_PASSWORD_ENTER_TWICE = False
-ACCOUNT_EMAIL_SUBJECT_PREFIX = "\u200B"
+ACCOUNT_EMAIL_SUBJECT_PREFIX = "\u200b"
 ACCOUNT_LOGIN_METHODS = {"email"}
 ACCOUNT_UNIQUE_EMAIL = True
 
@@ -104,42 +94,20 @@ elif EMAIL_PROVIDER == "aws":
 elif EMAIL_PROVIDER == "smtp":
     EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 else:
-    raise Exception("EMAIL_PROVIDER not allowed")
+    raise ImproperlyConfigured(f"EMAIL_PROVIDER '{EMAIL_PROVIDER}' not allowed")
 
 # <---------------------- Cors configurations ---------------------->
 CORS_ALLOWED_ORIGINS = CORS_ALLOWED_URLS
-CORS_ORIGIN_WHITELIST = CORS_ALLOWED_URLS
 
 # <---------------------- django-debug-toolbar configurations ---------------------->
-# INTERNAL_IPS = [
-#     "127.0.0.1",
-#     "0.0.0.0"
-# ]
-
-
 if USE_DEBUG_TOOLBAR:
-    import socket  # only if you haven't already imported this
+    import socket
+
+    INSTALLED_APPS = INSTALLED_APPS + ["debug_toolbar"]
+    MIDDLEWARE = MIDDLEWARE + ["debug_toolbar.middleware.DebugToolbarMiddleware"]
 
     hostname, _, ips = socket.gethostbyname_ex(socket.gethostname())
     INTERNAL_IPS = [ip[: ip.rfind(".")] + ".1" for ip in ips] + ["127.0.0.1", "0.0.0.0"]
-
-
-# <-------------- Celery configurations -------------->
-if USE_CELERY:
-    CELERY_BROKER = f"redis://:@{BROKER_SERVER}:{BROKER_SERVER_PORT}/0"
-    CELERY_BROKER_URL = CELERY_BROKER
-    CELERY_RESULT_BACKEND = CELERY_BROKER
-
-# <-------------- Socket configurations -------------->
-if USE_WEB_SOCKET:
-    CHANNEL_LAYERS = {
-        "default": {
-            "BACKEND": "channels_redis.core.RedisChannelLayer",
-            "CONFIG": {
-                "hosts": [(BROKER_SERVER, BROKER_SERVER_PORT)],
-            },
-        },
-    }
 
 
 CUSTOM_AUTH_PASSWORD_VALIDATORS = [
@@ -162,51 +130,54 @@ REST_FRAMEWORK = {
         "dj_rest_auth.jwt_auth.JWTAuthentication",
     ),
     "DEFAULT_PAGINATION_CLASS": "django_base.base_utils.base_pagination.CustomPagination",
-    "DEFAULT_SCHEMA_CLASS": "rest_framework.schemas.coreapi.AutoSchema",
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
     "PAGE_SIZE": 10,
     "DEFAULT_RENDERER_CLASSES": ("rest_framework.renderers.JSONRenderer",),
+    "DEFAULT_THROTTLE_CLASSES": [
+        "rest_framework.throttling.AnonRateThrottle",
+        "rest_framework.throttling.UserRateThrottle",
+        "rest_framework.throttling.ScopedRateThrottle",
+    ],
+    "DEFAULT_THROTTLE_RATES": {
+        "anon": "60/minute",
+        "user": "300/minute",
+        "password_recovery": "5/hour",
+    },
 }
 
 SITE_ID = 1
 
-# <-------------- SWAGGER configurations -------------->
-SWAGGER_SETTINGS = {
-    "USE_SESSION_AUTH": False,
-    "SHOW_REQUEST_HEADERS": True,
-    "SECURITY_DEFINITIONS": {
-        "api_key": {
-            "type": "apiKey",
-            "in": "header",
-            "name": "Authorization",
-            "description": "Write 'Token' in the field, followed by a space and then your token",
-        }
+# <-------------- drf-spectacular configurations -------------->
+SPECTACULAR_SETTINGS = {
+    "TITLE": f"{APP_NAME} API",
+    "DESCRIPTION": f"{APP_NAME} documentation",
+    "VERSION": "1.0.0",
+    "CONTACT": {"email": "contact@linkchar.com"},
+    "SERVE_INCLUDE_SCHEMA": False,
+    "SWAGGER_UI_DIST": "SIDECAR",
+    "SWAGGER_UI_FAVICON_HREF": "SIDECAR",
+    "REDOC_DIST": "SIDECAR",
+    "SWAGGER_UI_SETTINGS": {
+        "persistAuthorization": True,
     },
+    # Filter the public surface — see django_base/openapi.py for the policy.
+    "PREPROCESSING_HOOKS": ["django_base.openapi.filter_public_endpoints"],
 }
 
 
 # <-------------- Sentry -------------->
 if IS_PRODUCTION:
-    import sentry_sdk
+    import logging as _logging
 
     if not SENTRY_DSN:
-        raise Exception("SENTRY_DSN not found in environment variables")
+        _logging.getLogger(__name__).warning(
+            "SENTRY_DSN not set in production — error tracking disabled"
+        )
+    else:
+        import sentry_sdk
 
-    sentry_sdk.init(
-        dsn=SENTRY_DSN,
-        # Set traces_sample_rate to 1.0 to capture 100%
-        # of transactions for performance monitoring.
-        traces_sample_rate=1.0,
-        # Set profiles_sample_rate to 1.0 to profile 100%
-        # of sampled transactions.
-        # We recommend adjusting this value in production.
-        profiles_sample_rate=1.0,
-    )
-
-
-# <-------------- Google settings -------------->
-SOCIALACCOUNT_PROVIDERS = {
-    "google": {
-        "SCOPE": ["profile", "email", "openid"],
-        "AUTH_PARAMS": {"access_type": "offline"},  # refresh_token
-    }
-}
+        sentry_sdk.init(
+            dsn=SENTRY_DSN,
+            traces_sample_rate=1.0,
+            profiles_sample_rate=1.0,
+        )
