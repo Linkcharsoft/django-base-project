@@ -80,6 +80,11 @@ If your question isn't here, add a row in your PR.
 
 | Keywords | Where |
 |---|---|
+| code organization, design, clean code, SOLID, OOP, refactor | [conventions.md → code organization](./conventions.md#code-organization) |
+| import at top, circular import, deferred import, `PLC0415`, `TYPE_CHECKING` | [conventions.md → imports go at the top](./conventions.md#imports-go-at-the-top-of-the-file) |
+| constant, magic number, hardcoded string, literal, where to define | [conventions.md → constants have exactly one home](./conventions.md#constants-have-exactly-one-home) |
+| duplicated logic, DRY, copy paste, repeated code, extract helper | [conventions.md → don't abstract on the first write](./conventions.md#dont-abstract-on-the-first-write-do-extract-on-the-second) |
+| class vs functions, inheritance, composition, mixin, abstraction, service class | [conventions.md → class or module of functions](./conventions.md#class-or-module-of-functions) |
 | BaseModel, `created_at`, `updated_at`, abstract base | [conventions.md → BaseModel](./conventions.md#basemodel) |
 | BaseSerializer | [conventions.md → BaseSerializer](./conventions.md#baseserializer) |
 | viewset, mixin, `BaseModelViewSet`, `NoPutViewSetMixin` | [conventions.md → viewset mixins](./conventions.md#viewset-mixins) |

@@ -2,6 +2,66 @@
 
 **Scope.** Code-level patterns and helpers used across the project. New code should follow these unless there's a specific reason not to. Not covered: build/dev tools (see [toolchain.md](./toolchain.md)), testing (see [testing.md](./testing.md)).
 
+## Code organization
+
+Applies to every `.py` file in the project. The rules below are deliberately stated as thresholds, not principles — when in doubt, take the option that writes less code.
+
+### Imports go at the top of the file
+
+Every import at module level, before any other statement. `ruff` enforces this (`PLC0415`), so a deferred import fails `just lint` and blocks the task.
+
+**A circular import means the dependency is wrong, not the import.** Climb this ladder in order — a deferred import is the last rung, not the first:
+
+1. **Model reference** → use the string form, never import the model: `models.ForeignKey("users.User", ...)`.
+2. **Shared helper** → the helper belongs to neither app. Move it to `django_base/base_utils/`, both sides import from there.
+3. **Type hints only** → put it under `if TYPE_CHECKING:` at the top (already exempted in the coverage config) and quote the annotation.
+4. **Genuinely unavoidable** → deferred import inside the function, with a one-line comment naming the cycle it breaks. Without that comment it reads as an accident and review will flag it.
+
+**Exception: `tasks.py` (Celery).** Celery autodiscovery imports every app's `tasks.py` at worker startup, before the app registry is necessarily ready, so importing models or services at module level there causes `AppRegistryNotReady` or a circular import that the ladder above can't fix. Importing inside the task body is the normal, correct pattern — `per-file-ignores` exempts `**/tasks.py` from `PLC0415`. This exemption is only for that startup problem: third-party libs, stdlib and anything else with no import-time cost still go at the top of the file. See [extending/celery.md](./extending/celery.md).
+
+The other exceptions already in the tree — `manage.py` and the conditional blocks in `settings/` — are also covered by `per-file-ignores` in [pyproject.toml](../pyproject.toml). Don't add new ones.
+
+### Constants have exactly one home
+
+| The value… | Lives in |
+|---|---|
+| …changes per environment or deploy | `.env` + [`environment_variables.py`](../django_base/settings/environment_variables.py) ([checklist](./environment.md#adding-a-new-env-var-checklist)) |
+| …defines the shape of the project | [`configurations.py`](../django_base/settings/configurations.py) |
+| …is an internal detail of one module | module-level `ALL_CAPS` constant, right after the imports |
+| …is used by two or more files | it already has one of the homes above — **import it**, never retype the literal |
+
+Never leave a meaningful literal inside a function body: a frontend route, an email subject, a throttle scope name, a size limit, an expiration, a magic number in a comparison. Name it and lift it to the top of the module.
+
+The failure mode this prevents: a model declares `max_length=25` while a settings constant declares the same length. Both are "right" the day they're written, then one changes and nothing fails — the values just silently drift apart. If the same literal appears in two places, one of them is already a latent bug.
+
+### Don't abstract on the first write, do extract on the second
+
+| Situation | Do |
+|---|---|
+| Same block twice in **one file** | Extract to a function/method in that file |
+| Same logic across **two or more apps** | Move to `django_base/base_utils/` — but **grep there first**, it may already exist |
+| Two serializers/models sharing most fields | One inherits the other, or reuses it as a nested field. Don't copy the field block |
+| Written once, might repeat later | **Leave it.** Duplicate it when it actually repeats — the second write tells you what the right abstraction is |
+
+### Class or module of functions?
+
+Group functions into a class **only when they share state**. Otherwise a module of functions is the correct answer, and it's the cheaper one.
+
+Django already hands you the classes worth having — `Model`, `Serializer`, `ViewSet`, `Storage`, `Permission`, `Validator`. Subclass those. Building a layer *above* them needs a concrete, present-tense reason.
+
+Don't create, unless a task asks for it verbatim:
+
+- an ABC or `Protocol` with a single implementation,
+- a Factory / Registry / Manager / Service class introduced "for the future",
+- a mixin used by exactly one class.
+
+Two more rules that resolve most cases:
+
+- **Inherit when the child is-a parent and reuses more than a member or two.** Otherwise compose: pass the helper in as an argument. Inheritance for code reuse alone produces base classes nobody can change later.
+- **A method that never touches `self` doesn't belong on the class.** Make it a module-level function, or `@staticmethod` if it's genuinely tied to the type.
+
+Where each layer's logic goes (serializer vs. view) is a separate rule — see [Viewset mixins](#viewset-mixins) below and the layer rules in [`.claude/agents/django-task-runner.md`](../.claude/agents/django-task-runner.md).
+
 ## BaseModel
 
 Defined in `django_base/base_utils/base_models.py`. Every model that needs `created_at`/`updated_at` should inherit from it:

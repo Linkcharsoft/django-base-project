@@ -54,6 +54,7 @@ select = [
     "DJ",   # flake8-django
     "C4",   # comprehensions
     "SIM",  # simplifications
+    "PLC0415",  # imports fuera del top-level del archivo (ver conventions.md → code organization)
 ]
 ignore = [
     "E501",   # line too long (lo maneja el formatter)
@@ -64,7 +65,8 @@ ignore = [
 [tool.ruff.lint.per-file-ignores]
 "**/migrations/*.py" = ["E", "F", "I", "UP"]
 "**/settings/*.py"   = ["F401", "F403", "F405"]
-"manage.py"          = ["E402"]
+"manage.py"          = ["E402", "PLC0415"]
+"**/tasks.py"        = ["PLC0415"]  # Celery: importar modelos/servicios dentro del task es el patrón correcto
 
 [tool.ruff.format]
 quote-style = "double"
