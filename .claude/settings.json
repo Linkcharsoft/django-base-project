@@ -16,7 +16,8 @@
       "Bash(rm:*)",
       "Bash(mv inferencia-add-env-var *)",
       "Bash(mv inferencia-create-django-app *)",
-      "Edit(/.claude/skills/django-base-add-api-resource/**)"
+      "Edit(/.claude/skills/django-base-add-api-resource/**)",
+      "Bash(uvx ruff *)"
     ]
   }
 }

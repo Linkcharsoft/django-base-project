@@ -32,6 +32,10 @@ makemigrations:
 manage *args:
     docker compose exec {{web}} python manage.py {{args}}
 
+# Poblar la DB con datos de prueba (idempotente, solo con DEBUG=True)
+seed:
+    docker compose exec {{web}} python manage.py seed
+
 # Correr la suite de tests
 test:
     docker compose exec {{web}} pytest

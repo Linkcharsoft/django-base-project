@@ -119,6 +119,10 @@ If your question isn't here, add a row in your PR.
 | run tests, pytest | [testing.md → running](./testing.md#running) |
 | test layout, where tests live | [testing.md → layout](./testing.md#layout) |
 | test convention, factory boy, fixtures | [testing.md → conventions](./testing.md#conventions) |
+| seed, demo data, test data, populate db, `just seed`, frontend testing | [seed-data.md](./seed-data.md) |
+| test accounts, demo credentials, personas, test password | [seed-data.md → accounts](./seed-data.md#accounts) |
+| factory, `factories.py`, `seeds.py`, add model to seed | [seed-data.md → adding to the seed](./seed-data.md#adding-to-the-seed-backend-side) + [skill](../.claude/skills/django-base-seed-data/SKILL.md) |
+| reset data, wipe test users, flush db | [seed-data.md → reset](./seed-data.md#reset) |
 | test maintenance mode, 503 in tests | [testing.md → maintenance mode in tests](./testing.md#maintenance-mode-in-tests) |
 | test throttle, 429 in tests | [testing.md → throttling in tests](./testing.md#throttling-in-tests) |
 

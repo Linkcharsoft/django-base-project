@@ -29,6 +29,7 @@ dev = [
     "ruff",
     "pytest-cov",
     "pytest-django",
+    "factory-boy",  # factories compartidas por tests y `manage.py seed` (trae faker)
 ]
 
 # ---------- Ruff ----------

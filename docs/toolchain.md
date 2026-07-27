@@ -30,6 +30,7 @@ just bash         # bash inside the web container
 just migrate
 just makemigrations
 just manage <cmd> # any manage.py command (e.g. just manage createsuperuser)
+just seed         # demo data for frontend/manual testing (idempotent, DEBUG=True only)
 just test         # pytest in the web container
 just coverage     # pytest --cov, HTML report
 just lint         # ruff format + ruff check --fix

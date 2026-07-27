@@ -32,6 +32,15 @@ You are a reviewer. **You don't write or edit code.** Your only job is to read t
 - [ ] New helpers in `base_utils/`: was there really no equivalent already? Grep.
 - [ ] New custom permission classes: wasn't `IsAuthenticated` / `IsAdminUser` / an existing class enough?
 
+### Seed data ([seed-data.md](../../docs/seed-data.md))
+Only applies when the diff adds or changes a model. Skip otherwise.
+- [ ] Every new model has a factory in `<app>/factories.py` **and** rows in `<app>/seeds.py`. A model the frontend can see but the seed can't produce is a Blocker.
+- [ ] The factory declares `django_get_or_create` on a natural key — without it a second `just seed` duplicates every row.
+- [ ] Coverage: one seeded object per `choices` value, both sides of each boolean, optional relations present *and* absent, and more rows than one page for anything listed by a paginated endpoint.
+- [ ] Tests reuse the factory rather than building objects inline with `Model.objects.create(...)`.
+- [ ] No JSON fixtures (`loaddata` / `dumpdata` / `fixtures/*.json`) were introduced.
+- [ ] `docs/seed-data.md` was updated if accounts or credentials changed.
+
 ### Code organization ([conventions.md → code organization](../../docs/conventions.md#code-organization))
 `just lint` already blocks imports outside the top level (`PLC0415`), so don't re-check that. Check what it can't see:
 - [ ] **No meaningful literal left inside a function body** — frontend routes, email subjects, throttle scope names, size limits, expirations, magic numbers in comparisons. Each should be a named constant, in the home the decision table assigns it.

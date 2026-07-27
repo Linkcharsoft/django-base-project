@@ -104,8 +104,29 @@ Order tasks so the runner can execute from top to bottom without guessing:
 5. Add API resources/viewsets/routers.
 6. Add custom actions or secondary workflows.
 7. Add docs or cross-cutting cleanup only when not already included.
+8. **Always last: a seed-data task** (see below).
 
 If a later task depends on an earlier one, say so in `Context`.
+
+### The mandatory final task — seed data
+
+Every backlog that creates or changes a model ends with one seed task, numbered last. The frontend is built against `just seed`, so a backlog that leaves it stale ships a backend nobody can develop against.
+
+Each API-resource task already seeds its own model (step 7 of `django-base-add-api-resource`). This final task is not a do-over of that — it exists to make the *scenario* coherent across apps: relations wired between apps' seeded objects, states that only make sense in combination, and a pass against the coverage rule to catch what individual tasks missed.
+
+Write it in the standard shape, with `django-base-seed-data` named in `Context` and acceptance criteria along these lines:
+
+```markdown
+**Acceptance criteria**:
+- [ ] `just seed` runs clean on an empty database
+- [ ] Running `just seed` twice does not duplicate rows (idempotent)
+- [ ] Every model added by this backlog has a factory in `<app>/factories.py` and rows in `<app>/seeds.py`
+- [ ] Each `choices` field has one seeded object per value; each paginated list has more rows than one page
+- [ ] Cross-app relations are populated (no seeded object left with an empty required relation)
+- [ ] `docs/seed-data.md` matches what the seed produces
+```
+
+Skip this task only when the backlog touches no models at all (e.g. a docs-only or config-only backlog). Say so explicitly in the task list rather than silently omitting it.
 
 ## Context Quality
 
@@ -118,6 +139,7 @@ The `Context` field is where the planner earns its keep. Include:
   - `django-base-create-app`
   - `django-base-add-api-resource`
   - `django-base-add-env-var`
+  - `django-base-seed-data`
 - Constraints that prevent overbuilding.
 
 Do not paste the whole requirements document into every task. Reference the relevant section/heading instead.
