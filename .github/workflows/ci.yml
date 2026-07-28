@@ -1,0 +1,137 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  UV_FROZEN: "1"
+
+jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
+      - name: Set up Python
+        run: uv python install 3.13
+
+      # `--frozen` everywhere else assumes the lock matches pyproject.toml.
+      # If it does not, the Docker build breaks at `uv sync --frozen` — catch it
+      # here instead, where the error message actually says so.
+      - name: uv.lock is in sync with pyproject.toml
+        run: uv lock --check
+
+      - name: Install dependencies
+        run: uv sync --all-extras --dev
+
+      - name: ruff check
+        run: uv run ruff check --output-format=github .
+
+      - name: ruff format
+        run: uv run ruff format --check .
+
+  test:
+    name: Tests
+    runs-on: ubuntu-latest
+
+    services:
+      db:
+        image: postgres:16
+        env:
+          POSTGRES_DB: test_db
+          POSTGRES_USER: test_user
+          POSTGRES_PASSWORD: test_password
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U test_user -d test_db"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      SECRET_KEY: ci-secret-key-not-used-anywhere-else
+      DEBUG: "True"
+      IS_PRODUCTION: "False"
+      FRONT_URL: http://localhost:3000
+      CSRF_TRUSTED_ORIGINS: http://localhost:8000
+      ALLOWED_HOSTS: localhost:8000
+      CORS_ALLOWED_URLS: http://localhost:3000,http://localhost:8000
+      DB_ENGINE: postgresql
+      DB_NAME: test_db
+      DB_USER: test_user
+      DB_PASSWORD: test_password
+      DB_HOST: localhost
+      DB_PORT: "5432"
+      EMAIL_PROVIDER: console
+      USE_S3: "False"
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
+      - name: Set up Python
+        run: uv python install 3.13
+
+      - name: Install dependencies
+        run: uv sync --all-extras --dev
+
+      - name: Django system checks
+        run: uv run python manage.py check
+
+      # A model changed without its migration is the failure this catches: it
+      # passes review and then breaks on deploy, not in the suite.
+      - name: No missing migrations
+        run: uv run python manage.py makemigrations --check --dry-run
+
+      - name: Migrate
+        run: uv run python manage.py migrate
+
+      - name: Tests
+        run: uv run pytest --cov=. --cov-report=term-missing
+
+      # The frontend develops against `just seed`, so a broken seed is a broken
+      # contract. Running it twice is what proves the idempotency it promises.
+      - name: Seed runs and is idempotent
+        run: |
+          # `-v 0` matters: shell_plus otherwise prints "N objects imported
+          # automatically" ahead of the value and the counts never compare equal.
+          count_rows() {
+            uv run python manage.py shell -v 0 -c "
+          from django.contrib.auth import get_user_model
+          from allauth.account.models import EmailAddress
+          from users.models import Profile
+          print(get_user_model().objects.count(), Profile.objects.count(), EmailAddress.objects.count())
+          "
+          }
+          uv run python manage.py seed
+          BEFORE=$(count_rows)
+          uv run python manage.py seed
+          AFTER=$(count_rows)
+          echo "rows (users profiles emails) — after 1st seed: $BEFORE | after 2nd: $AFTER"
+          test "$BEFORE" = "$AFTER"
+
+      # Same two steps `just schema-validate` runs locally. The static check
+      # catches what spectacular cannot: a custom @action whose real response
+      # envelope differs from the serializer it infers.
+      - name: Every @action declares @extend_schema
+        run: uv run python scripts/check_api_schema.py
+
+      - name: OpenAPI schema is valid
+        run: uv run python manage.py spectacular --validate --fail-on-warn --file /dev/null
