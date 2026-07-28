@@ -42,6 +42,10 @@ extend-exclude = [
     "media",
     ".venv",
     "venv",
+    # ruff 0.16 started formatting code blocks inside markdown. The blocks in
+    # docs/ are illustrative — some are deliberately partial — so letting the
+    # formatter rewrite them adds noise to doc diffs and buys nothing.
+    "*.md",
 ]
 
 [tool.ruff.lint]

@@ -54,6 +54,30 @@ The `test` job defines its own env block — it does not read `.env`. When you a
 
 The grouping is the point. Ungrouped, a weekly Python check opens one PR per package and they get ignored en masse — which is how a repo ends up with 20 open alerts.
 
+Note that Dependabot runs as soon as it sees the config on the default branch — the `interval` governs subsequent runs, not the first one. Expect a burst of PRs the day you merge it, one per accumulated major plus one per group.
+
+### Reviewing a Dependabot PR
+
+Green checks mean "nothing we test broke." That is most of the answer, and for the grouped minor/patch PR it is normally all of it — merge it.
+
+The gap worth knowing: CI runs the suite, and the suite is small. It cannot see a behavior change in a code path nothing covers. So calibrate by blast radius, not by the green tick alone:
+
+| PR kind | Default action |
+|---|---|
+| Grouped minor/patch, green | Merge. This is the boring path and it should stay boring. |
+| Security advisory, green | Merge, after the exposure check below. |
+| **Major**, green | Read the changelog for breaking changes first — that is why majors are ungrouped. |
+| Anything touching **auth, storage, or the DB driver** | Read the changelog even for a patch. These fail in ways a small suite misses. |
+| Red checks | Never merge to silence it. A red Dependabot PR is CI doing its job — see below. |
+
+**When a Dependabot PR goes red, the bump is usually not the bug.** A tooling upgrade can change what "passing" means: ruff 0.16 began formatting code blocks inside markdown, so the grouped PR carrying it failed `ruff format --check` on files no one had touched. The fix belonged in `pyproject.toml` (exclude `*.md`), on `main`, not in the Dependabot branch — a branch fix gets clobbered on the next rebase, and every future PR would fail the same way.
+
+Ask which of the three it is before touching the branch:
+
+1. **Our code is genuinely incompatible** → fix our code, on its own branch, then rebase the bump onto it.
+2. **The tool changed its rules** → adjust the config on `main`, then tell Dependabot to `@dependabot rebase`.
+3. **The new version is actually broken** → close the PR and pin the old version with a comment explaining why.
+
 ### Triaging an alert
 
 Severity labels rank the *advisory*, not your exposure. Check what the code actually uses before treating a `high` as urgent:
