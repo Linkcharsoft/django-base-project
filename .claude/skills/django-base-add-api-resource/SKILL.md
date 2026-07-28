@@ -81,13 +81,19 @@ Start with the repo's docs, then inspect existing code:
    base_router.registry.extend(widgets_router.registry)
    ```
 
-7. Documentation:
+7. Seed data (do this in the same task, not later):
+   - Add a `DjangoModelFactory` for the new model in `<app>/factories.py`, with `django_get_or_create` on a natural key so the seed stays idempotent. The test suite uses this same factory.
+   - Extend (or create) `<app>/seeds.py` so `just seed` produces data the frontend can actually render: one object per `choices` value, both sides of every boolean, present and absent optional relations, and enough rows to pass the first page of any paginated list.
+   - Update `docs/seed-data.md` only if you added accounts or changed credentials.
+   - Full checklist and the coverage rule: `.claude/skills/django-base-seed-data/SKILL.md`.
+
+8. Documentation:
    - Update `docs/api-contract.md` for new, removed, or changed endpoints/methods/payloads.
    - Update `docs/architecture.md` if the app inventory or URL layout changes.
    - Update `docs/_agent-index.md` when a new endpoint/resource/concept should be discoverable.
    - If the resource needs an env var, switch to `django-base-add-env-var` for that change — do not edit `docs/environment.md` directly from here.
 
-8. Verification:
+9. Verification:
    - Add or update focused API tests for the resource, permissions, and important failure cases.
    - Run focused tests while developing when possible.
    - Run `just schema-validate` after serializers, viewsets, routers, permissions, or OpenAPI-visible behavior changed.

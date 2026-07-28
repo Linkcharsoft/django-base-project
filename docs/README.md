@@ -18,6 +18,7 @@ Reference documentation for `django-base-project`. Every file is single-concern 
 | Look up an env var | [environment.md](./environment.md) |
 | Add an endpoint / app / model | [development-guide.md](./development-guide.md) |
 | Write or run tests | [testing.md](./testing.md) |
+| Fill a dev DB with data to develop the frontend against | [seed-data.md](./seed-data.md) |
 | Deploy to production | [deployment.md](./deployment.md) |
 | Run the planner / runner / reviewer subagent loop | [task-workflow.md](./task-workflow.md) |
 | Add Celery or WebSockets to the project | [extending/](./extending/) |
@@ -42,6 +43,7 @@ docs/
 ├── toolchain.md             ← Build/dev tools (just, uv, ruff, pre-commit, spectacular)
 ├── development-guide.md     ← Step-by-step recipes (add endpoint/app/model/…)
 ├── testing.md               ← Test setup + conventions
+├── seed-data.md             ← Demo data for frontend/manual testing (just seed)
 │
 ├── deployment.md            ← Production setup
 │
@@ -79,6 +81,7 @@ Treat docs like code: when you change behavior, update the doc in the **same PR*
 | A URL mount under `/` | [architecture.md → URL layout](./architecture.md#url-layout) + [api-contract.md](./api-contract.md) if under `/api/` |
 | Auth flow (login / JWT / recovery / OAuth) | [auth.md](./auth.md) + [api-contract.md](./api-contract.md) if endpoints changed |
 | A code convention (BaseModel, mixin, validator) | [conventions.md](./conventions.md) |
+| A model the frontend can see (new, or new `choices`/status field) | the app's `factories.py` + `seeds.py`, and [seed-data.md](./seed-data.md) if accounts changed — see [skill](../.claude/skills/django-base-seed-data/SKILL.md) |
 | A new just recipe / tool config | [toolchain.md](./toolchain.md) + [_agent-index.md](./_agent-index.md) |
 | Deployment surface (Dockerfile, entrypoint, gunicorn config) | [deployment.md](./deployment.md) |
 | An opt-in feature (Celery, Channels, places, …) | the relevant file under [extending/](./extending/) — do **not** add it to the base docs |

@@ -32,6 +32,23 @@ You are a reviewer. **You don't write or edit code.** Your only job is to read t
 - [ ] New helpers in `base_utils/`: was there really no equivalent already? Grep.
 - [ ] New custom permission classes: wasn't `IsAuthenticated` / `IsAdminUser` / an existing class enough?
 
+### Seed data ([seed-data.md](../../docs/seed-data.md))
+Only applies when the diff adds or changes a model. Skip otherwise.
+- [ ] Every new model has a factory in `<app>/factories.py` **and** rows in `<app>/seeds.py`. A model the frontend can see but the seed can't produce is a Blocker.
+- [ ] The factory declares `django_get_or_create` on a natural key — without it a second `just seed` duplicates every row.
+- [ ] Coverage: one seeded object per `choices` value, both sides of each boolean, optional relations present *and* absent, and more rows than one page for anything listed by a paginated endpoint.
+- [ ] Tests reuse the factory rather than building objects inline with `Model.objects.create(...)`.
+- [ ] No JSON fixtures (`loaddata` / `dumpdata` / `fixtures/*.json`) were introduced.
+- [ ] `docs/seed-data.md` was updated if accounts or credentials changed.
+
+### Code organization ([conventions.md → code organization](../../docs/conventions.md#code-organization))
+`just lint` already blocks imports outside the top level (`PLC0415`), so don't re-check that. Check what it can't see:
+- [ ] **No meaningful literal left inside a function body** — frontend routes, email subjects, throttle scope names, size limits, expirations, magic numbers in comparisons. Each should be a named constant, in the home the decision table assigns it.
+- [ ] **No literal duplicated across two files.** If the same string/number appears in the diff twice (or once in the diff and once already in the tree), one of them should be importing the other. Grep the value to confirm.
+- [ ] **No copy-pasted block.** Same logic twice in one file, or the same helper re-implemented in two apps instead of moved to `base_utils/`. Two serializers/models sharing most of their field block is the common case.
+- [ ] **No class whose methods never touch `self`.** That is a module of functions wearing a class — and it's the one shape of over-abstraction you can confirm by reading, not by judgment. A mixin with a single user is the same finding.
+- [ ] If a deferred import survives (`per-file-ignores` or `noqa`), it carries a comment naming the cycle it breaks — and the cycle wasn't solvable by a string model reference or by moving the helper to `base_utils/`. **Not a finding in `tasks.py`**: Celery autodiscovery makes in-task imports the correct pattern there, no comment required.
+
 ### Things that shouldn't appear unless the spec asked for them verbatim
 - [ ] `throttle_classes`, `DEFAULT_THROTTLE_*`, rate limiting
 - [ ] `cache_page`, `@method_decorator(cache_*)`, redis, caching

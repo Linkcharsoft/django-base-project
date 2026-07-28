@@ -56,9 +56,11 @@ Most of the surface area we want to protect is at the HTTP boundary (permissions
 ```python
 from rest_framework.test import APIClient
 
-def test_users_list_is_admin_only(db, user_factory):
+from users.factories import UserFactory
+
+def test_users_list_is_admin_only(db):
     client = APIClient()
-    client.force_authenticate(user=user_factory(is_staff=False))
+    client.force_authenticate(user=UserFactory(is_staff=False))
     response = client.get("/api/users/")
     assert response.status_code == 403
 ```
@@ -67,7 +69,9 @@ Over direct viewset method calls.
 
 ### Factories, not fixtures-as-JSON
 
-Use `factory_boy` (or hand-rolled `User.objects.create_user(...)` helpers) over JSON fixtures. JSON fixtures rot when the schema changes; factories adapt.
+Use `factory_boy` over JSON fixtures. JSON fixtures rot when the schema changes; factories adapt.
+
+Factories live in `<app>/factories.py` and are **shared with the demo seed** — [users/factories.py](../users/factories.py) is the canonical one. Write the factory once and both the test suite and `just seed` get it. See [seed-data.md](./seed-data.md) for the seed side.
 
 ### One assertion per behavior
 

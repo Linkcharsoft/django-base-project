@@ -80,6 +80,11 @@ If your question isn't here, add a row in your PR.
 
 | Keywords | Where |
 |---|---|
+| code organization, design, clean code, SOLID, OOP, refactor | [conventions.md → code organization](./conventions.md#code-organization) |
+| import at top, circular import, deferred import, `PLC0415`, `TYPE_CHECKING` | [conventions.md → imports go at the top](./conventions.md#imports-go-at-the-top-of-the-file) |
+| constant, magic number, hardcoded string, literal, where to define | [conventions.md → constants have exactly one home](./conventions.md#constants-have-exactly-one-home) |
+| duplicated logic, DRY, copy paste, repeated code, extract helper | [conventions.md → don't abstract on the first write](./conventions.md#dont-abstract-on-the-first-write-do-extract-on-the-second) |
+| class vs functions, inheritance, composition, mixin, abstraction, service class | [conventions.md → class or module of functions](./conventions.md#class-or-module-of-functions) |
 | BaseModel, `created_at`, `updated_at`, abstract base | [conventions.md → BaseModel](./conventions.md#basemodel) |
 | BaseSerializer | [conventions.md → BaseSerializer](./conventions.md#baseserializer) |
 | viewset, mixin, `BaseModelViewSet`, `NoPutViewSetMixin` | [conventions.md → viewset mixins](./conventions.md#viewset-mixins) |
@@ -114,6 +119,10 @@ If your question isn't here, add a row in your PR.
 | run tests, pytest | [testing.md → running](./testing.md#running) |
 | test layout, where tests live | [testing.md → layout](./testing.md#layout) |
 | test convention, factory boy, fixtures | [testing.md → conventions](./testing.md#conventions) |
+| seed, demo data, test data, populate db, `just seed`, frontend testing | [seed-data.md](./seed-data.md) |
+| test accounts, demo credentials, personas, test password | [seed-data.md → accounts](./seed-data.md#accounts) |
+| factory, `factories.py`, `seeds.py`, add model to seed | [seed-data.md → adding to the seed](./seed-data.md#adding-to-the-seed-backend-side) + [skill](../.claude/skills/django-base-seed-data/SKILL.md) |
+| reset data, wipe test users, flush db | [seed-data.md → reset](./seed-data.md#reset) |
 | test maintenance mode, 503 in tests | [testing.md → maintenance mode in tests](./testing.md#maintenance-mode-in-tests) |
 | test throttle, 429 in tests | [testing.md → throttling in tests](./testing.md#throttling-in-tests) |
 

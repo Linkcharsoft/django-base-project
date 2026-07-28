@@ -104,8 +104,31 @@ Order tasks so the runner can execute from top to bottom without guessing:
 5. Add API resources/viewsets/routers.
 6. Add custom actions or secondary workflows.
 7. Add docs or cross-cutting cleanup only when not already included.
+8. **Last, when the backlog spans two or more apps: a seed-data task** (see below).
 
 If a later task depends on an earlier one, say so in `Context`.
+
+### The final task — seed data (cross-app backlogs only)
+
+Add this task when the backlog creates or changes models in **two or more apps**. The frontend is built against `just seed`, so a backlog that leaves the cross-app scenario incoherent ships a backend nobody can develop against.
+
+Each API-resource task already seeds its own model (step 7 of `django-base-add-api-resource`). This final task is not a do-over of that — it exists to make the *scenario* coherent across apps: relations wired between apps' seeded objects, states that only make sense in combination, and a pass against the coverage rule to catch what individual tasks missed.
+
+**Single-app backlogs don't get this task.** There is no cross-app scenario to reconcile, so the per-model seeding each API-resource task already does is the whole job — adding a final task there is a do-over.
+
+Write it in the standard shape, with `django-base-seed-data` named in `Context` and acceptance criteria along these lines:
+
+```markdown
+**Acceptance criteria**:
+- [ ] `just seed` runs clean on an empty database
+- [ ] Running `just seed` twice does not duplicate rows (idempotent)
+- [ ] Every model added by this backlog has a factory in `<app>/factories.py` and rows in `<app>/seeds.py`
+- [ ] Each `choices` field has one seeded object per value; each paginated list has more rows than one page
+- [ ] Cross-app relations are populated (no seeded object left with an empty required relation)
+- [ ] `docs/seed-data.md` matches what the seed produces
+```
+
+When you skip it — single-app backlog, or one that touches no models at all (docs-only, config-only) — say so explicitly in the task list rather than silently omitting it.
 
 ## Context Quality
 
@@ -118,6 +141,7 @@ The `Context` field is where the planner earns its keep. Include:
   - `django-base-create-app`
   - `django-base-add-api-resource`
   - `django-base-add-env-var`
+  - `django-base-seed-data`
 - Constraints that prevent overbuilding.
 
 Do not paste the whole requirements document into every task. Reference the relevant section/heading instead.

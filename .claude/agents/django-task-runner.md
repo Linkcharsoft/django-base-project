@@ -66,6 +66,7 @@ When ambiguous on *how deep* to go, prefer reversible. Strip a model's fields be
 - **i18n: `gettext_lazy as _`** for every user-facing string.
 - **Pagination: `CustomPagination`** is the global default. Don't redefine it.
 - **Env vars: only in `django_base/settings/environment_variables.py`**.
+- **Every model the frontend can see gets a factory in `<app>/factories.py` and rows in `<app>/seeds.py`**, in the same task that created the model. Tests use that same factory instead of `Model.objects.create(...)` inline. Checklist: `.claude/skills/django-base-seed-data/SKILL.md`.
 
 ### Explicit prohibitions (don't add any of this unless the task asks for it verbatim)
 
