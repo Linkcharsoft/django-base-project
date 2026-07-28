@@ -125,6 +125,12 @@ If your question isn't here, add a row in your PR.
 | reset data, wipe test users, flush db | [seed-data.md → reset](./seed-data.md#reset) |
 | test maintenance mode, 503 in tests | [testing.md → maintenance mode in tests](./testing.md#maintenance-mode-in-tests) |
 | test throttle, 429 in tests | [testing.md → throttling in tests](./testing.md#throttling-in-tests) |
+| CI, GitHub Actions, pipeline, PR checks, workflow, why is CI red | [ci.md → ci](./ci.md#ci) |
+| CI env var, `ImproperlyConfigured` in CI, required var missing | [ci.md → env vars in CI](./ci.md#env-vars-in-ci) |
+| missing migration, `makemigrations --check`, model changed without migration | [ci.md → steps worth knowing about](./ci.md#steps-worth-knowing-about) |
+| `uv lock --check`, lock out of sync with pyproject | [ci.md → steps worth knowing about](./ci.md#steps-worth-knowing-about) |
+| dependabot, vulnerability, CVE, security alert, bump dependency, upgrade package | [ci.md → dependabot](./ci.md#dependabot) |
+| triage alert, severity vs exposure, is this CVE exploitable | [ci.md → triaging an alert](./ci.md#triaging-an-alert) |
 
 ### Deployment / ops
 

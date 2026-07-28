@@ -1,6 +1,6 @@
 # Testing
 
-**Scope.** How tests are organized, how to run them, and what conventions new tests should follow. Not covered: CI configuration (none yet — see audit backlog item 6.4).
+**Scope.** How tests are organized, how to run them, and what conventions new tests should follow. Not covered: what CI runs on every PR — see [ci.md](./ci.md).
 
 ## Status
 

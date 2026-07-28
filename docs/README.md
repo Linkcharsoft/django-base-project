@@ -19,6 +19,7 @@ Reference documentation for `django-base-project`. Every file is single-concern 
 | Add an endpoint / app / model | [development-guide.md](./development-guide.md) |
 | Write or run tests | [testing.md](./testing.md) |
 | Fill a dev DB with data to develop the frontend against | [seed-data.md](./seed-data.md) |
+| Know what CI checks, or bump a vulnerable dependency | [ci.md](./ci.md) |
 | Deploy to production | [deployment.md](./deployment.md) |
 | Run the planner / runner / reviewer subagent loop | [task-workflow.md](./task-workflow.md) |
 | Add Celery or WebSockets to the project | [extending/](./extending/) |
@@ -44,6 +45,7 @@ docs/
 ├── development-guide.md     ← Step-by-step recipes (add endpoint/app/model/…)
 ├── testing.md               ← Test setup + conventions
 ├── seed-data.md             ← Demo data for frontend/manual testing (just seed)
+├── ci.md                    ← What CI runs per PR + Dependabot triage
 │
 ├── deployment.md            ← Production setup
 │
@@ -83,6 +85,7 @@ Treat docs like code: when you change behavior, update the doc in the **same PR*
 | A code convention (BaseModel, mixin, validator) | [conventions.md](./conventions.md) |
 | A model the frontend can see (new, or new `choices`/status field) | the app's `factories.py` + `seeds.py`, and [seed-data.md](./seed-data.md) if accounts changed — see [skill](../.claude/skills/django-base-seed-data/SKILL.md) |
 | A new just recipe / tool config | [toolchain.md](./toolchain.md) + [_agent-index.md](./_agent-index.md) |
+| A CI step, or a **required** env var (CI defines its own env block) | [ci.md](./ci.md) + the `test` job env in [ci.yml](../.github/workflows/ci.yml) |
 | Deployment surface (Dockerfile, entrypoint, gunicorn config) | [deployment.md](./deployment.md) |
 | An opt-in feature (Celery, Channels, places, …) | the relevant file under [extending/](./extending/) — do **not** add it to the base docs |
 
