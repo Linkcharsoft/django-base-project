@@ -104,15 +104,17 @@ Order tasks so the runner can execute from top to bottom without guessing:
 5. Add API resources/viewsets/routers.
 6. Add custom actions or secondary workflows.
 7. Add docs or cross-cutting cleanup only when not already included.
-8. **Always last: a seed-data task** (see below).
+8. **Last, when the backlog spans two or more apps: a seed-data task** (see below).
 
 If a later task depends on an earlier one, say so in `Context`.
 
-### The mandatory final task — seed data
+### The final task — seed data (cross-app backlogs only)
 
-Every backlog that creates or changes a model ends with one seed task, numbered last. The frontend is built against `just seed`, so a backlog that leaves it stale ships a backend nobody can develop against.
+Add this task when the backlog creates or changes models in **two or more apps**. The frontend is built against `just seed`, so a backlog that leaves the cross-app scenario incoherent ships a backend nobody can develop against.
 
 Each API-resource task already seeds its own model (step 7 of `django-base-add-api-resource`). This final task is not a do-over of that — it exists to make the *scenario* coherent across apps: relations wired between apps' seeded objects, states that only make sense in combination, and a pass against the coverage rule to catch what individual tasks missed.
+
+**Single-app backlogs don't get this task.** There is no cross-app scenario to reconcile, so the per-model seeding each API-resource task already does is the whole job — adding a final task there is a do-over.
 
 Write it in the standard shape, with `django-base-seed-data` named in `Context` and acceptance criteria along these lines:
 
@@ -126,7 +128,7 @@ Write it in the standard shape, with `django-base-seed-data` named in `Context` 
 - [ ] `docs/seed-data.md` matches what the seed produces
 ```
 
-Skip this task only when the backlog touches no models at all (e.g. a docs-only or config-only backlog). Say so explicitly in the task list rather than silently omitting it.
+When you skip it — single-app backlog, or one that touches no models at all (docs-only, config-only) — say so explicitly in the task list rather than silently omitting it.
 
 ## Context Quality
 

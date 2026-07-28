@@ -46,8 +46,7 @@ Only applies when the diff adds or changes a model. Skip otherwise.
 - [ ] **No meaningful literal left inside a function body** — frontend routes, email subjects, throttle scope names, size limits, expirations, magic numbers in comparisons. Each should be a named constant, in the home the decision table assigns it.
 - [ ] **No literal duplicated across two files.** If the same string/number appears in the diff twice (or once in the diff and once already in the tree), one of them should be importing the other. Grep the value to confirm.
 - [ ] **No copy-pasted block.** Same logic twice in one file, or the same helper re-implemented in two apps instead of moved to `base_utils/`. Two serializers/models sharing most of their field block is the common case.
-- [ ] **New class actually holds state.** A class whose methods never touch `self`, a mixin with a single user, or a Service/Manager/Factory wrapper around functions is a finding — the functions belonged in a module.
-- [ ] **Inheritance is is-a, not code-reuse.** A subclass that reuses one member, or overrides most of the parent, should have composed instead (helper passed in).
+- [ ] **No class whose methods never touch `self`.** That is a module of functions wearing a class — and it's the one shape of over-abstraction you can confirm by reading, not by judgment. A mixin with a single user is the same finding.
 - [ ] If a deferred import survives (`per-file-ignores` or `noqa`), it carries a comment naming the cycle it breaks — and the cycle wasn't solvable by a string model reference or by moving the helper to `base_utils/`. **Not a finding in `tasks.py`**: Celery autodiscovery makes in-task imports the correct pattern there, no comment required.
 
 ### Things that shouldn't appear unless the spec asked for them verbatim
