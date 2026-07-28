@@ -385,7 +385,7 @@ requires-dist = [
     { name = "drf-writable-nested" },
     { name = "gunicorn" },
     { name = "pillow", specifier = ">=12.2.0" },
-    { name = "psycopg", extras = ["binary"], specifier = ">=3.1.8" },
+    { name = "psycopg", extras = ["binary"], specifier = ">=3.3.4" },
     { name = "sentry-sdk" },
     { name = "split-settings" },
     { name = "whitenoise" },
