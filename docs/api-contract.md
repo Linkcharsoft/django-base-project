@@ -6,7 +6,7 @@ The canonical schema is generated at runtime by drf-spectacular: `GET /api/schem
 
 ## Base URL
 
-- Dev: `http://localhost:8000`
+- Dev: `http://localhost:8001`
 - Production: configured per derived project (see [deployment.md](./deployment.md))
 
 All API paths are mounted under `/api/`. Two exceptions: `/admin/` and `/healthcheck/`.

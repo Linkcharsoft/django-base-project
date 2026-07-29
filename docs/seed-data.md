@@ -36,7 +36,7 @@ There is also `admin@admin.com / admin123123`, created by a data migration rathe
 Seeded users all carry `is_test_user=True`, so the existing teardown endpoint wipes them and everything cascading from them:
 
 ```bash
-curl -X DELETE http://localhost:8000/api/users/delete-test-users/
+curl -X DELETE http://localhost:8001/api/users/delete-test-users/
 just seed
 ```
 

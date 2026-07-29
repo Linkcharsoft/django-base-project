@@ -25,7 +25,7 @@ jobs:
           enable-cache: true
 
       - name: Set up Python
-        run: uv python install 3.13
+        run: uv python install 3.14
 
       # `--frozen` everywhere else assumes the lock matches pyproject.toml.
       # If it does not, the Docker build breaks at `uv sync --frozen` — catch it
@@ -87,7 +87,7 @@ jobs:
           enable-cache: true
 
       - name: Set up Python
-        run: uv python install 3.13
+        run: uv python install 3.14
 
       - name: Install dependencies
         run: uv sync --all-extras --dev

@@ -171,7 +171,7 @@ If the email matches an existing user, the social account links to it. If not, a
 2. Open `/admin/socialaccount/socialapp/` — your Google app is listed and attached to a Site.
 3. From the frontend (or `curl` with a real Google token):
    ```bash
-   curl -X POST http://localhost:8000/api/auth/google/ \
+   curl -X POST http://localhost:8001/api/auth/google/ \
      -H "Content-Type: application/json" \
      -d '{"access_token": "<real-google-token>"}'
    ```

@@ -20,7 +20,7 @@ services:
         INSTALL_DEV: "true"
     entrypoint: ./entrypoint-dev.sh
     ports:
-      - "8000:8000"
+      - "8001:8000"
     environment:
       - DB_NAME=${DB_NAME}
       - DB_USER=${DB_USER}
