@@ -23,7 +23,7 @@ Open `.env` and fill in at least `SECRET_KEY`, `DB_*`, and `DEFAULT_FROM_EMAIL`.
 docker compose up -d --build
 ```
 
-This builds the `web` and `db` services and launches them in the background. The `db` service is `postgres:16`. The `web` service runs gunicorn-less dev mode (`entrypoint-dev.sh`), which auto-runs `migrate` and `runserver` on container port `8000`, published locally as port `8001`.
+This builds the `web` and `db` services and launches them in the background. The `db` service is `postgres:16`. The `web` service runs gunicorn-less dev mode (`entrypoint-dev.sh`), which auto-runs `migrate` and `runserver` on port `8000`.
 
 ## 3. First migration + superuser
 
@@ -38,10 +38,10 @@ If `DEBUG=True`, migration `users/0002_auto_20230504_1107` automatically creates
 
 | URL | What you should see |
 |---|---|
-| `http://localhost:8001/admin/` | Django admin login |
-| `http://localhost:8001/api/schema/swagger-ui/` | OpenAPI 3.1 docs (drf-spectacular) |
-| `http://localhost:8001/api/system-status/is-system-up/` | `{"is_operational": true}` |
-| `http://localhost:8001/healthcheck/` | `ok` (plain text) |
+| `http://localhost:8000/admin/` | Django admin login |
+| `http://localhost:8000/api/schema/swagger-ui/` | OpenAPI 3.1 docs (drf-spectacular) |
+| `http://localhost:8000/api/system-status/is-system-up/` | `{"is_operational": true}` |
+| `http://localhost:8000/healthcheck/` | `ok` (plain text) |
 
 If any of these fail, check `just logs` for traces.
 

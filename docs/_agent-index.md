@@ -173,7 +173,7 @@ If your question isn't here, add a row in your PR.
 | just not found, command not found | [troubleshooting.md → `just: command not found`](./troubleshooting.md#just-command-not-found) |
 | docker compose v1, `docker-compose` not found | [troubleshooting.md → docker compose](./troubleshooting.md#docker-compose-command-not-found-or-docker-compose-is-invoked) |
 | postgres connection refused, db unreachable | [troubleshooting.md → connection refused](./troubleshooting.md#psycopgoperationalerror-connection-refused) |
-| port 8001 in use | [troubleshooting.md → port 8001](./troubleshooting.md#port-8001-already-in-use) |
+| port 8000 in use | [troubleshooting.md → port 8000](./troubleshooting.md#port-8000-already-in-use) |
 | ImproperlyConfigured | [troubleshooting.md → ImproperlyConfigured](./troubleshooting.md#improperlyconfigured-set-the-x-environment-variable) |
 | relation does not exist, migrate | [troubleshooting.md → relation does not exist](./troubleshooting.md#djangodbutilsprogrammingerror-relation--does-not-exist) |
 | no changes detected (migrations) | [troubleshooting.md → no changes detected](./troubleshooting.md#no-changes-detected-but-you-edited-a-model) |
