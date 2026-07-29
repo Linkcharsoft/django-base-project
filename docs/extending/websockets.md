@@ -271,7 +271,7 @@ daphne -b 0.0.0.0 -p 8000 django_base.asgi:application
 2. Open a Django shell: `from channels.layers import get_channel_layer; layer = get_channel_layer(); await layer.send("test", {"type": "hi"})` — should not error.
 3. From the browser dev console:
    ```js
-   const ws = new WebSocket("ws://localhost:8000/ws/lobby/?token=<your_jwt>");
+   const ws = new WebSocket("ws://localhost:8001/ws/lobby/?token=<your_jwt>");
    ws.onmessage = (e) => console.log(e.data);
    ws.onopen = () => ws.send(JSON.stringify({message: "hello"}));
    ```

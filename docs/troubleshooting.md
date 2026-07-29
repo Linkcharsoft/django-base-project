@@ -33,13 +33,13 @@ The `db` service hasn't finished starting yet, or `.env` `DB_HOST` is wrong.
 
 Wait a few seconds after `docker compose up -d`, or `just logs` to confirm Postgres is ready.
 
-### Port 8000 already in use
+### Port 8001 already in use
 
 ```bash
 docker compose down       # stop the dev stack
-# or, find what's holding 8000:
-#   Windows: netstat -aon | findstr :8000 → tasklist /FI "PID eq <pid>"
-#   macOS/Linux: lsof -i :8000
+# or, find what's holding 8001:
+#   Windows: netstat -aon | findstr :8001 -> tasklist /FI "PID eq <pid>"
+#   macOS/Linux: lsof -i :8001
 ```
 
 ### `ImproperlyConfigured: Set the X environment variable`

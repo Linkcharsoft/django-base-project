@@ -149,7 +149,7 @@ Browse interactively: `/api/schema/swagger-ui/` or `/api/schema/redoc/`.
 
 | | Version |
 |---|---|
-| Python | 3.13 |
+| Python | 3.14 |
 | Django | 6.0.5 |
 | DRF | 3.17.1 |
 | PostgreSQL | 16 |

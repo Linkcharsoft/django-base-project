@@ -2,7 +2,7 @@
 name = "django-base-project"
 version = "0.1.0"
 description = "Inferencia Django base template"
-requires-python = ">=3.13"
+requires-python = ">=3.14"
 dependencies = [
     "dj-rest-auth[with_social]",
     "Django",
