@@ -1,0 +1,62 @@
+name: Claude review (Dependabot)
+
+# Reviews Dependabot PRs with Claude: reads the changelog of every bumped
+# package, checks whether the flagged changes touch code this project actually
+# uses, and posts a single verdict comment on the PR. CI stays the mechanical
+# gate; this covers the judgment part (breaking changes, deprecations).
+#
+# Auth note: workflows triggered by Dependabot only see *Dependabot secrets*,
+# so CLAUDE_CODE_OAUTH_TOKEN must exist in Settings -> Secrets and variables
+# -> Dependabot (not just in Actions secrets).
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize]
+
+concurrency:
+  group: claude-dependabot-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  review:
+    name: Review dependency bumps
+    if: github.actor == 'dependabot[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      pull-requests: write
+      id-token: write
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          # Full history so Claude can diff the PR against its base branch.
+          fetch-depth: 0
+
+      - uses: anthropics/claude-code-action@c81e3bc69d1b18badbb63ba39581218f02421678 # v1.0.201
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          # The action rejects non-collaborator actors by default, and
+          # dependabot[bot] is never a collaborator.
+          allowed_bots: "dependabot[bot]"
+          prompt: |
+            This PR was opened by Dependabot on a Django/DRF project. Review it
+            as a dependency update, not as a code change:
+
+            1. List every package bumped in the diff (uv.lock, workflow files,
+               or Dockerfile), with old and new versions.
+            2. For each bump, fetch the release notes or changelog covering the
+               version range and flag breaking changes, deprecations, or
+               behavior changes.
+            3. For anything flagged, search this codebase to check whether the
+               project actually uses the affected API or feature.
+            4. Post exactly one comment on PR #${{ github.event.pull_request.number }}
+               using `gh pr comment`, containing:
+               - a table: package | old -> new | risk (none / low / review)
+               - a final verdict line: "Verdict: OK to merge" if nothing risky
+                 was found, otherwise "Verdict: needs human review" followed by
+                 the specific items a human should check.
+
+            Do not modify any files. Do not approve, merge, or close the PR.
+          claude_args: |
+            --allowedTools "Bash(gh pr comment:*),Bash(gh pr view:*),Bash(git diff:*),Bash(git log:*),WebFetch,WebSearch"
