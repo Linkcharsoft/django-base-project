@@ -36,6 +36,11 @@ jobs:
       - uses: anthropics/claude-code-action@c81e3bc69d1b18badbb63ba39581218f02421678 # v1.0.201
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          # Without an explicit token the action tries to mint one via the
+          # Claude GitHub App, which is not installed on this repo. The native
+          # workflow token is enough: the permissions block above elevates it
+          # to pull-requests: write even on Dependabot-triggered runs.
+          github_token: ${{ secrets.GITHUB_TOKEN }}
           # The action rejects non-collaborator actors by default, and
           # dependabot[bot] is never a collaborator.
           allowed_bots: "dependabot[bot]"
