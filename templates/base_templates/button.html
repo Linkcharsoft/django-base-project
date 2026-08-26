@@ -1,0 +1,27 @@
+{% comment %}
+Bulletproof CTA. Usage: {% include "base_templates/button.html" with url=event_url label="Ver evento" %}
+The VML fallback keeps the button rectangular and filled in Outlook desktop, which ignores
+border-radius and padding on anchors.
+{% endcomment %}
+<table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center"
+       style="border-collapse:separate; margin:32px auto;">
+    <tr>
+        <td class="gx-button" align="center" bgcolor="#111111"
+            style="border-radius:8px; background-color:#111111;">
+            <!--[if mso]>
+            <v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word"
+                         href="{{ url }}" style="height:48px;v-text-anchor:middle;width:260px;" arcsize="17%"
+                         stroke="f" fillcolor="#111111">
+                <w:anchorlock/>
+                <center style="color:#ffffff;font-family:Arial,sans-serif;font-size:16px;font-weight:bold;">{{ label }}</center>
+            </v:roundrect>
+            <![endif]-->
+            <!--[if !mso]><!-- -->
+            <a href="{{ url }}"
+               style="display:inline-block; padding:15px 34px; font-family:Arial,'Helvetica Neue',Helvetica,sans-serif; font-size:16px; font-weight:bold; line-height:1; color:#ffffff; text-decoration:none; border-radius:8px; background-color:#111111;">
+                {{ label }}
+            </a>
+            <!--<![endif]-->
+        </td>
+    </tr>
+</table>

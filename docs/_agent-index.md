@@ -94,6 +94,9 @@ If your question isn't here, add a row in your PR.
 | file upload, `ImageField`, `FileField`, `unique_upload_to`, avatar | [conventions.md → file uploads](./conventions.md#file-uploads) |
 | password validator, `UpperValidator`, `SymbolValidator` | [conventions.md → custom password validators](./conventions.md#custom-password-validators) |
 | email helper, send email from view, template sender | [conventions.md → email helpers](./conventions.md#email-helpers) |
+| template base de mail, `base_templates/base.html`, header, footer, botón de mail, `button.html`, `fallback_link.html`, estilos inline, preheader, mail se ve feo | [conventions.md → writing a mail template](./conventions.md#writing-a-mail-template) |
+| preview de mails, `preview_emails`, mandar mails de prueba, ver cómo llega el mail, probar template | [conventions.md → previewing mail](./conventions.md#previewing-mail) |
+| `BASE_EMAILS_BANNER_URL`, `BASE_EMAILS_CONTACT_EMAIL`, banner del mail, mail de contacto en el footer | [conventions.md → email helpers](./conventions.md#email-helpers) |
 | i18n, translation, gettext, `.po`, `.mo` | [conventions.md → i18n](./conventions.md#i18n) |
 
 ### Recipes (how do I add X)

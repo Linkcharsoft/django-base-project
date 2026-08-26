@@ -6,6 +6,8 @@ from django_base.settings.environment_variables import BASE_DIR
 APP_NAME = "Django Base"
 USE_DEBUG_TOOLBAR = False
 BASE_EMAILS_BANNER_URL = "https://linkchar-static-bk.s3.us-east-1.amazonaws.com/Linkchar-banner.jpg"
+# Shown in the mail footer so recipients have somewhere to reply. Empty omits the line.
+BASE_EMAILS_CONTACT_EMAIL = ""
 
 # <-------------- Auth configurations -------------->
 PASSWORD_CHANGE_BY_EMAIL = True

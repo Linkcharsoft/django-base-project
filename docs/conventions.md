@@ -178,10 +178,44 @@ Plus `FileSizeValidator` (above).
 
 In `django_base/base_utils/utils.py`:
 
-- `get_default_for_email_template()` → dict with `APP_NAME`, banner URL, etc. Spread into your template context.
+- `get_default_for_email_template()` → dict with `site_name`, `banner_url`, `contact_email`, `year`. Spread into your template context.
 - `email_template_sender(subject, template_name, context, to_email, from_email=DEFAULT_FROM_EMAIL, attachments=None)` → renders `template_name` via the Django template engine (project `templates/` dir is on the loader path) and sends via the configured `EMAIL_BACKEND`. Note: `email_template_sender` *also* calls `get_default_for_email_template()` internally, so you don't need to merge it into context manually — but it doesn't hurt.
 
+All three branding values come from settings: `APP_NAME`, `BASE_EMAILS_BANNER_URL` and
+`BASE_EMAILS_CONTACT_EMAIL` (empty by default, which omits the footer's contact line). A project
+that needs to change them per deployment without a release should move them behind env vars — see
+[environment.md](./environment.md).
+
 Templates live in `templates/registration/` and `templates/account/` (allauth defaults). Override the allauth ones by copying the same file path with your changes.
+
+### Writing a mail template
+
+Every template extends `base_templates/base.html`, which supplies the outer table, the white card,
+the banner header and the footer. Two rules keep them rendering in real clients:
+
+1. **Style inline, on every element.** Gmail strips most of a `<head>` `<style>` block and Outlook
+   ignores much of what is left, so a class-based layout collapses into unstyled text in exactly the
+   clients that matter. The `<style>` block in the base carries responsive tweaks only — never the
+   layout itself.
+2. **Reuse the partials** instead of hand-rolling markup:
+   - `{% include "base_templates/button.html" with url=... label="..." %}` — the CTA, with a VML
+     fallback so Outlook desktop still shows a filled, rounded button.
+   - `{% include "base_templates/fallback_link.html" with url=... %}` — the "if the button doesn't
+     work" plain-link escape hatch, which every mail carrying a CTA must include.
+
+Optional context keys the base understands: `preheader`, the hidden line clients show next to the
+subject in the inbox list.
+
+### Previewing mail
+
+`python manage.py preview_emails` renders every transactional template off one sample fixture set.
+`--out <dir>` writes the HTML for eyeballing; `--to <address>` sends real mail through the configured
+backend, which is the only way to check how Gmail and Outlook actually treat a layout change.
+`--only key1,key2` limits the run, and `--from` overrides the sender for providers that reject
+unverified identities. Run it after touching the base or any mail template.
+
+Add a fixture to `SAMPLES` in that command whenever you add a mail, so the new template is covered
+by the same preview run.
 
 ## OpenAPI schema
 

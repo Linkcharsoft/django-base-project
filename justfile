@@ -44,6 +44,10 @@ test:
 coverage:
     docker compose exec {{web}} pytest --cov=. --cov-report=html
 
+# Renderizar los mails transaccionales a media/email_previews (uso: just email-preview --to mail@x.com)
+email-preview *args:
+    docker compose exec {{web}} python manage.py preview_emails --out media/email_previews {{args}}
+
 # Generar archivos de traducción (.po)
 messages:
     docker compose exec {{web}} python manage.py makemessages -a --ignore=venv/*

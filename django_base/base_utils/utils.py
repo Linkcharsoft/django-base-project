@@ -13,9 +13,11 @@ def get_random_string(length):
 
 
 def get_default_for_email_template():
+    """Context every mail template can count on: branding, the footer's contact line and the year."""
     return {
         "banner_url": settings.BASE_EMAILS_BANNER_URL,
         "site_name": settings.APP_NAME,
+        "contact_email": settings.BASE_EMAILS_CONTACT_EMAIL,
         "year": timezone.now().year,
     }
 
