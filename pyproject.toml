@@ -18,7 +18,7 @@ dependencies = [
     "drf-writable-nested",
     "gunicorn",
     "pillow>=12.2.0",
-    "psycopg[binary]>=3.3.4",
+    "psycopg[binary]>=3.3.5",
     "sentry-sdk",
     "split-settings",
     "whitenoise",
