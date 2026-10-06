@@ -1,0 +1,91 @@
+# Deploy to the single-EC2 stack (Linkchar's base_infra_EC2): build the image,
+# push it to ECR, then SSH into the box and run /opt/app/deploy.sh, which pulls
+# it, recreates `web`, waits for its healthcheck and rolls back to the previous
+# image if the new one never turns healthy (the job then fails).
+#
+# Secrets: AWS_ACCESS_KEY_ID / AWS_SECRET_ACCESS_KEY (push to ECR), EC2_HOST
+# (the box's Elastic IP, Terraform output `ec2_public_ip`), EC2_SSH_KEY (private
+# half of the infra's `ssh_public_key`), DISCORD_WEBHOOK (failure notice).
+# EC2_HOST_FINGERPRINT (optional, recommended): the box's SSH host key fingerprint,
+# so the action refuses to talk to anything else. Get it with
+#   ssh-keyscan -t ed25519 <eip> 2>/dev/null | ssh-keygen -lf - | awk '{print $2}'
+# (SHA256:...). It changes when the box is recreated: update it then. Left empty,
+# the host key is not checked.
+# EC2_HOST, EC2_SSH_KEY and EC2_HOST_FINGERPRINT differ per box: keep them in the
+# GitHub Environment the job uses (`develop` here, `production` in ec2-main.yml).
+name: Deploy to EC2 - Develop
+
+on:
+  push:
+    branches: [ "develop" ] #main/develop/others
+
+env:
+  AWS_REGION: us-east-1
+
+  ENVIRONMENT: develop
+
+  ECR_REPOSITORY: <project_name>-backend-ecr-develop
+
+permissions:
+  contents: read
+
+# Never run two deploys of the same environment at once; a newer push waits.
+concurrency:
+  group: deploy-develop
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    environment: develop
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ env.AWS_REGION }}
+
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v2
+
+    # The box runs :latest; the commit tag identifies what was deployed.
+    # amd64 explicitly: the box is an amd64 instance.
+    - name: Build, tag, and push image to Amazon ECR
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        IMAGE_TAG: ${{ github.sha }}
+      run: |
+        docker buildx build --push \
+          --platform linux/amd64 \
+          -t $ECR_REGISTRY/$ECR_REPOSITORY:latest \
+          -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG \
+          --cache-to type=gha,mode=max \
+          --cache-from type=gha .
+
+    - name: Deploy on EC2 over SSH
+      uses: appleboy/ssh-action@v1
+      with:
+        host: ${{ secrets.EC2_HOST }}
+        username: ubuntu
+        key: ${{ secrets.EC2_SSH_KEY }}
+        fingerprint: ${{ secrets.EC2_HOST_FINGERPRINT }}
+        command_timeout: 25m # lock wait (<=10m) + healthcheck (<=5m) + rollback (<=5m)
+        script: /opt/app/deploy.sh
+
+    - name: Deploy Failure
+      uses: rjstone/discord-webhook-notify@v1
+      if: failure()
+      with:
+        severity: error
+        details: Deploy Failed!
+        webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}

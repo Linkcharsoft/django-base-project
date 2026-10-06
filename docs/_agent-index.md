@@ -20,6 +20,7 @@ If your question isn't here, add a row in your PR.
 |---|---|
 | install, clone, first time, setup, prerequisites | [quickstart.md](./quickstart.md) |
 | env var, environment variable, `.env`, secret, configuration | [environment.md](./environment.md) |
+| cors, allowed origins, `CORS_ALLOWED_URLS`, www, front url origin | [environment.md → required](./environment.md#required-the-project-will-not-boot-without-these) |
 | add new env var, register env var | [environment.md → checklist](./environment.md#adding-a-new-env-var-checklist) |
 | feature flag, `USE_DEBUG_TOOLBAR`, `USE_S3` | [environment.md → compile-time flags](./environment.md#compile-time-flags-not-env-vars) |
 | celery, background jobs, redis, broker | [extending/celery.md](./extending/celery.md) |
@@ -141,6 +142,7 @@ If your question isn't here, add a row in your PR.
 
 | Keywords | Where |
 |---|---|
+| deploy pipeline, deploy workflow, github actions deploy, ecs deploy, ec2 deploy, `.github.base`, deploy.sh, rollback | [deployment.md → deploy pipelines](./deployment.md#deploy-pipelines) |
 | production deploy, gunicorn, prod compose | [deployment.md → production image](./deployment.md#production-image) |
 | static files, whitenoise, collectstatic | [deployment.md → static and media](./deployment.md#static-and-media) |
 | s3 media, public media storage | [deployment.md → static and media](./deployment.md#static-and-media) |

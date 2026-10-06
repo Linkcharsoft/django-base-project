@@ -14,7 +14,7 @@ All vars are parsed in [`django_base/settings/environment_variables.py`](../djan
 | `FRONT_URL` | url | `auth_api/`, password recovery emails | Used to build recovery / verification links. **No trailing slash** in stored value (templates add `/`). |
 | `CSRF_TRUSTED_ORIGINS` | csv | `django_settings.py` | Comma-separated origins for CSRF. |
 | `ALLOWED_HOSTS` | csv | `django_settings.py` | Comma-separated host headers. |
-| `CORS_ALLOWED_URLS` | csv | `custom_settings.py` (CORS) | Origins allowed by `django-cors-headers`. |
+| `CORS_ALLOWED_URLS` | csv | `custom_settings.py` (CORS) | Extra origins allowed by `django-cors-headers`. `FRONT_URL` is always appended, together with its `www.` twin (`https://app.com` also allows `https://www.app.com`, and vice versa; no twin for `localhost` or IPs) — so list only *other* frontends here. |
 | `DB_ENGINE` | enum | `db_settings.py` | One of `sqlite3`, `postgresql`, `mysql`, `oracle`. |
 | `DB_USER` `DB_PASSWORD` `DB_HOST` `DB_PORT` `DB_NAME` | str | `db_settings.py` | DB credentials. With dockerized DB, `DB_HOST=db`. With sqlite, the rest are ignored but must be present (any value). |
 | `EMAIL_PROVIDER` | enum | `custom_settings.py` | `console` (dev), `smtp`, `aws` (`django_ses.SESBackend`). |

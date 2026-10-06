@@ -87,6 +87,7 @@ Treat docs like code: when you change behavior, update the doc in the **same PR*
 | A new just recipe / tool config | [toolchain.md](./toolchain.md) + [_agent-index.md](./_agent-index.md) |
 | A CI step, or a **required** env var (CI defines its own env block) | [ci.md](./ci.md) + the `test` job env in [ci.yml](../.github/workflows/ci.yml) |
 | Deployment surface (Dockerfile, entrypoint, gunicorn config) | [deployment.md](./deployment.md) |
+| A deploy workflow template (`.github.base/workflows/`) | [deployment.md → deploy pipelines](./deployment.md#deploy-pipelines) |
 | An opt-in feature (Celery, Channels, places, …) | the relevant file under [extending/](./extending/) — do **not** add it to the base docs |
 
 ### Adding a new doc file

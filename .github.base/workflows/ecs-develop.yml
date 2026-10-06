@@ -2,11 +2,11 @@ name: Deploy to Amazon ECS - Develop
 
 on:
   push:
-    branches: [ "develop" ] #main/develop/others 
+    branches: [ "develop" ] #main/develop/others
 
 env:
   AWS_REGION: us-east-1
-  
+
   ENVIRONMENT: develop
 
   ECR_REPOSITORY: <project_name>-backend-ecr-develop

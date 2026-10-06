@@ -18,6 +18,19 @@ command: gunicorn --bind 0.0.0.0:8000 --pythonpath code django_base.wsgi:applica
 
 The dev entrypoint (`entrypoint-dev.sh`) is **not** used in production.
 
+## Deploy pipelines
+
+[`.github.base/workflows/`](../.github.base/workflows/) holds example deploy workflows, one pair per Linkchar infra flavour. They are **not** active here (GitHub only runs `.github/workflows/`): in a derived project, copy the pair that matches its infra into `.github/workflows/`, replace `<project_name>` and set `AWS_REGION`.
+
+| Infra | Files | How it deploys | GitHub secrets |
+|---|---|---|---|
+| ECS Fargate (`base_infra_fargate`) | `ecs-main.yml`, `ecs-develop.yml` | Build + push to ECR, render the new image into the task definition, `amazon-ecs-deploy-task-definition` and wait for service stability | `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `DISCORD_WEBHOOK` |
+| Single EC2 box (`base_infra_EC2`) | `ec2-main.yml`, `ec2-develop.yml` | Build + push to ECR (`:latest` + commit tag), then `ssh ubuntu@<box> /opt/app/deploy.sh`: pull, recreate `web`, wait for the `/healthcheck/` healthcheck, roll back to the previous image if it never turns healthy | the above + `EC2_HOST` (the box's Elastic IP), `EC2_SSH_KEY` (private half of the infra's `ssh_public_key`), optional `EC2_HOST_FINGERPRINT` (the box's SSH host key, `SHA256:...`; when set, the deploy refuses any other host) |
+
+`main` deploys `production`, `develop` deploys `develop`; the resource names (`<project_name>-backend-ecr-<environment>`, and the ECS cluster/service/task/container names) are the ones the infra repos create. For EC2, keep `EC2_HOST`/`EC2_SSH_KEY`/`EC2_HOST_FINGERPRINT` in per-environment GitHub Environments (`production`, `develop`): each environment is a different box.
+
+The EC2 rollback does not revert migrations the new image already ran (see [migration deploy flow](#migration-deploy-flow)), and the healthcheck only proves gunicorn answers.
+
 ## Environment
 
 `IS_PRODUCTION=True` activates the Sentry block in `custom_settings.py`. If `SENTRY_DSN` is also set, `sentry_sdk.init` runs with `traces_sample_rate=1.0` and `profiles_sample_rate=1.0`. If `SENTRY_DSN` is missing, the project logs a warning and continues (does not crash) — added in Phase 1 of the audit.

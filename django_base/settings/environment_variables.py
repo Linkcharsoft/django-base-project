@@ -1,11 +1,26 @@
 import os
 from pathlib import Path
+from urllib.parse import urlsplit, urlunsplit
 
 import environ
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 env = environ.Env()
 environ.Env.read_env(os.path.join(BASE_DIR, ".env"))
+
+
+def with_www_variant(url):
+    """[url, url with "www." toggled]: frontends are often served from both the apex and www.
+
+    Hosts without a dot (localhost) and IP addresses get no variant.
+    """
+    parts = urlsplit(url)
+    host = parts.hostname or ""
+    if "." not in host or host.replace(".", "").isdigit():
+        return [url]
+    variant = host.removeprefix("www.") if host.startswith("www.") else f"www.{host}"
+    netloc = f"{variant}:{parts.port}" if parts.port else variant
+    return [url, urlunsplit(parts._replace(netloc=netloc))]
 
 
 # <--------------- General configurations -------------->
@@ -22,7 +37,10 @@ AWS_SECRET_ACCESS_KEY = env("AWS_SECRET_ACCESS_KEY", default="")
 FRONT_URL = env("FRONT_URL", default="http://localhost:3000")
 CSRF_TRUSTED_ORIGINS = env.list("CSRF_TRUSTED_ORIGINS", default=[])
 ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=[]) if not DEBUG else ["*"]
-CORS_ALLOWED_URLS = env.list("CORS_ALLOWED_URLS", default=[]) + [FRONT_URL]
+# FRONT_URL is always allowed, together with its www / non-www twin.
+CORS_ALLOWED_URLS = list(
+    dict.fromkeys(env.list("CORS_ALLOWED_URLS", default=[]) + with_www_variant(FRONT_URL))
+)
 
 
 # <-------------- DB settings -------------->
