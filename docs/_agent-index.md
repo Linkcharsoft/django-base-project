@@ -134,6 +134,7 @@ If your question isn't here, add a row in your PR.
 | missing migration, `makemigrations --check`, model changed without migration | [ci.md → steps worth knowing about](./ci.md#steps-worth-knowing-about) |
 | `uv lock --check`, lock out of sync with pyproject | [ci.md → steps worth knowing about](./ci.md#steps-worth-knowing-about) |
 | dependabot, vulnerability, CVE, security alert, bump dependency, upgrade package | [ci.md → dependabot](./ci.md#dependabot) |
+| dependabot review, automerge, auto-merge, `CLAUDE_CODE_OAUTH_TOKEN`, `DEPENDABOT_AUTOMERGE`, linkchar-backend-workflows | [ci.md → automated review](./ci.md#automated-review) |
 | triage alert, severity vs exposure, is this CVE exploitable | [ci.md → triaging an alert](./ci.md#triaging-an-alert) |
 | should I merge this dependabot PR, major bump, red dependabot check | [ci.md → reviewing a dependabot pr](./ci.md#reviewing-a-dependabot-pr) |
 | ruff formats markdown, `*.md` excluded, docs reformatted by ruff | [ci.md → reviewing a dependabot pr](./ci.md#reviewing-a-dependabot-pr) |

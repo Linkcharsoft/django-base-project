@@ -4,7 +4,7 @@
 
 ## CI
 
-[`.github/workflows/ci.yml`](../.github/workflows/ci.yml) runs on every PR and on pushes to `main`. Two jobs, in parallel:
+[`.github/workflows/ci.yml`](../.github/workflows/ci.yml) runs on every PR and on pushes to `main`. Two jobs, in parallel (plus a third, `dependabot`, that only runs on Dependabot PRs — see [automated review](#automated-review)):
 
 | Job | Steps |
 |---|---|
@@ -56,7 +56,17 @@ The grouping is the point. Ungrouped, a weekly Python check opens one PR per pac
 
 Note that Dependabot runs as soon as it sees the config on the default branch — the `interval` governs subsequent runs, not the first one. Expect a burst of PRs the day you merge it, one per accumulated major plus one per group.
 
+### Automated review
+
+The `dependabot` job in `ci.yml` calls the shared [`linkchar-backend-workflows`](https://github.com/Linkcharsoft/linkchar-backend-workflows) review, pinned to a release tag (Dependabot bumps the tag like any other action). After Lint and Tests finish, Claude reads the changelog of every bumped package, checks whether this project uses what changed, and posts a verdict comment. Patch/minor bumps whose verdict is `ok` **and** whose CI passed are squash-merged automatically; majors are only commented. Set the `DEPENDABOT_AUTOMERGE` repo variable to `off` to keep the review but never merge.
+
+- **Secret:** `CLAUDE_CODE_OAUTH_TOKEN` must exist both as a *Dependabot* secret and as an *Actions* secret (same value). Without it the review is skipped and nothing merges.
+- **Adding a CI job:** add it to the `dependabot` job's `needs` **and** to its `ci-result` expression, or a failure in it will not block the merge.
+- Merge policy, inputs and fix commits from trusted actors are documented in the shared repo's README.
+
 ### Reviewing a Dependabot PR
+
+What reaches a human is what the automated review did not merge: majors, red PRs, and anything the verdict flagged.
 
 Green checks mean "nothing we test broke." That is most of the answer, and for the grouped minor/patch PR it is normally all of it — merge it.
 

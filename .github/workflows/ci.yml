@@ -9,6 +9,9 @@ concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: true
 
+permissions:
+  contents: read
+
 env:
   UV_FROZEN: "1"
 
@@ -135,3 +138,20 @@ jobs:
 
       - name: OpenAPI schema is valid
         run: uv run python manage.py spectacular --validate --fail-on-warn --file /dev/null
+
+  dependabot:
+    needs: [lint, test]
+    # Dependabot's PRs, whoever pushed last: the called workflow decides which pushers it trusts.
+    if: ${{ !cancelled() && github.event.pull_request.user.login == 'dependabot[bot]' }}
+    uses: Linkcharsoft/linkchar-backend-workflows/.github/workflows/dependabot-review.yml@v1.0.0
+    permissions:
+      actions: read
+      contents: write
+      pull-requests: write
+      id-token: write
+    secrets:
+      CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+    with:
+      # "success" only when every job above succeeded; failed, cancelled or skipped all count as not.
+      ci-result: ${{ (needs.lint.result == 'success' && needs.test.result == 'success') && 'success' || 'failure' }}
+      automerge: ${{ vars.DEPENDABOT_AUTOMERGE || 'minor' }}
