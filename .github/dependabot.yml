@@ -1,5 +1,9 @@
 version: 2
 
+# Every Dependabot PR is reviewed by the shared workflow (the `dependabot` job
+# of `workflows/ci.yml`), which squash-merges patch/minor bumps that pass the
+# review and CI. Majors go to the panel's runner, which tests and merges them.
+
 updates:
   # ---------- Python (uv.lock + pyproject.toml) ----------
   - package-ecosystem: uv
@@ -14,16 +18,17 @@ updates:
       prefix: "[FIX]"
       prefix-development: "[FIX]"
     groups:
-      # One PR for every patch/minor bump. These are the ones that should be
-      # boring to merge: CI green -> merge. Keeping them grouped is what stops
-      # Dependabot from opening five separate PRs every Monday.
+      # One PR for every patch/minor bump: CI green + review ok -> merged by
+      # the `dependabot` job of workflows/ci.yml. Keeping them grouped is what
+      # stops Dependabot from opening five separate PRs every Monday.
       python-minor-patch:
         applies-to: version-updates
         update-types:
           - minor
           - patch
-      # Majors stay ungrouped and arrive one per PR — they need the changelog
-      # read before merging, so batching them would defeat the point.
+      # Majors stay ungrouped and arrive one per PR: the review does not merge
+      # them, the panel's runner tests each one and merges it, so batching them
+      # would defeat the point.
       security:
         applies-to: security-updates
         patterns:

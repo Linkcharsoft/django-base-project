@@ -143,7 +143,7 @@ jobs:
     needs: [lint, test]
     # Dependabot's PRs, whoever pushed last: the called workflow decides which pushers it trusts.
     if: ${{ !cancelled() && github.event.pull_request.user.login == 'dependabot[bot]' }}
-    uses: Linkcharsoft/linkchar-backend-workflows/.github/workflows/dependabot-review.yml@v1.1.0
+    uses: Linkcharsoft/linkchar-backend-workflows/.github/workflows/dependabot-review.yml@v1.2.0
     permissions:
       actions: read
       contents: write
