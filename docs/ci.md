@@ -61,6 +61,7 @@ Note that Dependabot runs as soon as it sees the config on the default branch â€
 The `dependabot` job in `ci.yml` calls the shared [`linkchar-backend-workflows`](https://github.com/Linkcharsoft/linkchar-backend-workflows) review, pinned to a release tag (Dependabot bumps the tag like any other action). After Lint and Tests finish, Claude reads the changelog of every bumped package, checks whether this project uses what changed, and posts a verdict comment. Patch/minor bumps whose verdict is `ok` **and** whose CI passed are squash-merged automatically; majors are only commented. Set the `DEPENDABOT_AUTOMERGE` repo variable to `off` to keep the review but never merge.
 
 - **Secret:** `CLAUDE_CODE_OAUTH_TOKEN` must exist both as a *Dependabot* secret and as an *Actions* secret (same value). Without it the review is skipped and nothing merges.
+- **Deploying the merge:** a merge made with the workflow's `GITHUB_TOKEN` fires no push workflow, so a project with a deploy workflow sets `deploy-workflow: <its file name>` on the `dependabot` job and grants it `actions: write` (the deploy workflow needs a `workflow_dispatch` trigger that its jobs accept on `main`).
 - **Adding a CI job:** add it to the `dependabot` job's `needs` **and** to its `ci-result` expression, or a failure in it will not block the merge.
 - Merge policy, inputs and fix commits from trusted actors are documented in the shared repo's README.
 
