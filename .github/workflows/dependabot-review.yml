@@ -1,4 +1,4 @@
-name: Claude review (Dependabot)
+name: Dependabot review
 
 # Reviews Dependabot PRs with Claude: reads the changelog of every bumped
 # package, checks whether the flagged changes touch code this project actually
@@ -14,7 +14,7 @@ on:
     types: [opened, reopened, synchronize]
 
 concurrency:
-  group: claude-dependabot-${{ github.ref }}
+  group: dependabot-review-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -33,7 +33,8 @@ jobs:
           # Full history so Claude can diff the PR against its base branch.
           fetch-depth: 0
 
-      - uses: anthropics/claude-code-action@a874e9ecd7bb36efdad65429c6b35815f5a08f10 # v1.0.210
+      - name: Review dependency bumps
+        uses: anthropics/claude-code-action@a874e9ecd7bb36efdad65429c6b35815f5a08f10 # v1.0.210
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           # Without an explicit token the action tries to mint one via the
@@ -61,6 +62,10 @@ jobs:
                - a final verdict line: "Verdict: OK to merge" if nothing risky
                  was found, otherwise "Verdict: needs human review" followed by
                  the specific items a human should check.
+
+            The comment must not mention Claude, Anthropic, AI, or any
+            assistant or bot, and must not carry any signature or footer.
+            Write it as a plain review note.
 
             Do not modify any files. Do not approve, merge, or close the PR.
           claude_args: |
