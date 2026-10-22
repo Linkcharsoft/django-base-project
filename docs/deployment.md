@@ -20,7 +20,9 @@ The dev entrypoint (`entrypoint-dev.sh`) is **not** used in production.
 
 ## Deploy pipelines
 
-[`.github.base/workflows/`](../.github.base/workflows/) holds example deploy workflows, one pair per Linkchar infra flavour. They are **not** active here (GitHub only runs `.github/workflows/`): in a derived project, copy the pair that matches its infra into `.github/workflows/`, replace `<project_name>` and set `AWS_REGION`.
+[`.github.base/workflows/`](../.github.base/workflows/) holds example deploy workflows, one pair per Linkchar infra flavour. They are **not** active here (GitHub only runs `.github/workflows/`): in a derived project, copy the pair that matches its infra into `.github/workflows/`, replace `<project_name>` and set `AWS_REGION`. Then, in `ci.yml`'s `dependabot` job, set `deploy-workflow: <file>` to the workflow that deploys the branch Dependabot targets (the default branch, normally `main`: `ec2-main.yml` or `ecs-main.yml`) and change its `actions: read` to `actions: write`. Its merges are made with `GITHUB_TOKEN`, which fires no push workflow, so without this an auto-merged bump is never deployed ([CI → automated review](./ci.md#automated-review)).
+
+Each workflow also has a `workflow_dispatch` trigger, for redeploying by hand and for that dispatch. Its job only runs when the dispatch is on its own branch (`main` or `develop`), so a dispatch from another branch cannot deploy it.
 
 | Infra | Files | How it deploys | GitHub secrets |
 |---|---|---|---|

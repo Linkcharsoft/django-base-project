@@ -18,6 +18,9 @@ name: Deploy to EC2 - Develop
 on:
   push:
     branches: [ "develop" ] #main/develop/others
+  # Redeploy by hand, and how ci.yml's dependabot job deploys a bump it auto-merged (deploy-workflow): a merge
+  # made with GITHUB_TOKEN fires no push workflow.
+  workflow_dispatch:
 
 env:
   AWS_REGION: us-east-1
@@ -37,6 +40,8 @@ concurrency:
 jobs:
   deploy:
     name: Deploy
+    # A dispatch can name any branch; only develop deploys from here.
+    if: github.ref == 'refs/heads/develop'
     runs-on: ubuntu-latest
     environment: develop
 

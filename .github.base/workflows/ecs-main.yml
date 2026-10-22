@@ -3,6 +3,9 @@ name: Deploy to Amazon ECS - Main
 on:
   push:
     branches: [ "main" ] #main/develop/others
+  # Redeploy by hand, and how ci.yml's dependabot job deploys a bump it auto-merged (deploy-workflow): a merge
+  # made with GITHUB_TOKEN fires no push workflow.
+  workflow_dispatch:
 
 env:
   AWS_REGION: us-east-1
@@ -21,6 +24,8 @@ permissions:
 jobs:
   deploy:
     name: Deploy
+    # A dispatch can name any branch; only main deploys from here.
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     environment: production
 
