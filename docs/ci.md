@@ -4,12 +4,14 @@
 
 ## CI
 
-[`.github/workflows/ci.yml`](../.github/workflows/ci.yml) runs on every PR and on pushes to `main`. Two jobs, in parallel (plus a third, `dependabot`, that only runs on Dependabot PRs — see [automated review](#automated-review)):
+[`.github/workflows/ci.yml`](../.github/workflows/ci.yml) runs on every PR and on pushes to `main`, except when a change only touches docs (`docs/**`, `*.md`). One job, **Lint and tests** (plus `dependabot`, that only runs on Dependabot PRs — see [automated review](#automated-review)):
 
-| Job | Steps |
+| Stage | Steps |
 |---|---|
-| **Lint** | `uv lock --check` · `ruff check` · `ruff format --check` |
-| **Tests** | `manage.py check` · `makemigrations --check` · `migrate` · `pytest --cov` · seed idempotency · schema validation |
+| Lint | `uv lock --check` · `ruff check` · `ruff format --check` |
+| Tests | `manage.py check` · `makemigrations --check` · `migrate` · `pytest --cov` · seed idempotency · schema validation |
+
+Lint and tests share a job on purpose: each job pays its own checkout and `uv sync`, and GitHub bills every job rounded up to the minute against the org's Actions quota. A lint failure therefore stops the run before the tests.
 
 CI does **not** use Docker. It installs with `uv sync` directly on the runner and talks to a `postgres:16` service container — same Postgres as local, no SQLite fallback.
 
@@ -48,17 +50,17 @@ The `test` job defines its own env block — it does not read `.env`. When you a
 
 | Ecosystem | Cadence | Grouping |
 |---|---|---|
-| `uv` (Python) | weekly, Mondays | one PR for all minor+patch; majors separate; security separate |
+| `uv` (Python) | monthly | one PR for all minor+patch; majors separate; security separate |
 | `github-actions` | monthly | one PR for all |
 | `docker` (base image) | monthly | one PR |
 
-The grouping is the point. Ungrouped, a weekly Python check opens one PR per package and they get ignored en masse — which is how a repo ends up with 20 open alerts.
+The grouping is the point. Ungrouped, a Python check opens one PR per package and they get ignored en masse — which is how a repo ends up with 20 open alerts.
 
 Note that Dependabot runs as soon as it sees the config on the default branch — the `interval` governs subsequent runs, not the first one. Expect a burst of PRs the day you merge it, one per accumulated major plus one per group.
 
 ### Automated review
 
-The `dependabot` job in `ci.yml` calls the shared [`linkchar-backend-workflows`](https://github.com/Linkcharsoft/linkchar-backend-workflows) review, pinned to a release tag (Dependabot bumps the tag like any other action). After Lint and Tests finish, Claude reads the changelog of every bumped package, checks whether this project uses what changed, and posts a verdict comment. Patch/minor bumps whose verdict is `ok` **and** whose CI passed are squash-merged automatically; a major (or an unknown update type) gets a "Not auto-merged" comment and goes to the panel's runner, which tests it and merges it. Set the `DEPENDABOT_AUTOMERGE` repo variable to `off` to keep the review but never merge.
+The `dependabot` job in `ci.yml` calls the shared [`linkchar-backend-workflows`](https://github.com/Linkcharsoft/linkchar-backend-workflows) review, pinned to a release tag (Dependabot bumps the tag like any other action). After the Lint and tests job finishes, Claude reads the changelog of every bumped package, checks whether this project uses what changed, and posts a verdict comment. Patch/minor bumps whose verdict is `ok` **and** whose CI passed are squash-merged automatically; a major (or an unknown update type) gets a "Not auto-merged" comment and goes to the panel's runner, which tests it and merges it. Set the `DEPENDABOT_AUTOMERGE` repo variable to `off` to keep the review but never merge.
 
 - **Secret:** `CLAUDE_CODE_OAUTH_TOKEN` must exist both as a *Dependabot* secret and as an *Actions* secret (same value). Without it the review is skipped and nothing merges.
 - **Deploying the merge:** a merge made with the workflow's `GITHUB_TOKEN` fires no push workflow, so a project with a deploy workflow sets `deploy-workflow: <its file name>` on the `dependabot` job and grants it `actions: write` (the deploy workflow needs a `workflow_dispatch` trigger that its jobs accept on `main`).

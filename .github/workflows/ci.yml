@@ -1,9 +1,17 @@
 name: CI
 
+# A change that only touches docs runs nothing: there is nothing to lint or test,
+# and on the Free plan every run counts against the org's Actions minutes.
 on:
   push:
     branches: [main]
+    paths-ignore:
+      - "docs/**"
+      - "**/*.md"
   pull_request:
+    paths-ignore:
+      - "docs/**"
+      - "**/*.md"
 
 concurrency:
   group: ci-${{ github.ref }}
@@ -16,37 +24,10 @@ env:
   UV_FROZEN: "1"
 
 jobs:
-  lint:
-    name: Lint
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v7
-
-      - name: Install uv
-        uses: astral-sh/setup-uv@v7
-        with:
-          enable-cache: true
-
-      - name: Set up Python
-        run: uv python install 3.14
-
-      # `--frozen` everywhere else assumes the lock matches pyproject.toml.
-      # If it does not, the Docker build breaks at `uv sync --frozen` — catch it
-      # here instead, where the error message actually says so.
-      - name: uv.lock is in sync with pyproject.toml
-        run: uv lock --check
-
-      - name: Install dependencies
-        run: uv sync --all-extras --dev
-
-      - name: ruff check
-        run: uv run ruff check --output-format=github .
-
-      - name: ruff format
-        run: uv run ruff format --check .
-
+  # Lint and tests in one job: each job pays its own checkout and `uv sync`, and
+  # GitHub bills every job rounded up to the minute.
   test:
-    name: Tests
+    name: Lint and tests
     runs-on: ubuntu-latest
 
     services:
@@ -92,8 +73,20 @@ jobs:
       - name: Set up Python
         run: uv python install 3.14
 
+      # `--frozen` everywhere else assumes the lock matches pyproject.toml.
+      # If it does not, the Docker build breaks at `uv sync --frozen` — catch it
+      # here instead, where the error message actually says so.
+      - name: uv.lock is in sync with pyproject.toml
+        run: uv lock --check
+
       - name: Install dependencies
         run: uv sync --all-extras --dev
+
+      - name: ruff check
+        run: uv run ruff check --output-format=github .
+
+      - name: ruff format
+        run: uv run ruff format --check .
 
       - name: Django system checks
         run: uv run python manage.py check
@@ -140,7 +133,7 @@ jobs:
         run: uv run python manage.py spectacular --validate --fail-on-warn --file /dev/null
 
   dependabot:
-    needs: [lint, test]
+    needs: test
     # Dependabot's PRs, whoever pushed last: the called workflow decides which pushers it trusts.
     if: ${{ !cancelled() && github.event.pull_request.user.login == 'dependabot[bot]' }}
     uses: Linkcharsoft/linkchar-backend-workflows/.github/workflows/dependabot-review.yml@v1.2.0
@@ -152,6 +145,5 @@ jobs:
     secrets:
       CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
     with:
-      # "success" only when every job above succeeded; failed, cancelled or skipped all count as not.
-      ci-result: ${{ (needs.lint.result == 'success' && needs.test.result == 'success') && 'success' || 'failure' }}
+      ci-result: ${{ needs.test.result }}
       automerge: ${{ vars.DEPENDABOT_AUTOMERGE || 'minor' }}
