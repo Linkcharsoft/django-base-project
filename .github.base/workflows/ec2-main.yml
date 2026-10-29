@@ -8,7 +8,8 @@
 # half of the infra's `ssh_public_key`), DISCORD_WEBHOOK (failure notice).
 # EC2_HOST_FINGERPRINT (optional, recommended): the box's SSH host key fingerprint,
 # so the action refuses to talk to anything else. Get it with
-#   ssh-keyscan -t ed25519 <eip> 2>/dev/null | ssh-keygen -lf - | awk '{print $2}'
+#   ssh-keyscan -t ecdsa <eip> 2>/dev/null | ssh-keygen -lf - | awk '{print $2}'
+# (ECDSA, not ed25519: the action's Go SSH client negotiates the ECDSA host key first.)
 # (SHA256:...). It changes when the box is recreated: update it then. Left empty,
 # the host key is not checked.
 # EC2_HOST, EC2_SSH_KEY and EC2_HOST_FINGERPRINT differ per box: keep them in the
