@@ -52,7 +52,7 @@ The `test` job defines its own env block — it does not read `.env`. When you a
 |---|---|---|
 | `uv` (Python) | monthly | one PR for all minor+patch; majors separate; security separate |
 | `github-actions` | monthly | one PR for all |
-| `docker` (base image) | monthly | one PR |
+| `docker` (base image) | monthly | one PR; patch only — Python minor/major (`3.14` → `3.15`) is ignored, moving Python is a deliberate change (Dockerfile, `ci.yml`, `requires-python`) |
 
 The grouping is the point. Ungrouped, a Python check opens one PR per package and they get ignored en masse — which is how a repo ends up with 20 open alerts.
 
