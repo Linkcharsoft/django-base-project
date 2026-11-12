@@ -142,6 +142,9 @@ REST_FRAMEWORK = {
         "anon": "60/minute",
         "user": "300/minute",
         "password_recovery": "5/hour",
+        # Scope declared by dj-rest-auth's views (login, logout, registration, password change).
+        # Without a rate here ScopedRateThrottle raises and those views answer 500.
+        "dj_rest_auth": "60/minute",
     },
 }
 
