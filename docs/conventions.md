@@ -115,7 +115,9 @@ class MyViewSet(BaseModelViewSet):
     extra_permissions = []   # appended to whichever action runs
 ```
 
-Empty list = misconfiguration → raises an `AssertionError` at request time. Use `[AllowAny]` explicitly for public endpoints.
+Empty list = misconfiguration → raises an `AssertionError` at request time.
+
+**New endpoints are private by default; public ones declare `AllowAny` explicitly.** `DEFAULT_PERMISSION_CLASSES` is `IsAuthenticated`, so a view that declares nothing answers 401 to anonymous clients. To make an endpoint public, write `[AllowAny]` (in `permissions` or `permission_classes`) **and** add it to `PUBLIC_ENDPOINTS` in [`django_base/tests.py`](../django_base/tests.py); the test there fails on any public endpoint that is not listed, and on any listed one that stopped being public. See [auth.md → permissions](./auth.md#permissions).
 
 ### `ViewSetSerializerMixin`
 
@@ -224,7 +226,7 @@ by the same preview run.
 - **Every `@action` must declare `@extend_schema(request=..., responses=...)`** — both for built-in actions (`@action(detail=False, methods=["get"])`) and detail actions. Spectacular cannot infer the response envelope when the action returns anything other than the viewset's default serializer (e.g. `{"detail": "..."}`, a custom paginated envelope, a `{"items": [...], "total": N}` shape). Without `@extend_schema`, spectacular emits a *silently wrong* schema that compiles fine but lies about the real response.
 - This is enforced by `python scripts/check_api_schema.py`, which is wired ahead of `manage.py spectacular --validate --fail-on-warn` inside `just schema-validate`. The check fails the build when an `@action` is missing the decorator.
 - For viewsets, set the per-action serializer via `serializers = {"action_name": Serializer}` — that's also what spectacular reads for `list`/`retrieve`/`create`/`update`/`partial_update`/`destroy`. Do **not** also set `serializer_class`.
-- Canonical example: [users/views.py](../users/views.py) `complete_register`, `toggle_block`, `delete_test_users`. Copy that shape.
+- Canonical example: [users/views.py](../users/views.py) `complete_register`, `toggle_block`. Copy that shape.
 - The **public surface** is filtered by [`django_base/openapi.py`](../django_base/openapi.py), registered as a `PREPROCESSING_HOOKS` entry in `SPECTACULAR_SETTINGS`. It strips every `PUT` (the project answers 405 anyway) and limits `/api/auth/...` to a whitelist of routes the frontend actually consumes. When a new dj-rest-auth route needs to become public, edit the whitelist there — not via per-view decorators.
 
 ## i18n

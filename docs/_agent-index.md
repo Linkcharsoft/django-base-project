@@ -20,6 +20,7 @@ If your question isn't here, add a row in your PR.
 |---|---|
 | install, clone, first time, setup, prerequisites | [quickstart.md](./quickstart.md) |
 | env var, environment variable, `.env`, secret, configuration | [environment.md](./environment.md) |
+| `TRUSTED_PROXY_COUNT`, x-forwarded-for, xff, client ip, real ip, behind alb, behind caddy | [auth.md → client IP](./auth.md#client-ip-behind-a-proxy) |
 | cors, allowed origins, `CORS_ALLOWED_URLS`, www, front url origin | [environment.md → required](./environment.md#required-the-project-will-not-boot-without-these) |
 | add new env var, register env var | [environment.md → checklist](./environment.md#adding-a-new-env-var-checklist) |
 | feature flag, `USE_DEBUG_TOOLBAR`, `USE_S3` | [environment.md → compile-time flags](./environment.md#compile-time-flags-not-env-vars) |
@@ -56,9 +57,11 @@ If your question isn't here, add a row in your PR.
 | endpoint, route inventory, what endpoints exist | [api-contract.md](./api-contract.md) |
 | user endpoint, `/api/users/`, user crud | [api-contract.md → /api/users/](./api-contract.md#apiusers) |
 | auth endpoint, login, logout, register | [api-contract.md → /api/auth/](./api-contract.md#apiauth) |
+| my sessions, `/api/auth/sessions/`, logout-all, close session, other devices | [api-contract.md → /api/auth/](./api-contract.md#apiauth) |
 | system status, maintenance, is-system-up | [api-contract.md → /api/system-status/](./api-contract.md#apisystem-status) |
 | healthcheck, load balancer probe | [api-contract.md → /healthcheck/](./api-contract.md#healthcheck) |
 | throttle, rate limit | [api-contract.md → throttling](./api-contract.md#throttling) |
+| `dj_rest_auth` throttle scope, 500 on login, no default throttle rate | [api-contract.md → throttling](./api-contract.md#throttling) |
 | breaking change, deprecate, contract | [api-contract.md → breaking change rules](./api-contract.md#breaking-change-rules) |
 | put 405, no put, why patch | [api-contract.md](./api-contract.md) + [conventions.md → viewset mixins](./conventions.md#viewset-mixins) |
 
@@ -68,14 +71,23 @@ If your question isn't here, add a row in your PR.
 |---|---|
 | login, jwt, access token, refresh token | [auth.md → login](./auth.md#login-email--password) |
 | jwt lifetime, jwt expiration, jwt rotation | [auth.md → stack](./auth.md#stack) |
+| session, `AuthSession`, `sid` claim, revoke token, revocation, idle timeout, `SESSION_IDLE_TTL`, `SESSION_MAX_TTL`, 401 session_invalid | [auth.md → sessions](./auth.md#sessions-revocable-jwt) |
+| password change closes sessions, deactivate user logs out, `mark_password_change`, `open_session` | [auth.md → sessions](./auth.md#sessions-revocable-jwt) |
+| login attempts, `LoginEvent`, failed logins, brute force, login rate limit, 429 login, `LOGIN_RATE_LIMIT_*` | [auth.md → login attempts](./auth.md#login-attempts-and-rate-limit) |
+| admin login, `/admin/login/`, not_staff | [auth.md → login attempts](./auth.md#login-attempts-and-rate-limit) |
+| security admin, Security section, summary, users on alert, close sessions from admin | [auth.md → admin](./auth.md#admin-security-section) |
+| purge login events, `purge_security_records`, retention | [auth.md → purging](./auth.md#purging-old-records) |
+| port sessions to derived project, authtoken table, `authtoken_token`, remove TokenAuthentication | [auth.md → porting](./auth.md#porting-to-a-derived-project) |
+| allauth urls, allauth html views removed | [auth.md → signup](./auth.md#signup) |
 | signup, registration, register | [auth.md → signup](./auth.md#signup) |
 | password recovery, forgot password, reset password | [auth.md → password recovery](./auth.md#password-recovery) |
 | password change, change password | [auth.md → password change](./auth.md#password-change-authenticated) |
 | `PASSWORD_CHANGE_BY_EMAIL`, gate password change | [auth.md → password change](./auth.md#password-change-authenticated) |
 | google oauth, social login, socialapp | [extending/google-oauth.md](./extending/google-oauth.md) |
 | permission, `IsAdminUser`, `HasRegisterCompletePermission` | [auth.md → permissions](./auth.md#permissions) |
+| private by default, `AllowAny`, public endpoint, `PUBLIC_ENDPOINTS`, `DEFAULT_PERMISSION_CLASSES` | [auth.md → permissions](./auth.md#permissions) + [conventions.md → ViewSetPermissionMixin](./conventions.md#viewsetpermissionmixin) |
 | maintenance flag, kill switch, `SystemStatus`, 503 | [auth.md → maintenance flag](./auth.md#global-maintenance-flag) |
-| test user, `is_test_user`, e2e teardown, delete test users | [api-contract.md → /api/users/](./api-contract.md#apiusers) |
+| test user, e2e teardown, delete test users, reset seed | [seed-data.md → reset](./seed-data.md#reset) |
 
 ### Code patterns
 

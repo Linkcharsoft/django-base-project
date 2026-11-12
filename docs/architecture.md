@@ -25,6 +25,7 @@ High-level map of the codebase. Read [quickstart.md](./quickstart.md) first if y
 ├── auth_api/                   # Custom auth endpoints (password recovery, password change)
 ├── users/                      # User + Profile + TokenRecovery models, viewset, filters, permissions
 ├── platform_configurations/    # SystemStatus (global maintenance flag) + IsSystemUpMiddleware
+├── security/                   # JWT sessions, login attempts + rate limit, admin login, Security admin
 ├── templates/                  # HTML email templates (allauth + password recovery)
 ├── locale/                     # i18n .po/.mo files
 ├── docs/                       # ← this folder
@@ -78,10 +79,11 @@ Mounted in `django_base/urls.py`:
 
 | Prefix | Module | Purpose |
 |---|---|---|
+| `/admin/login/` | `security.admin_login` | Admin login with the login rate limit and `LoginEvent` log (mounted ahead of `/admin/`) |
 | `/admin/` | `django.contrib.admin` | Django admin |
 | `/__debug__/` | `debug_toolbar` | Only when `USE_DEBUG_TOOLBAR=True` |
 | `/api/schema/` | `drf_spectacular.views` | OpenAPI schema + Swagger UI + Redoc |
-| `/api/auth/` | `auth_api.urls` | Login, logout, JWT, password change/recovery |
+| `/api/auth/` | `auth_api.urls` (+ `security.views`) | Login, logout, JWT, own sessions, password change/recovery |
 | `/api/users/` | `users.urls` router | User CRUD + custom actions |
 | `/api/system-status/` | `platform_configurations.urls` router | Global maintenance health check |
 | `/healthcheck/`, `/` | `HealthCheckMiddleware` | Plain `ok` text (for load balancers) |
@@ -92,9 +94,10 @@ Full endpoint inventory: [api-contract.md](./api-contract.md).
 
 | App | Models | Role |
 |---|---|---|
-| `users` | `User` (custom, extends `AbstractUser`), `Profile`, `TokenRecovery` | Custom user with `is_test_user` flag, 1-to-1 `Profile` with `is_register_complete`, password recovery tokens |
+| `users` | `User` (custom, extends `AbstractUser`), `Profile`, `TokenRecovery` | Custom user, 1-to-1 `Profile` with `is_register_complete`, password recovery tokens |
 | `auth_api` | _(none)_ | Custom auth views — extends `dj-rest-auth` |
 | `platform_configurations` | `SystemStatus` | Global maintenance flag (`pk=1` singleton) |
+| `security` | `AuthSession`, `LoginEvent` (+ proxy `SecuritySummary`) | Revocable sessions behind the JWTs, login-attempt log and rate limit, admin login, "Security" admin section, `purge_security_records`. See [auth.md](./auth.md#sessions-revocable-jwt) |
 
 There is **no** app called `auth/` — that was the original name and was renamed to `auth_api/` to avoid colliding with `django.contrib.auth` (Phase 6 audit, commit `18e568d`).
 

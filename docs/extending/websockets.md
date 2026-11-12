@@ -197,6 +197,8 @@ def JWTAuthMiddlewareStack(app):
     return JWTAuthMiddleware(AuthMiddlewareStack(app))
 ```
 
+This only checks the signature and expiry. The base also requires the token's session to be valid (revocation, idle and max TTL — see [auth.md → sessions](../auth.md#sessions-revocable-jwt)): decode it with simplejwt's `AccessToken(token)` instead of `jwt_decode`, and accept the user only if `security.sessions.get_valid_session(access)` (wrapped in `database_sync_to_async`) returns a session. Otherwise a logged-out or revoked token keeps its socket.
+
 The client connects with `ws://host/ws/<room>/?token=<jwt>`. Don't put JWTs in cookies for WS — the browser sends them on every HTTP request too, and Channels' default auth middleware reads sessions only.
 
 ### 6. Settings — channel layer + INSTALLED_APPS

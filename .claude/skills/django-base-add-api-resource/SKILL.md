@@ -55,7 +55,7 @@ Start with the repo's docs, then inspect existing code:
 5. Custom actions:
    - Use `@action` from DRF. Prefer `methods=["patch"]` for state changes.
    - Add matching `permissions` and `serializers` entries for the action.
-   - **Every `@action` must be decorated with `@extend_schema(request=..., responses=...)`**, no exceptions. drf-spectacular can't infer the response envelope for actions that return anything other than the default serializer (custom dicts like `{"detail": "..."}` or `{"items": [...], "total": N}`), so without `@extend_schema` the generated OpenAPI lies. This is enforced by `scripts/check_api_schema.py` which runs as part of `just schema-validate`. Canonical example: `users/views.py` (`complete_register`, `toggle_block`, `delete_test_users`).
+   - **Every `@action` must be decorated with `@extend_schema(request=..., responses=...)`**, no exceptions. drf-spectacular can't infer the response envelope for actions that return anything other than the default serializer (custom dicts like `{"detail": "..."}` or `{"items": [...], "total": N}`), so without `@extend_schema` the generated OpenAPI lies. This is enforced by `scripts/check_api_schema.py` which runs as part of `just schema-validate`. Canonical example: `users/views.py` (`complete_register`, `toggle_block`).
    - For syntax, use `docs/development-guide.md#recipe-add-a-custom-action`; for the project-canonical shape, copy `users/views.py`.
 
 6. Router conventions:

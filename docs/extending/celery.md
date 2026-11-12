@@ -149,6 +149,36 @@ Run `just migrate` and add a `beat` service to compose:
       - redis
 ```
 
+#### Scheduling the security purge
+
+`purge_security_records` ([auth.md → purging](../auth.md#purging-old-records)) is a management command, so the beat entry only needs a thin task. In `security/tasks.py`:
+
+```python
+from celery import shared_task
+from django.core.management import call_command
+
+
+@shared_task
+def purge_security_records():
+    call_command("purge_security_records")
+```
+
+Then schedule it once a day, either from the admin (django-celery-beat → Periodic tasks → task `security.tasks.purge_security_records`, crontab `0 4 * * *`) or in code:
+
+```python
+# custom_settings.py
+from celery.schedules import crontab
+
+CELERY_BEAT_SCHEDULE = {
+    "purge-security-records": {
+        "task": "security.tasks.purge_security_records",
+        "schedule": crontab(hour=4, minute=0),
+    },
+}
+```
+
+`CELERY_BEAT_SCHEDULE` entries are synced into the `DatabaseScheduler` on beat startup. Without Celery, a daily cron line on the host does the same: `docker compose exec -T web python manage.py purge_security_records`.
+
 ### 7. Write a task
 
 In any app, create `tasks.py`:

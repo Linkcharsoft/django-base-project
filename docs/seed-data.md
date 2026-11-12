@@ -33,10 +33,10 @@ There is also `admin@admin.com / admin123123`, created by a data migration rathe
 
 ## Reset
 
-Seeded users all carry `is_test_user=True`, so the existing teardown endpoint wipes them and everything cascading from them:
+Every seeded account uses the `@test.com` domain, so deleting those users wipes everything cascading from them too:
 
 ```bash
-curl -X DELETE http://localhost:8000/api/users/delete-test-users/
+just manage shell -c "from users.models import User; User.objects.filter(email__endswith='@test.com').delete()"
 just seed
 ```
 

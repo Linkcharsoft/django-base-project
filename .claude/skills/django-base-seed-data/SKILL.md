@@ -35,7 +35,7 @@ One `DjangoModelFactory` per model. Canonical example: [users/factories.py](../.
 - `factory.Faker(...)` for filler values, `factory.Sequence(...)` for anything that must be unique.
 - `factory.SubFactory(OtherFactory)` for FKs — never create the parent by hand inside the child factory.
 - Expose non-field setup (related rows, post-save state) as `@factory.post_generation` hooks with a keyword name, so `seeds.py` reads as flags: `UserFactory(verified=False)`.
-- Set the project's test marker when the model has one — `is_test_user=True` on users — so the existing `DELETE /api/users/delete-test-users/` teardown reaches the data.
+- Seeded accounts use the `@test.com` domain, so deleting those users (see `docs/seed-data.md → Reset`) reaches the data that cascades from them.
 
 ### `seeds.py`
 
@@ -85,7 +85,7 @@ If the frontend can render a screen you cannot reach with the seeded data, the s
 ## Do not
 
 - Do not write JSON fixtures (`loaddata`/`dumpdata`). They rot when the schema changes; see `docs/testing.md`.
-- Do not add a `--fresh` / wipe flag. Reset already exists: `DELETE /api/users/delete-test-users/` cascades the test data, then re-seed.
+- Do not add a `--fresh` / wipe flag. Reset already exists: deleting the `@test.com` users cascades the test data (see `docs/seed-data.md → Reset`), then re-seed.
 - Do not create a central `seeds.py` that imports from other apps — each app seeds itself, ordering comes from `INSTALLED_APPS`.
 - Do not randomize the identity of a persona. Emails, slugs, and any value the frontend hardcodes must be literals, not `Faker`.
 - Do not seed anything behind a real external service. Mock it and add the `SETUP_REQUIRED.md` entry instead.

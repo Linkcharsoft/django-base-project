@@ -67,9 +67,10 @@ HTTP request
 ┌─────────────────────────────────────────────────────────────────┐
 │ DRF view dispatch                                               │
 │ 1. authentication_classes:                                      │
-│      TokenAuthentication, JWTAuthentication                     │
+│      SessionJWTAuthentication (JWT + its session must be valid) │
 │      → request.user, request.auth set                           │
-│ 2. permission_classes (via ViewSetPermissionMixin):             │
+│ 2. permission_classes (default IsAuthenticated; viewsets via    │
+│    ViewSetPermissionMixin):                                     │
 │      lookup permissions[action] or permissions["default"]       │
 │      → 401/403 if any fails                                     │
 │ 3. throttle_classes (anon 60/min, user 300/min, scoped)         │
@@ -95,12 +96,9 @@ HTTP response  (middleware unwinds in reverse order)
 
 ## Authentication resolution
 
-Both auth classes run in order. The first one that returns a `(user, auth)` tuple wins; the rest are skipped.
+One auth class: **`security.authentication.SessionJWTAuthentication`** — `Authorization: Bearer <jwt>` header. On top of simplejwt's checks (signature, expiry, active user) it requires the token's session (claim `sid`) to be valid, and answers 401 otherwise. See [auth.md → sessions](./auth.md#sessions-revocable-jwt). DRF's `TokenAuthentication` is not installed.
 
-- **`TokenAuthentication`** — `Authorization: Token <key>` header. Used mostly for legacy / internal scripts.
-- **`JWTAuthentication`** — `Authorization: Bearer <jwt>` header. The frontend uses this.
-
-If both fail and no auth is set, `request.user` is `AnonymousUser` and the permission classes decide whether to 401.
+Without an `Authorization` header, `request.user` is `AnonymousUser` and the permission classes decide: the default `IsAuthenticated` answers 401, so only views declaring `AllowAny` are reachable.
 
 ## Maintenance mode (short-circuit)
 

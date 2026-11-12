@@ -131,7 +131,13 @@ By design. `NoPutViewSetMixin` blocks PUT to force `PATCH` usage. Use `PATCH` fr
 
 ### Endpoint returns 401 with valid JWT
 
-Check that the `Authorization` header is `Bearer <jwt>` (not `Token <jwt>` — `Token` is for the legacy `TokenAuthentication` flow, which expects a different DB-issued key).
+Check that the `Authorization` header is `Bearer <jwt>` (`Token <key>` is not accepted: DRF's `TokenAuthentication` is not installed).
+
+If the body is `{"detail": "Session expired or closed.", "code": "session_invalid"}`, the token is fine but its session is not: logged out, closed from another device or the admin, password changed/reset, user deactivated, or idle/max TTL reached. Look the session up in the admin (Security → Sessions, search the email): `revoked_reason` says why. Tokens issued by hand with `RefreshToken.for_user()` carry no `sid` and always get this — use `security.sessions.open_session()`. See [auth.md → sessions](./auth.md#sessions-revocable-jwt).
+
+### Login returns 429
+
+The login rate limit (30/min per IP, 10/min per email, shared with the admin login) was hit. Every attempt counts, blocked ones too, so it clears a minute after the client stops trying. Check Security → Login attempts. Behind a proxy, a wrong `TRUSTED_PROXY_COUNT` makes every client share the proxy's IP and hit the per-IP limit together — see [auth.md → client IP](./auth.md#client-ip-behind-a-proxy).
 
 ## Ruff / pre-commit
 

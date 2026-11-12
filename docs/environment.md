@@ -30,6 +30,7 @@ All vars are parsed in [`django_base/settings/environment_variables.py`](../djan
 | `AWS_SECRET_ACCESS_KEY` | `''` | (S3 + SES) | |
 | `AWS_STORAGE_BUCKET_NAME` | `''` | (S3 only) | |
 | `SENTRY_DSN` | `''` | Sentry error reporting | Used only when `IS_PRODUCTION=True`. Missing DSN logs a warning, does **not** crash. |
+| `TRUSTED_PROXY_COUNT` | `0` | Client IP from `X-Forwarded-For` | Int. Reverse proxies in front of Django that append to XFF; the client IP is read that many hops from the **right**. `0` = no proxy, use `REMOTE_ADDR` (local). Set `1` on `base_infra_fargate` (ALB) and `base_infra_EC2` (Caddy). Feeds the login log and rate limit — see [auth.md → client IP](./auth.md#client-ip-behind-a-proxy). |
 
 ## Compile-time flags (not env vars)
 
@@ -42,6 +43,10 @@ Defined in [`django_base/settings/configurations.py`](../django_base/settings/co
 | `PASSWORD_RECOVERY_TOKEN_TYPE` | `"link"` | `"link"` (25-char URL token) or `"code"` (6-digit OTP). |
 | `PASSWORD_RECOVERY_TOKEN_EXPIRE_AT` | `30` (minutes) | Token TTL. |
 | `USE_DEBUG_TOOLBAR` | `False` | Adds `debug_toolbar` middleware + `/__debug__/`. |
+| `SESSION_IDLE_TTL` / `SESSION_MAX_TTL` | 3 days / 7 days | A JWT session expires after this long unused / since login. See [auth.md → sessions](./auth.md#sessions-revocable-jwt). |
+| `LOGIN_RATE_LIMIT_WINDOW` / `_PER_IP` / `_PER_EMAIL` | 1 minute / 30 / 10 | Login attempts allowed per window (API + admin). See [auth.md](./auth.md#login-attempts-and-rate-limit). |
+| `SECURITY_FAILED_LOGINS_WINDOW` / `_ALERT` | 7 days / 5 | Failed logins that flag a user in the admin. |
+| `LOGIN_EVENT_RETENTION` / `AUTH_SESSION_RETENTION` | 90 days / 30 days | What `purge_security_records` keeps. |
 
 Celery and Channels are **not** shipped with the base. To add them, follow [`extending/celery.md`](./extending/celery.md) or [`extending/websockets.md`](./extending/websockets.md).
 

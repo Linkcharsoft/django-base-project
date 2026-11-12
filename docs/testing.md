@@ -87,7 +87,6 @@ Don't write tests that re-verify Django/DRF behavior. Test:
 - Custom serializers (`CustomRegisterSerializer`, `UserListSerializer` slim payload)
 - Middleware (`IsSystemUpMiddleware` exempt-path logic)
 - Password recovery flow end-to-end (token → check → confirm)
-- The `delete_test_users` open endpoint contract
 
 ### Maintenance mode in tests
 
@@ -101,6 +100,9 @@ def _system_is_up(db):
 ```
 
 ### Throttling in tests
+
+DRF's throttles count in the default cache (LocMem). The root [`conftest.py`](../conftest.py) clears it around every test, so the `anon`/`user` counters do not leak from one test into the next. The login rate limit is counted on `LoginEvent` rows, which the per-test transaction rolls back; tighten it per test with `@override_settings(LOGIN_RATE_LIMIT_PER_EMAIL=3)` instead of looping 10 times.
+
 
 `password_recovery` is throttled to `5/hour`. To avoid flakiness in tests that loop the flow:
 
