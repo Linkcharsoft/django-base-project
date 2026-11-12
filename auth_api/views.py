@@ -24,6 +24,9 @@ from django_base.base_utils.utils import (
     get_default_for_email_template,
     get_random_string,
 )
+from security.models import AuthSession
+from security.sessions import get_session_id
+from security.signals import mark_password_change
 from users.models import TokenRecovery, User
 
 logger = logging.getLogger(__name__)
@@ -156,6 +159,8 @@ class PasswordRecoveryViewSet(BaseGenericViewSet):
             return Response(_("Token is invalid"), status=status.HTTP_400_BAD_REQUEST)
 
         user.set_password(password)
+        # A reset means someone else may hold the account: close every session.
+        mark_password_change(user, reason=AuthSession.RevokedReason.PASSWORD_RESET)
         user.save()
         token_recovery.delete()
         return Response(_("Password reset successful"), status=status.HTTP_200_OK)
@@ -187,6 +192,9 @@ class PasswordChangeViewModify(PasswordChangeView):
         data["new_password2"] = new_password
         serializer = self.get_serializer(data=data)
         serializer.is_valid(raise_exception=True)
+        # The other sessions close; the one making the request stays open.
+        current = get_session_id(request.auth) if hasattr(request.auth, "get") else None
+        mark_password_change(request.user, keep_session=current)
         serializer.save()
 
         # TODO Add is register complete permission??

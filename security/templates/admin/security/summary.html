@@ -1,0 +1,91 @@
+{% extends "admin/base_site.html" %}
+{% load i18n %}
+
+{% block bodyclass %}{{ block.super }} app-{{ opts.app_label }} model-{{ opts.model_name }} change-list{% endblock %}
+
+{% block breadcrumbs %}
+<ol class="breadcrumbs">
+<li><a href="{% url 'admin:index' %}">{% translate 'Home' %}</a></li>
+<li><a href="{% url 'admin:app_list' app_label=opts.app_label %}">{{ opts.app_config.verbose_name }}</a></li>
+<li aria-current="page">{{ opts.verbose_name_plural|capfirst }}</li>
+</ol>
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+  <p>
+    {% blocktranslate trimmed count counter=open_sessions %}
+      <strong>{{ counter }}</strong> active session
+    {% plural %}
+      <strong>{{ counter }}</strong> active sessions
+    {% endblocktranslate %}
+    {% blocktranslate trimmed count counter=users_with_sessions %}
+      across <strong>{{ counter }}</strong> user.
+    {% plural %}
+      across <strong>{{ counter }}</strong> users.
+    {% endblocktranslate %}
+    {% blocktranslate trimmed %}
+      Failed logins counted over the last <strong>{{ window_days }}</strong> days; a user is on alert from <strong>{{ alert_threshold }}</strong>.
+    {% endblocktranslate %}
+  </p>
+
+  <div class="module">
+    <h2>{% translate "Users on alert" %}</h2>
+    {% if alert_users %}
+    <table style="width:100%">
+      <thead>
+        <tr>
+          <th>{% translate "User" %}</th>
+          <th>{% translate "Active" %}</th>
+          <th>{% translate "Failed logins" %}</th>
+          <th>{% translate "Active sessions" %}</th>
+          <th>{% translate "Last used" %}</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for user in alert_users %}
+        <tr>
+          <td><a href="{% url user_changelist %}{{ user.pk }}/change/">{{ user.email|default:user.get_username }}</a></td>
+          <td>{{ user.is_active|yesno }}</td>
+          <td><a href="{% url 'admin:security_loginevent_changelist' %}?q={{ user.email|urlencode }}">{{ user.failed_logins }}</a></td>
+          <td><a href="{% url 'admin:security_authsession_changelist' %}?status=active&amp;q={{ user.email|urlencode }}">{{ user.active_sessions }}</a></td>
+          <td>{{ user.last_activity_at|date:"Y-m-d H:i"|default:"-" }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    <p style="padding:8px 10px"><a href="{% url user_changelist %}?security_alert=yes">{% translate "Open in Users" %}</a></p>
+    {% else %}
+    <p style="padding:8px 10px">{% blocktranslate trimmed %}No user reached {{ alert_threshold }} failed logins in the last {{ window_days }} days.{% endblocktranslate %}</p>
+    {% endif %}
+  </div>
+
+  <div class="module">
+    <h2>{% translate "IPs with the most failed logins" %}</h2>
+    {% if top_ips %}
+    <table style="width:100%">
+      <thead>
+        <tr>
+          <th>{% translate "IP" %}</th>
+          <th>{% translate "Failed logins" %}</th>
+          <th>{% translate "Distinct emails" %}</th>
+          <th>{% translate "Last failure" %}</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for row in top_ips %}
+        <tr>
+          <td><a href="{% url 'admin:security_loginevent_changelist' %}?q={{ row.ip_address|urlencode }}">{{ row.ip_address }}</a></td>
+          <td>{{ row.failed }}</td>
+          <td>{{ row.emails }}</td>
+          <td>{{ row.last_failed_at|date:"Y-m-d H:i" }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <p style="padding:8px 10px">{% blocktranslate trimmed %}No failed logins in the last {{ window_days }} days.{% endblocktranslate %}</p>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

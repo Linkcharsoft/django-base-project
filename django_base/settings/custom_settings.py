@@ -4,6 +4,7 @@ from django.core.exceptions import ImproperlyConfigured
 
 from django_base.settings.configurations import (
     APP_NAME,
+    SESSION_MAX_TTL,
     USE_DEBUG_TOOLBAR,
 )
 from django_base.settings.django_settings import AUTH_PASSWORD_VALIDATORS, BASE_APPS, MIDDLEWARE
@@ -22,6 +23,7 @@ THIRD_APPS = []
 MY_APPS = [
     "users",
     "platform_configurations",
+    "security",
 ]
 
 INSTALLED_APPS = THIRD_APPS + MY_APPS + BASE_APPS
@@ -78,11 +80,21 @@ REST_AUTH = {
     "USE_JWT": True,
     "JWT_AUTH_HTTPONLY": False,
     "JWT_AUTH_RETURN_EXPIRATION": True,
+    # JWT only: DRF's authtoken (one non-expiring, non-revocable token per user) is not installed.
+    "TOKEN_MODEL": None,
+    # No Django session cookie on API login: a staff member logging in through the API would
+    # otherwise get into the admin without its login (and its log), and revoking the JWT session
+    # would not end that cookie.
+    "SESSION_LOGIN": False,
+    # Every JWT pair belongs to a security.AuthSession (claim "sid"), also the ones that
+    # dj-rest-auth issues outside the login view (registration).
+    "JWT_TOKEN_CLAIMS_SERIALIZER": "security.serializers.SessionTokenClaimsSerializer",
 }
 
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(days=2),
-    "REFRESH_TOKEN_LIFETIME": timedelta(days=5),
+    # The refresh never outlives its session: aligned with SESSION_MAX_TTL.
+    "REFRESH_TOKEN_LIFETIME": SESSION_MAX_TTL,
 }
 
 
@@ -125,10 +137,9 @@ for validator in CUSTOM_AUTH_PASSWORD_VALIDATORS:
 
 # <---------------------- Rest configurations ---------------------->
 REST_FRAMEWORK = {
-    "DEFAULT_AUTHENTICATION_CLASSES": (
-        "rest_framework.authentication.TokenAuthentication",
-        "dj_rest_auth.jwt_auth.JWTAuthentication",
-    ),
+    "DEFAULT_AUTHENTICATION_CLASSES": ("security.authentication.SessionJWTAuthentication",),
+    # Private by default: a public endpoint declares AllowAny explicitly.
+    "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
     "DEFAULT_PAGINATION_CLASS": "django_base.base_utils.base_pagination.CustomPagination",
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
     "PAGE_SIZE": 10,
@@ -143,7 +154,8 @@ REST_FRAMEWORK = {
         "user": "300/minute",
         "password_recovery": "5/hour",
         # Scope declared by dj-rest-auth's views (login, logout, registration, password change).
-        # Without a rate here ScopedRateThrottle raises and those views answer 500.
+        # Without a rate here ScopedRateThrottle raises and those views answer 500. The login's
+        # real limit is security's, counted on LoginEvent (LOGIN_RATE_LIMIT_*).
         "dj_rest_auth": "60/minute",
     },
 }

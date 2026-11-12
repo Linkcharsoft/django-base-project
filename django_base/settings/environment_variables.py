@@ -43,6 +43,12 @@ CORS_ALLOWED_URLS = list(
 )
 
 
+# How many reverse proxies in front of Django append to X-Forwarded-For (ALB on Fargate, Caddy on
+# EC2: 1 each). The client IP is read that many hops from the RIGHT of the header. 0 ignores the
+# header and uses REMOTE_ADDR (local dev, no proxy).
+TRUSTED_PROXY_COUNT = env.int("TRUSTED_PROXY_COUNT", default=0)
+
+
 # <-------------- DB settings -------------->
 DB_ENGINE = env("DB_ENGINE", default="sqlite3")
 DB_USER = env("DB_USER", default="")

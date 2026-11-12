@@ -22,6 +22,9 @@ _PUBLIC_AUTH_PATHS = frozenset(
     {
         "/api/auth/login/",
         "/api/auth/logout/",
+        "/api/auth/logout-all/",
+        "/api/auth/sessions/",
+        "/api/auth/sessions/{pk}/",
         "/api/auth/token/refresh/",
         "/api/auth/registration/",
         "/api/auth/registration/verify-email/",

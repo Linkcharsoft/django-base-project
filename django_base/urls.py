@@ -9,6 +9,7 @@ from drf_spectacular.views import (
 from rest_framework.routers import DefaultRouter
 
 from platform_configurations.urls import router as platform_configurations_router
+from security.admin_login import admin_login
 from users.urls import router as users_router
 
 base_router = DefaultRouter()
@@ -19,6 +20,8 @@ base_router.registry.extend(platform_configurations_router.registry)
 # fmt: off
 #<-------------- Django + libraries urls -------------->
 urlpatterns = [
+    # Ahead of admin.site.urls: rate limited and recorded in LoginEvent (security app).
+    path("admin/login/", admin_login, name="admin_login"),
     path("admin/", admin.site.urls),
 ]
 

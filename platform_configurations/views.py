@@ -1,6 +1,7 @@
 from drf_spectacular.utils import extend_schema
 from rest_framework import mixins, status
 from rest_framework.decorators import action
+from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 
@@ -14,6 +15,8 @@ class SystemStatusViewSet(GenericViewSet, mixins.ListModelMixin):
 
     queryset = SystemStatus.objects.all()
     serializer_class = SystemStatusSerializer
+    # Public: the frontend checks it before anyone logs in.
+    permission_classes = [AllowAny]
 
     @extend_schema(responses=SystemStatusSerializer)
     @action(detail=False, methods=["get"], url_path="is-system-up")
