@@ -2,6 +2,7 @@ import pytest
 from rest_framework.test import APIClient
 
 from users.factories import TEST_PASSWORD, UserFactory
+from users.models import User
 
 
 @pytest.mark.django_db
@@ -37,3 +38,26 @@ def test_factory_flags_drive_account_state():
     assert user.check_password(TEST_PASSWORD)
     assert not user.emailaddress_set.get(email=user.email).verified
     assert not user.profile.is_register_complete
+
+
+@pytest.mark.django_db
+def test_delete_test_users_endpoint_is_gone():
+    client = APIClient()
+    client.force_authenticate(user=UserFactory(is_staff=True))
+    assert client.delete("/api/users/delete-test-users/").status_code == 404
+
+
+@pytest.mark.django_db
+def test_registration_ignores_the_removed_is_test_user_field():
+    """The frontend used to send it; old clients must still be able to sign up."""
+    response = APIClient().post(
+        "/api/auth/registration/",
+        {
+            "email": "legacy@test.com",
+            "password1": "Str0ng-Pass!",
+            "password2": "Str0ng-Pass!",
+            "is_test_user": True,
+        },
+    )
+    assert response.status_code == 201
+    assert User.objects.filter(email="legacy@test.com").exists()

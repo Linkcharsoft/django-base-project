@@ -14,7 +14,7 @@ from rest_framework.mixins import (
     RetrieveModelMixin,
     UpdateModelMixin,
 )
-from rest_framework.permissions import AllowAny, IsAdminUser, IsAuthenticated
+from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework.response import Response
 
 from django_base.base_utils.base_viewsets import BaseGenericViewSet
@@ -63,7 +63,6 @@ class UserViewSet(
         "toggle_block": [IsAdminUser],
         "destroy": [IsAdminUser],
         "list": [IsAdminUser],
-        "delete_test_users": [AllowAny],
         "default": [HasRegisterCompletePermission],
     }
 
@@ -195,20 +194,4 @@ class UserViewSet(
         return Response(
             {"detail": _("User is unblocked") if is_active else _("User is blocked")},
             status=status.HTTP_200_OK,
-        )
-
-    @extend_schema(
-        request=None,
-        responses={204: DetailMessageSerializer},
-        description=(
-            "Bulk-delete every user flagged `is_test_user=True`. Returns 204 "
-            "with a `detail` message. Intended for e2e teardown."
-        ),
-    )
-    @action(detail=False, methods=["DELETE"], url_path="delete-test-users")
-    def delete_test_users(self, request):
-        get_user_model().objects.filter(is_test_user=True).delete()
-        return Response(
-            {"detail": _("Test users deleted")},
-            status=status.HTTP_204_NO_CONTENT,
         )

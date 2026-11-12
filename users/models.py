@@ -10,8 +10,6 @@ from django_base.base_utils.base_models import (
 
 
 class User(BaseModel, AbstractUser):
-    is_test_user = models.BooleanField(default=False)
-
     class Meta:
         verbose_name = "User"
         verbose_name_plural = "Users"

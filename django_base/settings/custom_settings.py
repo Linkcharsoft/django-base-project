@@ -61,7 +61,7 @@ STATIC_ROOT = BASE_DIR / "static"
 # <---------------------- Auth configurations ---------------------->
 
 # Allauth configurations
-ACCOUNT_SIGNUP_FIELDS = ("email*", "password1*", "is_test_user")
+ACCOUNT_SIGNUP_FIELDS = ("email*", "password1*")
 ACCOUNT_ADAPTER = "users.adapter.CustomAccountAdapter"
 ACCOUNT_EMAIL_SUBJECT_PREFIX = "\u200b"
 ACCOUNT_LOGIN_METHODS = {"email"}

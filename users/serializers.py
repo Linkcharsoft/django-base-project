@@ -73,12 +73,10 @@ class CustomRegisterSerializer(RegisterSerializer):
 
     username = serializers.CharField(required=False, allow_blank=True)
     password2 = serializers.CharField(required=False, write_only=True)
-    is_test_user = serializers.BooleanField(default=False)
     # new_field = serializers.BooleanField(required=True)
 
     def get_cleaned_data(self):
         cleaned_data = super().get_cleaned_data()
-        cleaned_data["is_test_user"] = self.validated_data.get("is_test_user", False)
         cleaned_data["username"] = self.validated_data.get("email", "")
         # cleaned_data["new_field"] = self.validated_data.get("new_field", False)
         return cleaned_data
@@ -94,7 +92,6 @@ class CustomRegisterSerializer(RegisterSerializer):
     def save(self, request):
         user = super().save(request)
         self.cleaned_data = self.get_cleaned_data()
-        user.is_test_user = self.cleaned_data.get("is_test_user", False)
         # user.new_field = self.cleaned_data.get("new_field")
         user.save()
         return user

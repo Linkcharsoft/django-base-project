@@ -26,7 +26,6 @@ class UserFactory(DjangoModelFactory):
     username = factory.LazyAttribute(lambda o: o.email.split("@")[0])
     first_name = factory.Faker("first_name")
     last_name = factory.Faker("last_name")
-    is_test_user = True
 
     @factory.post_generation
     def password(obj, create, extracted, **kwargs):

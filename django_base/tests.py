@@ -51,7 +51,6 @@ PUBLIC_ENDPOINTS = {
     ("GET", "/api/schema/redoc/"),
     ("GET", "/api/system-status/"),
     ("GET", "/api/system-status/is-system-up/"),
-    ("DELETE", "/api/users/delete-test-users/"),  # open by design: E2E fixtures cleanup
 }
 
 _GROUP = re.compile(r"\(\?P<(\w+)>[^)]*\)")

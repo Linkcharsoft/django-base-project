@@ -38,11 +38,8 @@ def generate_jwt(modeladmin, request, queryset):
 @admin.register(User)
 class CustomUserAdmin(SecurityUserAdminMixin, UserAdmin):
     inlines = [UserProfileInline, *SecurityUserAdminMixin.security_inlines]
-    fieldsets = UserAdmin.fieldsets + ((None, {"fields": ("is_test_user",)}),)
-    # Username, names, is_active and is_test_user live on the detail page and in the filters:
+    # Username, names and is_active live on the detail page and in the filters:
     # at 1280 px (with both sidebars) the list fits the account and its security columns only.
     list_display = ("id", "email", "is_staff", *SecurityUserAdminMixin.security_list_display)
-    list_filter = (
-        UserAdmin.list_filter + ("is_test_user",) + SecurityUserAdminMixin.security_list_filter
-    )
+    list_filter = UserAdmin.list_filter + SecurityUserAdminMixin.security_list_filter
     actions = [generate_jwt, *SecurityUserAdminMixin.security_actions]
